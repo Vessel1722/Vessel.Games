@@ -20,18 +20,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-light); overflow-x: hidden; }
 
-        /* --- BARRA DE ANUNCIOS SUPERIOR --- */
-        .top-marquee {
-            background-color: var(--primary); color: #fff; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px;
-            padding: 8px 0; overflow: hidden; position: fixed; top: 0; width: 100%; z-index: 1001; text-transform: uppercase;
-            box-shadow: 0 2px 10px rgba(138, 43, 226, 0.5);
-        }
-        .marquee-content { display: inline-block; white-space: nowrap; animation: marquee 25s linear infinite; }
-        .marquee-content span { margin: 0 40px; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
         /* --- NAVEGACIÓN --- */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(7, 7, 10, 0.95); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 34px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(7, 7, 10, 0.95); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
         .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary), 0 0 40px var(--primary); animation: cyberGlitch 4s infinite; cursor: pointer; }
         .logo span { color: var(--accent); text-shadow: 0 0 5px #fff, 0 0 15px var(--accent), 0 0 30px var(--accent); }
@@ -65,22 +55,31 @@
         .btn-tg { background: rgba(0, 136, 204, 0.1); border: 1px solid #0088cc; color: #0088cc; box-shadow: 0 0 10px rgba(0, 136, 204, 0.2); }
         .btn-tg:hover { background: #0088cc; color: white; box-shadow: 0 0 20px rgba(0, 136, 204, 0.6); transform: translateY(-3px); }
 
+        /* --- NUEVO CAROUSEL CON IMÁGENES MINIATURA --- */
+        .mini-carousel-container { margin-top: 50px; width: 100%; overflow: hidden; position: relative; }
+        .mini-carousel-track { display: flex; gap: 15px; width: max-content; animation: scrollMini 45s linear infinite; } 
+        .mini-card { 
+            background: linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(10, 10, 15, 0.9) 100%); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; 
+            padding: 5px 15px 5px 5px; display: flex; align-items: center; gap: 10px; 
+            font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; backdrop-filter: blur(5px); 
+        }
+        .mini-card img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
+        .mini-card span.c-accent { color: var(--accent); font-weight: 900; }
+        .mini-card span.c-primary { color: #d4a5ff; font-weight: 900; }
+        @keyframes scrollMini { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- ANCLA PARA EL BOTÓN DE CATÁLOGO --- */
+        #catalogo-ancla { scroll-margin-top: 100px; padding-top: 20px; }
+
         /* --- FILTROS FLOTANTES --- */
-        .catalog-filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 40px 5% 0 5%; position: relative; z-index: 10; }
+        .catalog-filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0 5%; position: relative; z-index: 10; }
         .filter-btn { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         .filter-btn:hover { background: rgba(138,43,226,0.1); color: #fff; border-color: var(--primary); }
         .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.5); }
 
-        /* --- CAROUSEL GAMING --- */
-        .mini-carousel-container { margin-top: 50px; width: 100%; overflow: hidden; position: relative; }
-        .mini-carousel-track { display: flex; gap: 15px; width: max-content; animation: scrollMini 45s linear infinite; } 
-        .mini-card { background: linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(10, 10, 15, 0.9) 100%); border: 1px solid; border-image: linear-gradient(45deg, var(--primary), var(--accent)) 1; clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%); padding: 12px 30px; display: flex; align-items: center; gap: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; backdrop-filter: blur(5px); transition: transform 0.3s; }
-        .mini-card:hover { transform: scale(1.05); }
-        .mini-card span.c-accent { color: var(--accent); font-weight: 900; text-shadow: 0 0 5px var(--accent); }
-        .mini-card span.c-primary { color: #d4a5ff; font-weight: 900; text-shadow: 0 0 5px var(--primary); }
-
         /* --- SECCIONES DE CONTENIDO --- */
-        .section-title { text-align: center; margin: 60px 0 40px 0; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-top: 40px; font-family: 'Orbitron', sans-serif; }
+        .section-title { text-align: center; margin: 40px 0; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-top: 40px; font-family: 'Orbitron', sans-serif; }
         .section-title::after { content: ''; display: block; width: 60px; height: 4px; background-color: var(--primary); margin: 15px auto 0 auto; border-radius: 2px; }
         .gaming-title { color: var(--accent); } .gaming-title::after { background-color: var(--accent); }
         .social-title { color: var(--token); } .social-title::after { background-color: var(--token); }
@@ -111,31 +110,12 @@
         .gaming-card .price { color: var(--accent); }
         .social-card .price { color: var(--token); }
 
-        /* --- TÉRMINOS Y CONDICIONES BOX --- */
-        .terms-box { background: linear-gradient(145deg, rgba(20, 20, 30, 0.5), rgba(7, 7, 10, 0.8)); border: 1px solid rgba(255, 0, 127, 0.3); border-left: 4px solid var(--token); border-radius: 12px; padding: 25px; margin: 0 auto 40px auto; max-width: 1400px; color: var(--text-dim); font-size: 0.85rem; line-height: 1.7; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .terms-box h3 { color: #fff; margin-bottom: 15px; font-size: 1.2rem; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-        .terms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .terms-grid ul { list-style: none; padding: 0; }
-        .terms-grid li { margin-bottom: 8px; position: relative; padding-left: 20px; }
-        .terms-grid li::before { content: '🔸'; position: absolute; left: 0; top: 0; }
-
         /* --- MÉTODOS DE PAGO BANNER --- */
-        .payment-methods-banner { background: #12121a; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 5%; text-align: center; margin-top: 40px; }
-        .payment-methods-banner h3 { font-family: 'Orbitron', sans-serif; color: #fff; margin-bottom: 20px; font-size: 1.2rem; letter-spacing: 1px; }
-        .payment-icons { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
-        .pay-tag { background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; transition: 0.3s; }
+        .payment-methods-banner { background: #0a0a0f; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 5%; text-align: center; margin-top: 40px; }
+        .payment-methods-banner h3 { font-family: 'Orbitron', sans-serif; color: #fff; margin-bottom: 25px; font-size: 1.2rem; letter-spacing: 1px; }
+        .payment-icons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .pay-tag { background: rgba(255,255,255,0.03); padding: 12px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; transition: 0.3s; }
         .pay-tag:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(138,43,226,0.2); }
-
-        /* --- PREGUNTAS FRECUENTES (FAQ) --- */
-        #faq { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
-        .faq-item { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; border-radius: 12px; overflow: hidden; transition: 0.3s; }
-        .faq-question { padding: 20px; color: #fff; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-        .faq-question:hover { background: rgba(138,43,226,0.1); }
-        .faq-question::after { content: '+'; font-size: 1.5rem; color: var(--primary); transition: 0.3s; }
-        .faq-item.active .faq-question::after { content: '−'; transform: rotate(180deg); }
-        .faq-item.active { border-color: var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.2); }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #07070a; color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
-        .faq-answer p { padding: 20px; }
 
         /* --- SOCIAL PROOF POPUP --- */
         .social-proof-popup { position: fixed; bottom: -100px; left: 30px; background: rgba(18, 18, 26, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(138,43,226,0.4); border-left: 4px solid var(--accent); padding: 15px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
@@ -145,13 +125,11 @@
         .sp-text h4 { margin: 2px 0 0 0; font-size: 0.95rem; color: #fff; font-weight: 700; }
         .sp-time { font-size: 0.7rem; color: var(--primary); font-weight: 900; margin-top: 3px; display: block;}
 
-        /* --- BOTÓN FLOTANTE CARRITO --- */
+        /* --- PANEL LATERAL CARRITO --- */
         .cart-float-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: linear-gradient(135deg, var(--primary), #d4a5ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5); cursor: pointer; z-index: 900; transition: transform 0.3s, box-shadow 0.3s; }
         .cart-float-btn:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 40px rgba(138, 43, 226, 0.7); }
         .cart-float-btn svg { width: 28px; height: 28px; fill: white; }
         .cart-badge { position: absolute; top: 0; right: 0; background: var(--token); color: white; font-size: 0.8rem; font-weight: 900; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-color); }
-
-        /* --- PANEL LATERAL CARRITO --- */
         .cart-sidebar { position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; background: rgba(12, 12, 18, 0.98); backdrop-filter: blur(15px); box-shadow: -10px 0 30px rgba(0,0,0,0.8); z-index: 2000; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); display: flex; flex-direction: column; border-left: 1px solid rgba(138,43,226,0.3); }
         .cart-sidebar.active { right: 0; }
         .cart-header { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
@@ -169,9 +147,8 @@
         .cart-input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #2d2d3d; border-radius: 8px; color: white; font-size: 0.9rem; margin-bottom: 15px; outline: none; }
         .cart-input:focus { border-color: var(--primary); }
         .btn-checkout { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 1rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-checkout:hover { background: #9d4edd; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4); }
 
-        /* --- MODAL DE COMPRA REDISEÑADO --- */
+        /* --- MODAL DE COMPRA --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 3000; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-box { background: #0d0914; border: 1px solid rgba(138, 43, 226, 0.2); border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(138, 43, 226, 0.1); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
@@ -195,6 +172,61 @@
         .btn-modern-buy { flex: 1; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9rem; padding: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(138,43,226,0.4); text-transform: uppercase; }
         .btn-modern-buy:hover { background: #9d4edd; transform: translateY(-2px); }
 
+        /* --- VESSEL REWARDS REDISEÑADO --- */
+        #recompensas { padding: 80px 5%; margin-top: 60px; border-top: 1px solid rgba(138, 43, 226, 0.2); position: relative; overflow: hidden; }
+        .rewards-title { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; text-shadow: 0 0 20px var(--token); }
+        .rewards-subtitle { text-align: center; color: var(--text-dim); max-width: 700px; margin: 0 auto 50px auto; font-size: 1.1rem; line-height: 1.6; }
+        .steps-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 60px; }
+        .step-box { background: rgba(18, 18, 26, 0.6); border: 1px solid rgba(255, 0, 127, 0.2); border-radius: 16px; padding: 30px 20px; width: 280px; text-align: center; position: relative; backdrop-filter: blur(10px); transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .step-box:hover { border-color: var(--token); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(255, 0, 127, 0.2); }
+        .step-num { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: var(--token); border: 2px solid var(--token); box-shadow: 0 0 15px var(--token); font-size: 1.2rem; }
+        .step-box h4 { margin: 10px 0; color: #fff; font-size: 1.2rem; }
+        .step-box p { color: var(--text-dim); font-size: 0.9rem; line-height: 1.5; }
+        
+        .token-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto 50px auto; }
+        .token-card { background: linear-gradient(145deg, rgba(20,20,30,0.8), rgba(10,10,15,0.9)); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .token-card:hover { border-color: var(--token); background: rgba(255,0,127,0.05); transform: scale(1.05); box-shadow: 0 10px 25px rgba(255, 0, 127, 0.2); }
+        .t-name { font-weight: 900; color: #fff; font-size: 1rem; text-transform: uppercase; }
+        .t-cost { color: var(--token); font-weight: 900; font-size: 1.3rem; text-shadow: 0 0 10px rgba(255,0,127,0.4); }
+        .rewards-cta { text-align: center; }
+        .btn-token { background: var(--token); box-shadow: 0 0 20px rgba(255,0,127,0.5); border:none; color:white; padding:15px 35px; font-weight:700; border-radius:30px; text-decoration:none; display:inline-block; transition:0.3s; text-transform:uppercase; letter-spacing: 1px; font-size: 1rem;}
+        .btn-token:hover { background: #ff3399; box-shadow: 0 0 30px rgba(255,0,127,0.8); transform: translateY(-3px); }
+
+        /* --- PREGUNTAS FRECUENTES (FAQ) --- */
+        #faq { padding: 60px 5%; max-width: 900px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.05); }
+        .faq-item { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .faq-question { padding: 20px; color: #fff; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .faq-question:hover { background: rgba(138,43,226,0.1); }
+        .faq-question::after { content: '+'; font-size: 1.5rem; color: var(--primary); transition: 0.3s; }
+        .faq-item.active .faq-question::after { content: '−'; transform: rotate(180deg); }
+        .faq-item.active { border-color: var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.2); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #07070a; color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
+        .faq-answer p { padding: 20px; }
+
+        /* --- RESEÑAS REDISEÑADAS --- */
+        #recomendaciones { padding: 60px 5% 80px 5%; border-top: 1px solid rgba(255,255,255,0.05); }
+        .review-wrapper { display: flex; flex-wrap: wrap; gap: 40px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+        
+        .review-form { flex: 1; min-width: 300px; background: rgba(18, 18, 26, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.3); border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .review-form h3 { color: #fff; font-family: 'Orbitron', sans-serif; margin-bottom: 25px; text-transform: uppercase; font-size: 1.4rem; letter-spacing: 1px; }
+        .review-form input, .review-form textarea { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; border: 1px solid #2d2d3d; background: #0a0a0f; color: white; font-size: 1rem; transition: 0.3s; outline: none; }
+        .review-form input:focus, .review-form textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(138,43,226,0.2); }
+        .review-form textarea { resize: none; }
+        .star-rating { display: flex; gap: 10px; margin-bottom: 25px; font-size: 2rem; cursor: pointer; }
+        .star-rating span { color: #2d2d3d; transition: 0.2s; }
+        .star-rating span:hover, .star-rating span.active { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); transform: scale(1.1); }
+        .btn-post { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 1rem; transition: 0.3s; text-transform: uppercase; box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4); }
+        .btn-post:hover { background: #9d4edd; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6); }
+
+        .testimonials-container { flex: 2; min-width: 300px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .testimonial-card { background: #12121a; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; position: relative; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
+        .testimonial-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 255, 204, 0.15); }
+        .customer-profile { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .customer-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #fff; }
+        .customer-info h4 { color: #fff; font-size: 1rem; margin: 0 0 5px 0; }
+        .customer-info .stars-display { font-size: 0.9rem; margin: 0; color: #ffd700; letter-spacing: 2px;}
+        .testimonial-card p { color: var(--text-dim); font-style: italic; line-height: 1.6; font-size: 0.9rem; margin: 0; flex-grow: 1;}
+
         /* --- FOOTER --- */
         footer { text-align: center; padding: 50px; color: var(--text-dim); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); background-color: #050508; }
 
@@ -210,6 +242,7 @@
             .terms-grid { grid-template-columns: 1fr; }
             .social-proof-popup { bottom: -100px; left: 15px; right: 15px; justify-content: center; }
             .social-proof-popup.show { bottom: 15px; }
+            .review-wrapper { flex-direction: column; }
         }
         @media (max-width: 480px) {
             .hero h1 { font-size: 2rem; }
@@ -220,25 +253,12 @@
 </head>
 <body>
 
-    <div class="top-marquee">
-        <div class="marquee-content">
-            <span>🔥 OFERTA: Netflix a solo $90 MXN 🔥</span>
-            <span>💎 Recargas de Free Fire en menos de 5 minutos 💎</span>
-            <span>🚀 Los mejores precios para eSports y Streaming 🚀</span>
-            <span>👾 Xbox Game Pass Ultimate disponible 👾</span>
-            <span>🔥 OFERTA: Netflix a solo $90 MXN 🔥</span>
-            <span>💎 Recargas de Free Fire en menos de 5 minutos 💎</span>
-            <span>🚀 Los mejores precios para eSports y Streaming 🚀</span>
-            <span>👾 Xbox Game Pass Ultimate disponible 👾</span>
-        </div>
-    </div>
-
     <div class="social-proof-popup" id="socialProof">
         <div class="sp-icon">🛍️</div>
         <div class="sp-text">
-            <p>Alguien de México acaba de comprar</p>
+            <p id="spLocation">Alguien de México acaba de comprar</p>
             <h4 id="spItem">Disney+ (3 Meses)</h4>
-            <span class="sp-time">Hace 2 minutos</span>
+            <span class="sp-time" id="spTime">Hace 2 minutos</span>
         </div>
     </div>
 
@@ -269,7 +289,7 @@
         <div class="modal-box">
             <div class="modal-close" onclick="closeModal()">✕</div>
             <div class="modal-header-modern">
-                <img src="" id="modalImg" class="modal-thumbnail" alt="icon">
+                <img src="" id="modalImg" class="modal-thumbnail" alt="icon" referrerpolicy="no-referrer">
                 <div class="modal-title" id="modalTitle">Nombre del Servicio</div>
             </div>
             <div class="modal-body">
@@ -309,7 +329,7 @@
     <nav>
         <div class="logo">VESSEL<span>GAMES</span></div>
         <div class="menu">
-            <a href="#catalogo-main">Catálogo</a>
+            <a href="#catalogo-ancla">Catálogo</a>
             <a href="#recompensas">Rewards</a>
             <a href="#faq">FAQ</a>
         </div>
@@ -322,7 +342,7 @@
             <p>Consigue tus perfiles de streaming, licencias y monedas de juego al costo más bajo y con entrega inmediata.</p>
             
             <div class="hero-actions">
-                <a href="#catalogo-main" class="btn">🛒 Ver Catálogo</a>
+                <a href="#catalogo-ancla" class="btn">🛒 Ver Catálogo</a>
                 
                 <div class="contact-links">
                     <a href="https://wa.me/526611078412?text=Hola,%20tengo%20una%20duda%20sobre%20sus%20servicios." target="_blank" class="btn-contact btn-wa">
@@ -335,14 +355,36 @@
                     </a>
                 </div>
             </div>
+
+            <div class="mini-carousel-container">
+                <div class="mini-carousel-track">
+                    <div class="mini-card"><img src="https://i.imgur.com/k2EcQDW.jpg" referrerpolicy="no-referrer"><div>NETFLIX <span class="c-primary">$90</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/8zUIcAF.jpg" referrerpolicy="no-referrer"><div>FREE FIRE <span class="c-accent">$195</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/Ymyilp2.png" referrerpolicy="no-referrer"><div>PRIME VIDEO <span class="c-primary">$50</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/4F6ADP2.png" referrerpolicy="no-referrer"><div>MAX <span class="c-primary">$50</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/qMIAoBj.png" referrerpolicy="no-referrer"><div>CANVA PRO <span class="c-accent">$60</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/ETm5cQn.png" referrerpolicy="no-referrer"><div>SPOTIFY <span class="c-primary">$80</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/NbxACqw.jpg" referrerpolicy="no-referrer"><div>CODPOINTS <span class="c-accent">$200</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/k2EcQDW.jpg" referrerpolicy="no-referrer"><div>NETFLIX <span class="c-primary">$90</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/8zUIcAF.jpg" referrerpolicy="no-referrer"><div>FREE FIRE <span class="c-accent">$195</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/Ymyilp2.png" referrerpolicy="no-referrer"><div>PRIME VIDEO <span class="c-primary">$50</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/4F6ADP2.png" referrerpolicy="no-referrer"><div>MAX <span class="c-primary">$50</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/qMIAoBj.png" referrerpolicy="no-referrer"><div>CANVA PRO <span class="c-accent">$60</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/ETm5cQn.png" referrerpolicy="no-referrer"><div>SPOTIFY <span class="c-primary">$80</span></div></div>
+                    <div class="mini-card"><img src="https://i.imgur.com/NbxACqw.jpg" referrerpolicy="no-referrer"><div>CODPOINTS <span class="c-accent">$200</span></div></div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div id="catalogo-ancla"></div>
 
     <div id="catalogo-main">
         <div class="catalog-filters">
             <button class="filter-btn active" onclick="filterCatalog('all')">Ver Todo</button>
             <button class="filter-btn" onclick="filterCatalog('gaming')">Gaming</button>
             <button class="filter-btn" onclick="filterCatalog('streaming')">Streaming</button>
+            <button class="filter-btn" onclick="filterCatalog('cuentas')">Cuentas Nuevas</button>
             <button class="filter-btn" onclick="filterCatalog('software')">Software</button>
             <button class="filter-btn" onclick="filterCatalog('redes')">Redes Sociales</button>
         </div>
@@ -384,7 +426,7 @@
             <div class="services-section">
                 <div class="services-grid">
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Netflix', 'Hola, quiero un perfil de Netflix', '1 Mes|90; 2 Meses|170')">
-                        <div class="img-container"><img src="https://i.imgur.com/JdPWbY1.jpg" alt="Netflix" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/k2EcQDW.jpg" alt="Netflix" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Netflix</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$90</span></li><li><span>2 Meses</span> <span>$170</span></li></ul>
@@ -392,7 +434,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Prime Video', 'Hola, quiero un perfil de Prime Video', '1 Mes|50; 2 Meses|80')">
-                        <div class="img-container"><img src="https://i.imgur.com/Ymyilp2.jpg" alt="Prime Video" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/Ymyilp2.png" alt="Prime Video" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Prime Video</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>2 Meses</span> <span>$80</span></li></ul>
@@ -400,7 +442,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil MAX', 'Hola, quiero un perfil de MAX', '1 Mes|50; 3 Meses|125; 6 Meses|240; 12 Meses|450')">
-                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.jpg" alt="MAX" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.png" alt="MAX" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>MAX</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$125</span></li><li><span>... hasta 12 Meses</span> <span>$450</span></li></ul>
@@ -408,7 +450,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Disney+', 'Hola, quiero un perfil de Disney+', '1 Mes|50; 3 Meses|135; 6 Meses|260')">
-                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.jpg" alt="Disney" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.png" alt="Disney" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Disney+</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$135</span></li><li><span>6 Meses</span> <span>$260</span></li></ul>
@@ -416,7 +458,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Crunchyroll Fijo', 'Hola, quiero un perfil Crunchyroll Fijo', '1 Mes|60; 3 Meses|150; 6 Meses|275')">
-                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Fijo" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Fijo" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Crunchyroll Fijo</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$60</span></li><li><span>3 Meses</span> <span>$150</span></li><li><span>6 Meses</span> <span>$275</span></li></ul>
@@ -424,7 +466,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Crunchyroll Renovable', 'Hola, quiero Crunchyroll Renovable', '1 Mes|75; 3 Meses|170; 6 Meses|315; 12 Meses|590')">
-                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Renovable" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Renovable" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Crunchyroll Renovable</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$75</span></li><li><span>3 Meses</span> <span>$170</span></li><li><span>... hasta 12 Meses</span> <span>$590</span></li></ul>
@@ -432,7 +474,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Viki Rakuten', 'Hola, quiero un perfil de Viki', '1 Mes|50; 3 Meses|90')">
-                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.jpg" alt="Viki Rakuten" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.png" alt="Viki Rakuten" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Viki Rakuten</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$90</span></li></ul>
@@ -440,7 +482,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Paramount', 'Hola, quiero un perfil de Paramount', '1 Mes|50; 3 Meses|115; 6 Meses|200')">
-                        <div class="img-container"><img src="https://i.imgur.com/i0rERIv.jpg" alt="Paramount" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/i0rERIv.png" alt="Paramount" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Paramount</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>6 Meses</span> <span>$200</span></li></ul>
@@ -448,7 +490,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil VIX+', 'Hola, quiero un perfil de VIX+', '1 Mes|50; 3 Meses|115; 6 Meses|200; 12 Meses|350')">
-                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.jpg" alt="VIX+" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.png" alt="VIX+" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>VIX+</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>... hasta 12 Meses</span> <span>$350</span></li></ul>
@@ -456,7 +498,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Gaia', 'Hola, quiero un perfil de Gaia', '3 Meses|85; 6 Meses|140; 12 Meses|235')">
-                        <div class="img-container"><img src="https://i.imgur.com/KYB92z5.jpg" alt="Gaia" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/KYB92z5.png" alt="Gaia" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Gaia</h3>
                             <ul class="options-list"><li><span>3 Meses</span> <span>$85</span></li><li><span>6 Meses</span> <span>$140</span></li><li><span>12 Meses</span> <span>$235</span></li></ul>
@@ -464,27 +506,27 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Universal+', 'Hola, quiero cuenta Universal+', 'Cuenta Completa 1 Mes|100')">
-                        <div class="img-container"><img src="https://i.imgur.com/6zsOvIy.jpg" alt="Universal" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/6zsOvIy.png" alt="Universal" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Universal+</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Apple TV + MLS', 'Hola, quiero Apple TV con MLS', 'Paquete Fútbol 1 Mes|85')">
-                        <div class="img-container"><img src="https://i.imgur.com/qAETqyz.jpg" alt="Apple TV" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/qAETqyz.png" alt="Apple TV" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Apple TV + MLS</h3><ul class="options-list"><li><span>Paquete</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$85 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Telelatino', 'Hola, quiero Telelatino', 'Standard 1 Mes|120')">
-                        <div class="img-container"><img src="https://i.imgur.com/xgYGDYp.jpg" alt="Telelatino" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/xgYGDYp.png" alt="Telelatino" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Telelatino</h3><ul class="options-list"><li><span>Standard</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$120 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Fox One', 'Hola, quiero Fox One', 'Cuenta Completa 1 Mes|105')">
-                        <div class="img-container"><img src="https://i.imgur.com/BtISAiQ.jpg" alt="Fox One" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/BtISAiQ.png" alt="Fox One" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Fox One</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$105 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Deezer Familia', 'Hola, quiero Deezer Familia', 'Cuenta Nueva 1 Mes|100')">
-                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.jpg" alt="Deezer Familia" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.png" alt="Deezer Familia" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Deezer Familia</h3><ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="streaming" onclick="openModal(this, 'Deezer Premium', 'Hola, quiero Deezer Premium', 'Nueva/Renovación 1 Mes|55')">
-                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.jpg" alt="Deezer Premium" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.png" alt="Deezer Premium" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Deezer Premium</h3><ul class="options-list"><li><span>Nueva o Renovación</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$55 MXN</div></div></div>
                     </div>
                 </div>
@@ -496,27 +538,27 @@
             <div class="services-section">
                 <div class="services-grid">
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Netflix Nueva', 'Hola, quiero cuenta nueva de Netflix', 'Cuenta Completa|245')">
-                        <div class="img-container"><img src="https://i.imgur.com/JdPWbY1.jpg" alt="Netflix Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/k2EcQDW.jpg" alt="Netflix Nueva" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Netflix Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$245 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'VIX Nueva', 'Hola, quiero cuenta nueva de Vix', 'Cuenta Completa|90')">
-                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.jpg" alt="VIX Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.png" alt="VIX Nueva" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>VIX Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$90 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Disney + ESPN', 'Hola, quiero Disney con ESPN', 'Cuenta Completa|170')">
-                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.jpg" alt="Disney ESPN" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.png" alt="Disney ESPN" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Disney + ESPN</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$170 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'MAX Platino', 'Hola, quiero MAX Platino', 'Cuenta Completa|100')">
-                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.jpg" alt="Max Platino" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.png" alt="Max Platino" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>MAX Platino</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$100 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Viki Rakuten Nueva', 'Hola, quiero Viki Rakuten cuenta nueva', 'Cuenta Nueva|70')">
-                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.jpg" alt="Viki Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.png" alt="Viki Nueva" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Viki Rakuten</h3><div class="price-container"><span class="price-label">Nueva</span><div class="price">$70 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Spotify (Cuenta)', 'Hola, me interesa cuenta de Spotify', '1 Mes|80; 3 Meses|165')">
-                        <div class="img-container"><img src="https://i.imgur.com/ETm5cQn.jpg" alt="Spotify" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/ETm5cQn.png" alt="Spotify" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Spotify</h3>
                             <ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes - $80</span></li><li><span>Cuenta Nueva</span> <span>3 Meses - $165</span></li></ul>
@@ -524,7 +566,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Crunchyroll (Renovación)', 'Hola, quiero renovar Crunchyroll', '1 Mes|130; 12 Meses|1120')">
-                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Renovación" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Renovación" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Crunchyroll (Completa)</h3>
                             <ul class="options-list"><li><span>Renovación</span> <span>1 Mes - $130</span></li><li><span>Renovación</span> <span>12 Meses - $1120</span></li></ul>
@@ -532,7 +574,7 @@
                         </div>
                     </div>
                     <div class="service-card" data-category="cuentas" onclick="openModal(this, 'YouTube Premium', 'Hola, quiero YouTube Premium', '1 Mes (Invitación)|65; 3 Meses (Cuenta Nueva)|160')">
-                        <div class="img-container"><img src="https://i.imgur.com/i0bdg6h.jpg" alt="YouTube Premium" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img src="https://i.imgur.com/i0bdg6h.png" alt="YouTube Premium" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>YouTube Premium</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>3 Meses</span> <span>Cuenta Nueva - $160</span></li></ul>
@@ -700,12 +742,10 @@
     </div> <div class="payment-methods-banner">
         <h3>MÉTODOS DE PAGO ACEPTADOS</h3>
         <div class="payment-icons">
-            <div class="pay-tag">🏦 SPEI / Transferencia</div>
-            <div class="pay-tag">🏪 OXXO Pay</div>
-            <div class="pay-tag">🟨 Mercado Pago</div>
-            <div class="pay-tag" style="color: #F3BA2F; border-color: rgba(243, 186, 47, 0.3);">🔶 Binance Pay</div>
-            <div class="pay-tag" style="color: #26A17B; border-color: rgba(38, 161, 123, 0.3);">💵 USDT (Cripto)</div>
-            <div class="pay-tag" style="color: #345D9D; border-color: rgba(52, 93, 157, 0.3);">🪙 Litecoin (LTC)</div>
+            <div class="pay-tag" style="color: #fff; border-color: rgba(255, 255, 255, 0.3);">🏦 Transferencia (SPEI)</div>
+            <div class="pay-tag" style="color: #E21B22; border-color: rgba(226, 27, 34, 0.3);">🏪 Depósito OXXO</div>
+            <div class="pay-tag" style="color: #0079C1; border-color: rgba(0, 121, 193, 0.3);">💳 PayPal</div>
+            <div class="pay-tag" style="color: #F3BA2F; border-color: rgba(243, 186, 47, 0.3);">🔶 Binance</div>
         </div>
     </div>
 
@@ -770,45 +810,47 @@
         </div>
     </div>
 
-    <div id="recomendaciones" style="padding: 20px 5% 80px 5%;">
+    <div id="recomendaciones">
         <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-        <div class="review-form">
-            <h3 style="color:white; text-align:center; margin-bottom:15px; text-transform:uppercase;">Deja tu Recomendación</h3>
-            <input type="text" id="rev-name" placeholder="Tu Nombre">
-            <textarea id="rev-msg" rows="3" placeholder="¿Qué te pareció nuestro servicio?"></textarea>
-            <div class="star-rating" id="stars">
-                <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5" class="active">★</span>
+        
+        <div class="review-wrapper">
+            <div class="review-form">
+                <h3>Deja tu Recomendación</h3>
+                <input type="text" id="rev-name" placeholder="Tu Nombre">
+                <textarea id="rev-msg" rows="3" placeholder="¿Qué te pareció nuestro servicio?"></textarea>
+                <div class="star-rating" id="stars">
+                    <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5" class="active">★</span>
+                </div>
+                <button class="btn-post" onclick="postReview()">Publicar Reseña</button>
             </div>
-            <button class="btn-post" onclick="postReview()">Publicar Reseña</button>
-        </div>
 
-        <div class="testimonials-container" id="testimonials-list">
-            <div class="testimonial-card">
-                <div class="customer-profile">
-                    <div class="customer-avatar">A</div>
-                    <div class="customer-info">
-                        <h4>Alejandro G.</h4>
-                        <div class="stars-display">★★★★★</div>
+            <div class="testimonials-container" id="testimonials-list">
+                <div class="testimonial-card">
+                    <div class="customer-profile">
+                        <div class="customer-avatar">A</div>
+                        <div class="customer-info">
+                            <h4>Alejandro G.</h4>
+                            <div class="stars-display">★★★★★</div>
+                        </div>
                     </div>
+                    <p>Entrega súper rápida. Compré una cuenta de Netflix y me pasaron los accesos al instante. 100% recomendados.</p>
                 </div>
-                <p>Entrega súper rápida. Compré una cuenta de Netflix y me pasaron los accesos al instante. 100% recomendados.</p>
-            </div>
-            <div class="testimonial-card">
-                <div class="customer-profile">
-                    <div class="customer-avatar">R</div>
-                    <div class="customer-info">
-                        <h4>Roberto M.</h4>
-                        <div class="stars-display">★★★★★</div>
+                <div class="testimonial-card">
+                    <div class="customer-profile">
+                        <div class="customer-avatar">R</div>
+                        <div class="customer-info">
+                            <h4>Roberto M.</h4>
+                            <div class="stars-display">★★★★★</div>
+                        </div>
                     </div>
+                    <p>Los mejores precios para diamantes y Codpoints. Siempre compro mis recargas aquí y nunca fallan, trato excelente.</p>
                 </div>
-                <p>Los mejores precios para diamantes y Codpoints. Siempre compro mis recargas aquí y nunca fallan, trato excelente.</p>
             </div>
         </div>
     </div>
 
     <footer>
         <p>&copy; 2026 Vessel Games Oficial | Envíos inmediatos vía WhatsApp.</p>
-        <p style="opacity: 0.5; font-size: 0.8rem;">Aceptamos Criptomonedas (LTC/USDT) o transferencia.</p>
     </footer>
 
     <script>
@@ -939,11 +981,9 @@
 
         /* FILTROS DE CATÁLOGO */
         function filterCatalog(category) {
-            // Actualizar botones
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Filtrar Tarjetas
             document.querySelectorAll('.service-card').forEach(card => {
                 if(category === 'all' || card.getAttribute('data-category') === category) {
                     card.style.display = 'flex';
@@ -952,7 +992,6 @@
                 }
             });
 
-            // Ocultar Secciones Vacías
             document.querySelectorAll('.cat-section').forEach(section => {
                 if(category === 'all' || section.getAttribute('data-group') === category) {
                     section.style.display = 'block';
@@ -980,11 +1019,11 @@
             }
         }
 
-        /* NOTIFICACIONES DE VENTAS SIMULADAS (SOCIAL PROOF) */
+        /* NOTIFICACIONES DE VENTAS SIMULADAS */
         const purchases = [
-            "Netflix (1 Mes)", "Disney+ (3 Meses)", "Diamantes Free Fire", "Spotify Premium", "VIX+ (Cuenta Nueva)", "TikTok Seguidores", "Codpoints (Xbox)"
+            "Netflix (1 Mes)", "Disney+ (3 Meses)", "Diamantes Free Fire", "Spotify Premium", "VIX+ (Cuenta Nueva)", "TikTok Seguidores", "Codpoints (Xbox)", "Canva Pro", "Apple TV + MLS"
         ];
-        const locations = ["México", "Colombia", "Chile", "Perú", "Argentina", "Ecuador"];
+        const locations = ["Estados Unidos", "México", "Colombia", "El Salvador", "Perú", "Argentina", "Chile", "Ecuador", "Guatemala"];
         const times = ["Hace 2 minutos", "Hace 5 minutos", "Hace 1 minuto", "Hace 10 minutos", "Recién ahora"];
 
         setInterval(() => {
@@ -993,13 +1032,13 @@
             let loc = locations[Math.floor(Math.random() * locations.length)];
             let time = times[Math.floor(Math.random() * times.length)];
 
-            popup.querySelector('.sp-text p').innerText = `Alguien de ${loc} acaba de comprar`;
+            document.getElementById('spLocation').innerText = `Alguien de ${loc} acaba de comprar`;
             document.getElementById('spItem').innerText = item;
-            popup.querySelector('.sp-time').innerText = time;
+            document.getElementById('spTime').innerText = time;
 
             popup.classList.add('show');
-            setTimeout(() => { popup.classList.remove('show'); }, 4000); // Mostrar por 4 segundos
-        }, 18000); // Repetir cada 18 segundos
+            setTimeout(() => { popup.classList.remove('show'); }, 4000); 
+        }, 20000); 
 
         /* Lógica de Reseñas */
         let selectedStars = 5;
