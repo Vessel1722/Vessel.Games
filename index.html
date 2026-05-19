@@ -13,17 +13,26 @@
             --card-bg: #12121a;
             --text-light: #ffffff;
             --text-dim: #a0a0b0;
-            --accent: #00ffcc; /* Cyan Gamer */
-            --token: #ff007f; /* Magenta para Tokens */
+            --accent: #00ffcc; 
+            --token: #ff007f; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-light); overflow-x: hidden; }
 
+        /* --- BARRA DE ANUNCIOS SUPERIOR --- */
+        .top-marquee {
+            background-color: var(--primary); color: #fff; font-weight: 900; font-size: 0.8rem; letter-spacing: 1px;
+            padding: 8px 0; overflow: hidden; position: fixed; top: 0; width: 100%; z-index: 1001; text-transform: uppercase;
+            box-shadow: 0 2px 10px rgba(138, 43, 226, 0.5);
+        }
+        .marquee-content { display: inline-block; white-space: nowrap; animation: marquee 25s linear infinite; }
+        .marquee-content span { margin: 0 40px; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
         /* --- NAVEGACIÓN --- */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(7, 7, 10, 0.95); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(7, 7, 10, 0.95); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 34px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        /* LOGO GAMING NEÓN & GLITCH */
         .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary), 0 0 40px var(--primary); animation: cyberGlitch 4s infinite; cursor: pointer; }
         .logo span { color: var(--accent); text-shadow: 0 0 5px #fff, 0 0 15px var(--accent), 0 0 30px var(--accent); }
 
@@ -38,12 +47,8 @@
         .menu a:hover { color: var(--primary); }
 
         /* --- PORTADA HERO --- */
-        .hero {
-            background-image: radial-gradient(circle at center, rgba(7,7,10,0.2) 0%, rgba(7,7,10,1) 80%), url('https://i.imgur.com/VjjdVsd.jpg'); 
-            background-size: cover; background-position: center top; background-attachment: fixed; 
-            height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10%; position: relative;
-        }
-        .hero-content { max-width: 650px; z-index: 2; margin-top: 60px; }
+        .hero { background-image: radial-gradient(circle at center, rgba(7,7,10,0.2) 0%, rgba(7,7,10,1) 80%), url('https://i.imgur.com/VjjdVsd.jpg'); background-size: cover; background-position: center top; background-attachment: fixed; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10%; position: relative; }
+        .hero-content { max-width: 650px; z-index: 2; margin-top: 80px; }
         .badge { background: rgba(138, 43, 226, 0.2); color: #d4a5ff; padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 20px; border: 1px solid var(--primary); font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         .hero h1 { font-size: 3.8rem; font-weight: 900; line-height: 1.05; margin-bottom: 25px; text-transform: uppercase; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .hero h1 span { color: var(--primary); }
@@ -51,7 +56,7 @@
         
         .hero-actions { display: flex; flex-direction: column; gap: 15px; margin-bottom: 10px; }
         .btn { background-color: var(--primary); color: white; padding: 15px 35px; border-radius: 30px; font-size: 0.95rem; font-weight: 700; text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4); text-transform: uppercase; letter-spacing: 1px; width: fit-content; border:none;}
-        .btn:hover { background-color: #9d4edd; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6); }
+        .btn:hover { background-color: #9d4edd; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6); cursor: pointer; }
         
         .contact-links { display: flex; gap: 15px; flex-wrap: wrap; }
         .btn-contact { padding: 12px 25px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; text-decoration: none; color: white; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
@@ -60,22 +65,25 @@
         .btn-tg { background: rgba(0, 136, 204, 0.1); border: 1px solid #0088cc; color: #0088cc; box-shadow: 0 0 10px rgba(0, 136, 204, 0.2); }
         .btn-tg:hover { background: #0088cc; color: white; box-shadow: 0 0 20px rgba(0, 136, 204, 0.6); transform: translateY(-3px); }
 
-        /* --- CAROUSEL GAMING TOP SERVICIOS --- */
+        /* --- FILTROS FLOTANTES --- */
+        .catalog-filters { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 40px 5% 0 5%; position: relative; z-index: 10; }
+        .filter-btn { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 10px 20px; border-radius: 30px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        .filter-btn:hover { background: rgba(138,43,226,0.1); color: #fff; border-color: var(--primary); }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.5); }
+
+        /* --- CAROUSEL GAMING --- */
         .mini-carousel-container { margin-top: 50px; width: 100%; overflow: hidden; position: relative; }
         .mini-carousel-track { display: flex; gap: 15px; width: max-content; animation: scrollMini 45s linear infinite; } 
         .mini-card { background: linear-gradient(135deg, rgba(20, 20, 30, 0.9) 0%, rgba(10, 10, 15, 0.9) 100%); border: 1px solid; border-image: linear-gradient(45deg, var(--primary), var(--accent)) 1; clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%); padding: 12px 30px; display: flex; align-items: center; gap: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; white-space: nowrap; backdrop-filter: blur(5px); transition: transform 0.3s; }
         .mini-card:hover { transform: scale(1.05); }
         .mini-card span.c-accent { color: var(--accent); font-weight: 900; text-shadow: 0 0 5px var(--accent); }
         .mini-card span.c-primary { color: #d4a5ff; font-weight: 900; text-shadow: 0 0 5px var(--primary); }
-        @keyframes scrollMini { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* --- SECCIONES DE CONTENIDO --- */
-        .section-title { text-align: center; margin: 80px 0 40px 0; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-top: 40px; font-family: 'Orbitron', sans-serif; }
+        .section-title { text-align: center; margin: 60px 0 40px 0; font-size: 2.2rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-top: 40px; font-family: 'Orbitron', sans-serif; }
         .section-title::after { content: ''; display: block; width: 60px; height: 4px; background-color: var(--primary); margin: 15px auto 0 auto; border-radius: 2px; }
-        .gaming-title { color: var(--accent); }
-        .gaming-title::after { background-color: var(--accent); }
-        .social-title { color: var(--token); }
-        .social-title::after { background-color: var(--token); }
+        .gaming-title { color: var(--accent); } .gaming-title::after { background-color: var(--accent); }
+        .social-title { color: var(--token); } .social-title::after { background-color: var(--token); }
 
         .services-section { padding: 0 5% 40px 5%; }
         .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1400px; margin: 0 auto; align-items: start; }
@@ -84,9 +92,7 @@
         .service-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 35px rgba(138, 43, 226, 0.4); border-color: var(--primary); }
         .service-card:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(138, 43, 226, 0.6); border-color: #d4a5ff; }
         .gaming-card:hover { box-shadow: 0 15px 35px rgba(0, 255, 204, 0.3); border-color: var(--accent); }
-        .gaming-card:active { box-shadow: 0 5px 15px rgba(0, 255, 204, 0.5); border-color: #ffffff; }
         .social-card:hover { box-shadow: 0 15px 35px rgba(255, 0, 127, 0.3); border-color: var(--token); }
-        .social-card:active { box-shadow: 0 5px 15px rgba(255, 0, 127, 0.5); border-color: #ffffff; }
 
         .img-container { position: relative; width: 100%; height: 190px; background-color: #1a1a26; overflow: hidden; flex-shrink: 0; pointer-events: none; }
         .service-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity 0.3s, transform 0.5s ease; }
@@ -106,20 +112,38 @@
         .social-card .price { color: var(--token); }
 
         /* --- TÉRMINOS Y CONDICIONES BOX --- */
-        .terms-box {
-            background: linear-gradient(145deg, rgba(20, 20, 30, 0.5), rgba(7, 7, 10, 0.8));
-            border: 1px solid rgba(255, 0, 127, 0.3);
-            border-left: 4px solid var(--token);
-            border-radius: 12px; padding: 25px; margin: 0 auto 40px auto; max-width: 1400px;
-            color: var(--text-dim); font-size: 0.85rem; line-height: 1.7;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
+        .terms-box { background: linear-gradient(145deg, rgba(20, 20, 30, 0.5), rgba(7, 7, 10, 0.8)); border: 1px solid rgba(255, 0, 127, 0.3); border-left: 4px solid var(--token); border-radius: 12px; padding: 25px; margin: 0 auto 40px auto; max-width: 1400px; color: var(--text-dim); font-size: 0.85rem; line-height: 1.7; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         .terms-box h3 { color: #fff; margin-bottom: 15px; font-size: 1.2rem; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
         .terms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
         .terms-grid ul { list-style: none; padding: 0; }
         .terms-grid li { margin-bottom: 8px; position: relative; padding-left: 20px; }
         .terms-grid li::before { content: '🔸'; position: absolute; left: 0; top: 0; }
-        .terms-footer { margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); color: var(--accent); font-weight: 700; text-align: center; font-size: 0.9rem; }
+
+        /* --- MÉTODOS DE PAGO BANNER --- */
+        .payment-methods-banner { background: #12121a; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 5%; text-align: center; margin-top: 40px; }
+        .payment-methods-banner h3 { font-family: 'Orbitron', sans-serif; color: #fff; margin-bottom: 20px; font-size: 1.2rem; letter-spacing: 1px; }
+        .payment-icons { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+        .pay-tag { background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; transition: 0.3s; }
+        .pay-tag:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(138,43,226,0.2); }
+
+        /* --- PREGUNTAS FRECUENTES (FAQ) --- */
+        #faq { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
+        .faq-item { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; border-radius: 12px; overflow: hidden; transition: 0.3s; }
+        .faq-question { padding: 20px; color: #fff; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .faq-question:hover { background: rgba(138,43,226,0.1); }
+        .faq-question::after { content: '+'; font-size: 1.5rem; color: var(--primary); transition: 0.3s; }
+        .faq-item.active .faq-question::after { content: '−'; transform: rotate(180deg); }
+        .faq-item.active { border-color: var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.2); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: #07070a; color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; }
+        .faq-answer p { padding: 20px; }
+
+        /* --- SOCIAL PROOF POPUP --- */
+        .social-proof-popup { position: fixed; bottom: -100px; left: 30px; background: rgba(18, 18, 26, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(138,43,226,0.4); border-left: 4px solid var(--accent); padding: 15px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .social-proof-popup.show { bottom: 30px; }
+        .sp-icon { font-size: 1.5rem; }
+        .sp-text p { margin: 0; font-size: 0.85rem; color: var(--text-dim); }
+        .sp-text h4 { margin: 2px 0 0 0; font-size: 0.95rem; color: #fff; font-weight: 700; }
+        .sp-time { font-size: 0.7rem; color: var(--primary); font-weight: 900; margin-top: 3px; display: block;}
 
         /* --- BOTÓN FLOTANTE CARRITO --- */
         .cart-float-btn { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: linear-gradient(135deg, var(--primary), #d4a5ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5); cursor: pointer; z-index: 900; transition: transform 0.3s, box-shadow 0.3s; }
@@ -128,7 +152,7 @@
         .cart-badge { position: absolute; top: 0; right: 0; background: var(--token); color: white; font-size: 0.8rem; font-weight: 900; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-color); }
 
         /* --- PANEL LATERAL CARRITO --- */
-        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; background: rgba(12, 12, 18, 0.98); backdrop-filter: blur(15px); box-shadow: -10px 0 30px rgba(0,0,0,0.8); z-index: 1001; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); display: flex; flex-direction: column; border-left: 1px solid rgba(138,43,226,0.3); }
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 100%; max-width: 380px; height: 100%; background: rgba(12, 12, 18, 0.98); backdrop-filter: blur(15px); box-shadow: -10px 0 30px rgba(0,0,0,0.8); z-index: 2000; transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); display: flex; flex-direction: column; border-left: 1px solid rgba(138,43,226,0.3); }
         .cart-sidebar.active { right: 0; }
         .cart-header { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
         .cart-header h2 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: #fff; }
@@ -139,7 +163,6 @@
         .cart-item-info h4 { font-size: 0.95rem; margin-bottom: 5px; color: #fff; }
         .cart-item-info p { font-size: 0.8rem; color: var(--accent); font-weight: 700; }
         .remove-item { color: #ff4d4d; cursor: pointer; font-weight: 900; font-size: 1.2rem; padding: 0 5px; }
-        .empty-cart-msg { text-align: center; color: var(--text-dim); margin-top: 50px; font-style: italic; }
         .cart-footer { padding: 25px; background: #07070a; border-top: 1px solid rgba(255,255,255,0.05); }
         .cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 1.2rem; font-weight: 900; color: #fff; }
         .cart-total span:last-child { color: var(--primary); font-size: 1.5rem; }
@@ -151,120 +174,73 @@
         /* --- MODAL DE COMPRA REDISEÑADO --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 3000; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .modal-box { 
-            background: #0d0914; 
-            border: 1px solid rgba(138, 43, 226, 0.2); 
-            border-radius: 20px; 
-            padding: 30px; 
-            width: 90%; 
-            max-width: 400px; 
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(138, 43, 226, 0.1); 
-            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            position: relative; 
-        }
+        .modal-box { background: #0d0914; border: 1px solid rgba(138, 43, 226, 0.2); border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(138, 43, 226, 0.1); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
         .modal-overlay.active .modal-box { transform: scale(1); }
-        
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-dim); cursor: pointer; transition: 0.3s; }
         .modal-close:hover { color: #fff; }
-        
         .modal-header-modern { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .modal-thumbnail { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 15px rgba(138,43,226,0.4); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: #fff; line-height: 1.2; }
-        
         .modal-body label { display: block; color: #fff; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
-        
         .input-icon-wrapper { position: relative; width: 100%; margin-bottom: 25px; }
         .modal-input { width: 100%; padding: 15px 45px 15px 15px; background: #14101d; border: 1px solid #2d2440; border-radius: 12px; color: #fff; font-size: 1rem; outline: none; transition: border 0.3s; }
         .modal-input option { background-color: #14101d; color: white; }
         .modal-input:focus { border-color: var(--primary); }
         .input-user-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; fill: none; stroke: var(--primary); pointer-events: none; }
-        
         .modal-price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; font-size: 1.2rem; font-weight: 700;}
         .modal-price-row .m-total { font-weight: 900; color: #d4a5ff; font-size: 1.8rem; }
-        
         .modal-buttons-modern { display: flex; gap: 15px; }
         .btn-modern-cart { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #1a1428; border: 1px solid #2d2440; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9rem; padding: 15px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
         .btn-modern-cart:hover { background: #2d2440; }
         .btn-modern-buy { flex: 1; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9rem; padding: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(138,43,226,0.4); text-transform: uppercase; }
         .btn-modern-buy:hover { background: #9d4edd; transform: translateY(-2px); }
 
-        /* --- VESSEL REWARDS --- */
-        #recompensas { background: linear-gradient(180deg, #07070a 0%, #12051f 100%); padding: 80px 5%; margin-top: 60px; border-top: 1px solid var(--primary); position: relative; overflow: hidden; }
-        .rewards-title { font-family: 'Orbitron', sans-serif; text-align: center; font-size: 2.5rem; font-weight: 900; color: #fff; margin-bottom: 20px; text-transform: uppercase; text-shadow: 0 0 20px var(--token); }
-        .rewards-subtitle { text-align: center; color: var(--text-dim); max-width: 700px; margin: 0 auto 50px auto; font-size: 1.1rem; line-height: 1.6; }
-        .steps-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 60px; }
-        .step-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,0,127,0.3); border-radius: 16px; padding: 25px; width: 280px; text-align: center; position: relative; }
-        .step-num { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--token); width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: #fff; border: 3px solid #12051f; box-shadow: 0 0 15px var(--token); }
-        .step-box h4 { margin: 15px 0 10px 0; color: #fff; font-size: 1.1rem; }
-        .step-box p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; }
-        .token-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; max-width: 1000px; margin: 0 auto 50px auto; }
-        .token-card { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center; transition: 0.3s; }
-        .token-card:hover { border-color: var(--token); background: rgba(255,0,127,0.05); transform: translateY(-5px); }
-        .t-name { font-weight: 900; color: #fff; font-size: 0.9rem; margin-bottom: 8px; text-transform: uppercase; }
-        .t-cost { color: var(--token); font-weight: 900; font-size: 1.2rem; text-shadow: 0 0 10px rgba(255,0,127,0.4); }
-        .rewards-cta { text-align: center; }
-        .btn-token { background: var(--token); box-shadow: 0 0 20px rgba(255,0,127,0.5); border:none; color:white; padding:15px 30px; font-weight:700; border-radius:30px; text-decoration:none; display:inline-block; transition:0.3s; text-transform:uppercase;}
-        .btn-token:hover { background: #ff3399; box-shadow: 0 0 30px rgba(255,0,127,0.8); transform: scale(1.05); }
-
-        /* --- RESEÑAS MEJORADAS (DISEÑO PREMIUM) --- */
-        #recomendaciones { padding: 80px 5%; margin-top: 40px; background-color: var(--bg-color); }
-        .review-form { background: linear-gradient(145deg, rgba(20, 20, 30, 0.6), rgba(10, 10, 15, 0.9)); backdrop-filter: blur(10px); border: 1px solid rgba(138, 43, 226, 0.4); box-shadow: 0 0 30px rgba(138, 43, 226, 0.15); border-radius: 20px; padding: 40px; max-width: 650px; margin: 0 auto 60px auto; }
-        .review-form h3 { color: #fff; text-shadow: 0 0 10px var(--primary); font-family: 'Orbitron', sans-serif; text-align: center; margin-bottom: 25px; text-transform: uppercase; font-size: 1.5rem; }
-        .review-form input, .review-form textarea { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #2d2d3d; background: rgba(0,0,0,0.5); color: white; font-size: 1rem; transition: 0.3s; outline: none; }
-        .review-form input:focus, .review-form textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(138,43,226,0.3); }
-        .review-form textarea { resize: none; }
-        .star-rating { display: flex; justify-content: center; gap: 12px; margin-bottom: 25px; font-size: 2.2rem; cursor: pointer; }
-        .star-rating span { color: #2d2d3d; transition: 0.2s; }
-        .star-rating span:hover, .star-rating span.active { color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); transform: scale(1.1); }
-        .btn-post { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 35px; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4); }
-        .btn-post:hover { background: #9d4edd; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(138, 43, 226, 0.6); }
-
-        .testimonials-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .testimonial-card { background: linear-gradient(145deg, #12121a 0%, #0a0a0f 100%); border: 1px solid rgba(0, 255, 204, 0.2); border-top: 3px solid var(--accent); border-radius: 15px; padding: 30px; text-align: left; position: relative; transition: 0.3s; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2); border-color: var(--accent); }
-        
-        .customer-profile { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .customer-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #fff; box-shadow: 0 0 15px rgba(138,43,226,0.5); }
-        .customer-info h4 { color: #fff; font-size: 1rem; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 1px; }
-        .customer-info .stars-display { font-size: 1rem; margin: 0; color: #ffd700; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); letter-spacing: 2px;}
-        
-        .testimonial-card p { color: var(--text-dim); font-style: italic; line-height: 1.6; font-size: 0.95rem; margin: 0; position: relative; z-index: 2; }
-        .testimonial-card p::before { content: '"'; font-size: 4rem; color: rgba(138,43,226,0.1); position: absolute; top: -20px; left: -15px; font-family: serif; z-index: -1; }
-
         /* --- FOOTER --- */
         footer { text-align: center; padding: 50px; color: var(--text-dim); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); background-color: #050508; }
 
-        /* --- RESPONSIVO --- */
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.3rem; }
-            .hero { background-attachment: scroll; } 
-            nav { padding: 15px 20px; }
-            .menu { display: none; } 
             .services-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .img-container { height: 130px; }
             .service-info { padding: 12px; }
-            .service-info h3 { font-size: 0.9rem; margin-bottom: 5px; }
+            .service-info h3 { font-size: 0.9rem; }
             .options-list li { font-size: 0.7rem; padding: 2px 0; }
             .price { font-size: 1.1rem; }
-            .section-title { font-size: 1.8rem; }
-            .logo { font-size: 1.4rem; }
-            .contact-links { justify-content: center; }
             .cart-sidebar { width: 85%; right: -85%; }
             .terms-grid { grid-template-columns: 1fr; }
-            .review-form { padding: 25px; }
+            .social-proof-popup { bottom: -100px; left: 15px; right: 15px; justify-content: center; }
+            .social-proof-popup.show { bottom: 15px; }
         }
         @media (max-width: 480px) {
-            .hero-content { padding-top: 40px; }
             .hero h1 { font-size: 2rem; }
-            .services-grid { grid-template-columns: 1fr; gap: 15px; }
-            .btn { width: 100%; }
+            .services-grid { grid-template-columns: 1fr; }
             .contact-links { flex-direction: column; width: 100%; }
-            .btn-contact { justify-content: center; width: 100%; }
         }
     </style>
 </head>
 <body>
+
+    <div class="top-marquee">
+        <div class="marquee-content">
+            <span>🔥 OFERTA: Netflix a solo $90 MXN 🔥</span>
+            <span>💎 Recargas de Free Fire en menos de 5 minutos 💎</span>
+            <span>🚀 Los mejores precios para eSports y Streaming 🚀</span>
+            <span>👾 Xbox Game Pass Ultimate disponible 👾</span>
+            <span>🔥 OFERTA: Netflix a solo $90 MXN 🔥</span>
+            <span>💎 Recargas de Free Fire en menos de 5 minutos 💎</span>
+            <span>🚀 Los mejores precios para eSports y Streaming 🚀</span>
+            <span>👾 Xbox Game Pass Ultimate disponible 👾</span>
+        </div>
+    </div>
+
+    <div class="social-proof-popup" id="socialProof">
+        <div class="sp-icon">🛍️</div>
+        <div class="sp-text">
+            <p>Alguien de México acaba de comprar</p>
+            <h4 id="spItem">Disney+ (3 Meses)</h4>
+            <span class="sp-time">Hace 2 minutos</span>
+        </div>
+    </div>
 
     <div class="cart-float-btn" onclick="toggleCart()">
         <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
@@ -292,22 +268,18 @@
     <div class="modal-overlay" id="purchaseModal">
         <div class="modal-box">
             <div class="modal-close" onclick="closeModal()">✕</div>
-            
             <div class="modal-header-modern">
                 <img src="" id="modalImg" class="modal-thumbnail" alt="icon">
                 <div class="modal-title" id="modalTitle">Nombre del Servicio</div>
             </div>
-
             <div class="modal-body">
-                
                 <div id="modalSelectContainer" style="display: none; margin-bottom: 20px;">
                     <label>Elige tu paquete:</label>
                     <div class="input-icon-wrapper" style="margin-bottom:0;">
                         <select id="modalServiceOptions" class="modal-input" onchange="updateModalPrice()" style="padding-right:15px; cursor:pointer;">
-                            </select>
+                        </select>
                     </div>
                 </div>
-
                 <label>¿Cuál es tu <span style="color:var(--primary)">nombre</span>?</label>
                 <div class="input-icon-wrapper">
                     <input type="text" id="buyerName" class="modal-input" placeholder="Ej: Juan Pérez">
@@ -316,12 +288,10 @@
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </div>
-                
                 <div class="modal-price-row">
                     <span>Total:</span>
                     <span class="m-total" id="modalPrice">$0.00</span>
                 </div>
-                
                 <div class="modal-buttons-modern">
                     <button class="btn-modern-cart" onclick="addToCartFromModal()">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -330,9 +300,7 @@
                         </svg>
                         CARRITO
                     </button>
-                    <button class="btn-modern-buy" onclick="buyNowFromModal()">
-                        COMPRAR
-                    </button>
+                    <button class="btn-modern-buy" onclick="buyNowFromModal()">COMPRAR</button>
                 </div>
             </div>
         </div>
@@ -341,12 +309,9 @@
     <nav>
         <div class="logo">VESSEL<span>GAMES</span></div>
         <div class="menu">
-            <a href="#perfiles">Streaming</a>
-            <a href="#cuentas">Cuentas</a>
-            <a href="#gaming">Gaming</a>
-            <a href="#social">Redes</a>
-            <a href="#edicion">Software</a>
+            <a href="#catalogo-main">Catálogo</a>
             <a href="#recompensas">Rewards</a>
+            <a href="#faq">FAQ</a>
         </div>
     </nav>
 
@@ -357,7 +322,7 @@
             <p>Consigue tus perfiles de streaming, licencias y monedas de juego al costo más bajo y con entrega inmediata.</p>
             
             <div class="hero-actions">
-                <a href="#gaming" class="btn">🛒 Ver Catálogo</a>
+                <a href="#catalogo-main" class="btn">🛒 Ver Catálogo</a>
                 
                 <div class="contact-links">
                     <a href="https://wa.me/526611078412?text=Hola,%20tengo%20una%20duda%20sobre%20sus%20servicios." target="_blank" class="btn-contact btn-wa">
@@ -370,491 +335,377 @@
                     </a>
                 </div>
             </div>
-
-            <div class="mini-carousel-container">
-                <div class="mini-carousel-track">
-                    <div class="mini-card"><div>📺 NETFLIX <span class="c-primary">$90</span></div></div>
-                    <div class="mini-card"><div>🤖 CHATGPT PLUS <span class="c-accent">$145</span></div></div>
-                    <div class="mini-card"><div>📺 PRIME VIDEO <span class="c-primary">$50</span></div></div>
-                    <div class="mini-card"><div>🍿 MAX <span class="c-primary">$50</span></div></div>
-                    <div class="mini-card"><div>🎨 CANVA PRO <span class="c-accent">$60</span></div></div>
-                    <div class="mini-card"><div>☁️ ADOBE CC <span class="c-accent">$375</span></div></div>
-                    <div class="mini-card"><div>🛡️ NORD VPN <span class="c-primary">$100</span></div></div>
-                    <div class="mini-card"><div>🎧 SPOTIFY <span class="c-primary">$80</span></div></div>
-                    <div class="mini-card"><div>🍎 APPLE TV <span class="c-primary">$85</span></div></div>
-                    <div class="mini-card"><div>💎 FREE FIRE <span class="c-accent">Desde $195</span></div></div>
-                    <div class="mini-card"><div>🔫 CODPOINTS <span class="c-accent">Desde $200</span></div></div>
-                    <div class="mini-card"><div>📺 NETFLIX <span class="c-primary">$90</span></div></div>
-                    <div class="mini-card"><div>🤖 CHATGPT PLUS <span class="c-accent">$145</span></div></div>
-                    <div class="mini-card"><div>📺 PRIME VIDEO <span class="c-primary">$50</span></div></div>
-                    <div class="mini-card"><div>🍿 MAX <span class="c-primary">$50</span></div></div>
-                    <div class="mini-card"><div>🎨 CANVA PRO <span class="c-accent">$60</span></div></div>
-                    <div class="mini-card"><div>☁️ ADOBE CC <span class="c-accent">$375</span></div></div>
-                    <div class="mini-card"><div>🛡️ NORD VPN <span class="c-primary">$100</span></div></div>
-                    <div class="mini-card"><div>🎧 SPOTIFY <span class="c-primary">$80</span></div></div>
-                    <div class="mini-card"><div>🍎 APPLE TV <span class="c-primary">$85</span></div></div>
-                    <div class="mini-card"><div>💎 FREE FIRE <span class="c-accent">Desde $195</span></div></div>
-                    <div class="mini-card"><div>🔫 CODPOINTS <span class="c-accent">Desde $200</span></div></div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <h2 id="gaming" class="section-title gaming-title">Gaming & Monedas</h2>
-    <div class="services-section">
-        <div class="services-grid">
-            
-            <div class="service-card gaming-card" onclick="openModal(this, 'Diamantes Free Fire', 'Hola, quiero Diamantes de Free Fire', '1,085 Diamantes|195; 2,315 Diamantes|395; 3,080 Diamantes|525; 3,564 Diamantes|600; 4,136 Diamantes|685; 4,796 Diamantes|750; 5,137 Diamantes|865; 5,368 Diamantes|885; 12,320 Diamantes|1665')">
-                <div class="img-container"><img src="https://i.imgur.com/8zUIcAF.jpg" alt="Free Fire Diamantes" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Diamantes Free Fire</h3>
-                    <ul class="options-list">
-                        <li><span>1,085 Diamantes</span> <span>$195</span></li>
-                        <li><span>2,315 Diamantes</span> <span>$395</span></li>
-                        <li><span>... hasta 12,320</span> <span>$1,665</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$195 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card gaming-card" onclick="openModal(this, 'Codpoints (Solo Xbox)', 'Hola, quiero comprar Codpoints (Solo Xbox)', '2,400 CP|200; 4,800 CP|395; 7,200 CP|590; 9,600 CP|785; 12,000 CP|975')">
-                <div class="img-container"><img src="https://i.imgur.com/NbxACqw.jpg" alt="Codpoints Xbox" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Codpoints (Solo Xbox)</h3>
-                    <ul class="options-list">
-                        <li><span>2,400 CP</span> <span>$200</span></li>
-                        <li><span>4,800 CP</span> <span>$395</span></li>
-                        <li><span>... hasta 12,000 CP</span> <span>$975</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$200 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card gaming-card" onclick="openModal(this, 'Juegos de Xbox', 'Hola, quiero un juego o Game Pass', 'Game Pass Ultimate (1 Mes)|290; Juego Digital|0')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Xbox Juegos" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Juegos de Xbox</h3>
-                    <ul class="options-list">
-                        <li><span>Game Pass Ultimate (1 Mes)</span> <span>$290</span></li>
-                        <li><span>Cualquier título digital</span> <span>Cotizar</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$290 MXN</div></div>
-                </div>
-            </div>
-
+    <div id="catalogo-main">
+        <div class="catalog-filters">
+            <button class="filter-btn active" onclick="filterCatalog('all')">Ver Todo</button>
+            <button class="filter-btn" onclick="filterCatalog('gaming')">Gaming</button>
+            <button class="filter-btn" onclick="filterCatalog('streaming')">Streaming</button>
+            <button class="filter-btn" onclick="filterCatalog('software')">Software</button>
+            <button class="filter-btn" onclick="filterCatalog('redes')">Redes Sociales</button>
         </div>
-    </div>
 
-    <h2 id="perfiles" class="section-title">Pases por Perfil (Streaming)</h2>
-    <div class="services-section">
-        <div class="services-grid">
-            
-            <div class="service-card" onclick="openModal(this, 'Perfil Netflix', 'Hola, quiero un perfil de Netflix', '1 Mes|90; 2 Meses|170')">
-                <div class="img-container"><img src="https://i.imgur.com/k2EcQDW.jpg" alt="Netflix" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Netflix</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$90</span></li><li><span>2 Meses</span> <span>$170</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$90 MXN</div></div>
+        <div class="cat-section" data-group="gaming">
+            <h2 class="section-title gaming-title">Gaming & Monedas</h2>
+            <div class="services-section">
+                <div class="services-grid">
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Diamantes Free Fire', 'Hola, quiero Diamantes de Free Fire', '1,085 Diamantes|195; 2,315 Diamantes|395; 3,080 Diamantes|525; 3,564 Diamantes|600; 4,136 Diamantes|685; 4,796 Diamantes|750; 5,137 Diamantes|865; 5,368 Diamantes|885; 12,320 Diamantes|1665')">
+                        <div class="img-container"><img src="https://i.imgur.com/8zUIcAF.jpg" alt="Free Fire Diamantes" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Diamantes Free Fire</h3>
+                            <ul class="options-list"><li><span>1,085 Diamantes</span> <span>$195</span></li><li><span>2,315 Diamantes</span> <span>$395</span></li><li><span>... hasta 12,320</span> <span>$1,665</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$195 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Codpoints (Solo Xbox)', 'Hola, quiero comprar Codpoints (Solo Xbox)', '2,400 CP|200; 4,800 CP|395; 7,200 CP|590; 9,600 CP|785; 12,000 CP|975')">
+                        <div class="img-container"><img src="https://i.imgur.com/NbxACqw.jpg" alt="Codpoints Xbox" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Codpoints (Solo Xbox)</h3>
+                            <ul class="options-list"><li><span>2,400 CP</span> <span>$200</span></li><li><span>4,800 CP</span> <span>$395</span></li><li><span>... hasta 12,000 CP</span> <span>$975</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$200 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Juegos de Xbox', 'Hola, quiero un juego o Game Pass', 'Game Pass Ultimate (1 Mes)|290; Juego Digital|0')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Xbox Juegos" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Juegos de Xbox</h3>
+                            <ul class="options-list"><li><span>Game Pass Ultimate (1 Mes)</span> <span>$290</span></li><li><span>Cualquier título digital</span> <span>Cotizar</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$290 MXN</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil Prime Video', 'Hola, quiero un perfil de Prime Video', '1 Mes|50; 2 Meses|80')">
-                <div class="img-container"><img src="https://i.imgur.com/Ymyilp2.png" alt="Prime Video" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Prime Video</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>2 Meses</span> <span>$80</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil MAX', 'Hola, quiero un perfil de MAX', '1 Mes|50; 3 Meses|125; 6 Meses|240; 12 Meses|450')">
-                <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.png" alt="MAX" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>MAX</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$125</span></li><li><span>... hasta 12 Meses</span> <span>$450</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil Disney+', 'Hola, quiero un perfil de Disney+', '1 Mes|50; 3 Meses|135; 6 Meses|260')">
-                <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.png" alt="Disney" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Disney+</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$135</span></li><li><span>6 Meses</span> <span>$260</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Crunchyroll Fijo', 'Hola, quiero un perfil Crunchyroll Fijo', '1 Mes|60; 3 Meses|150; 6 Meses|275')">
-                <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Fijo" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Crunchyroll Fijo</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$60</span></li><li><span>3 Meses</span> <span>$150</span></li><li><span>6 Meses</span> <span>$275</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$60 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Crunchyroll Renovable', 'Hola, quiero Crunchyroll Renovable', '1 Mes|75; 3 Meses|170; 6 Meses|315; 12 Meses|590')">
-                <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Renovable" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Crunchyroll Renovable</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$75</span></li><li><span>3 Meses</span> <span>$170</span></li><li><span>... hasta 12 Meses</span> <span>$590</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$75 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil Viki Rakuten', 'Hola, quiero un perfil de Viki', '1 Mes|50; 3 Meses|90')">
-                <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.png" alt="Viki Rakuten" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Viki Rakuten</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$90</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil Paramount', 'Hola, quiero un perfil de Paramount', '1 Mes|50; 3 Meses|115; 6 Meses|200')">
-                <div class="img-container"><img src="https://i.imgur.com/i0rERIv.png" alt="Paramount" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Paramount</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>6 Meses</span> <span>$200</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil VIX+', 'Hola, quiero un perfil de VIX+', '1 Mes|50; 3 Meses|115; 6 Meses|200; 12 Meses|350')">
-                <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.png" alt="VIX+" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>VIX+</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>... hasta 12 Meses</span> <span>$350</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Perfil Gaia', 'Hola, quiero un perfil de Gaia', '3 Meses|85; 6 Meses|140; 12 Meses|235')">
-                <div class="img-container"><img src="https://i.imgur.com/KYB92z5.png" alt="Gaia" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Gaia</h3>
-                    <ul class="options-list"><li><span>3 Meses</span> <span>$85</span></li><li><span>6 Meses</span> <span>$140</span></li><li><span>12 Meses</span> <span>$235</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$35 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Universal+', 'Hola, quiero cuenta Universal+', 'Cuenta Completa 1 Mes|100')">
-                <div class="img-container"><img src="https://i.imgur.com/6zsOvIy.png" alt="Universal" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Universal+</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Apple TV + MLS', 'Hola, quiero Apple TV con MLS', 'Paquete Fútbol 1 Mes|85')">
-                <div class="img-container"><img src="https://i.imgur.com/qAETqyz.png" alt="Apple TV" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Apple TV + MLS</h3><ul class="options-list"><li><span>Paquete</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$85 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Telelatino', 'Hola, quiero Telelatino', 'Standard 1 Mes|120')">
-                <div class="img-container"><img src="https://i.imgur.com/xgYGDYp.png" alt="Telelatino" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Telelatino</h3><ul class="options-list"><li><span>Standard</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$120 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Fox One', 'Hola, quiero Fox One', 'Cuenta Completa 1 Mes|105')">
-                <div class="img-container"><img src="https://i.imgur.com/BtISAiQ.png" alt="Fox One" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Fox One</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$105 MXN</div></div></div>
-            </div>
-            
-            <div class="service-card" onclick="openModal(this, 'Deezer Familia', 'Hola, quiero Deezer Familia', 'Cuenta Nueva 1 Mes|100')">
-                <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.png" alt="Deezer Familia" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Deezer Familia</h3><ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Deezer Premium', 'Hola, quiero Deezer Premium', 'Nueva/Renovación 1 Mes|55')">
-                <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.png" alt="Deezer Premium" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Deezer Premium</h3><ul class="options-list"><li><span>Nueva o Renovación</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$55 MXN</div></div></div>
-            </div>
-
         </div>
-    </div>
 
-    <h2 id="cuentas" class="section-title">Cuentas Nuevas & Renovaciones</h2>
-    <div class="services-section">
-        <div class="services-grid">
-            
-            <div class="service-card" onclick="openModal(this, 'Netflix Nueva', 'Hola, quiero cuenta nueva de Netflix', 'Cuenta Completa|245')">
-                <div class="img-container"><img src="https://i.imgur.com/k2EcQDW.jpg" alt="Netflix Nueva" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Netflix Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$245 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'VIX Nueva', 'Hola, quiero cuenta nueva de Vix', 'Cuenta Completa|90')">
-                <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.png" alt="VIX Nueva" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>VIX Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$90 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Disney + ESPN', 'Hola, quiero Disney con ESPN', 'Cuenta Completa|170')">
-                <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.png" alt="Disney ESPN" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Disney + ESPN</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$170 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'MAX Platino', 'Hola, quiero MAX Platino', 'Cuenta Completa|100')">
-                <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.png" alt="Max Platino" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>MAX Platino</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$100 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Viki Rakuten Nueva', 'Hola, quiero Viki Rakuten cuenta nueva', 'Cuenta Nueva|70')">
-                <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.png" alt="Viki Nueva" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Viki Rakuten</h3><div class="price-container"><span class="price-label">Nueva</span><div class="price">$70 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Spotify (Cuenta)', 'Hola, me interesa cuenta de Spotify', '1 Mes|80; 3 Meses|165')">
-                <div class="img-container"><img src="https://i.imgur.com/ETm5cQn.png" alt="Spotify" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Spotify</h3>
-                    <ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes - $80</span></li><li><span>Cuenta Nueva</span> <span>3 Meses - $165</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$80 MXN</div></div>
+        <div class="cat-section" data-group="streaming">
+            <h2 class="section-title">Pases por Perfil (Streaming)</h2>
+            <div class="services-section">
+                <div class="services-grid">
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Netflix', 'Hola, quiero un perfil de Netflix', '1 Mes|90; 2 Meses|170')">
+                        <div class="img-container"><img src="https://i.imgur.com/JdPWbY1.jpg" alt="Netflix" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Netflix</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$90</span></li><li><span>2 Meses</span> <span>$170</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$90 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Prime Video', 'Hola, quiero un perfil de Prime Video', '1 Mes|50; 2 Meses|80')">
+                        <div class="img-container"><img src="https://i.imgur.com/Ymyilp2.jpg" alt="Prime Video" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Prime Video</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>2 Meses</span> <span>$80</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil MAX', 'Hola, quiero un perfil de MAX', '1 Mes|50; 3 Meses|125; 6 Meses|240; 12 Meses|450')">
+                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.jpg" alt="MAX" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>MAX</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$125</span></li><li><span>... hasta 12 Meses</span> <span>$450</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Disney+', 'Hola, quiero un perfil de Disney+', '1 Mes|50; 3 Meses|135; 6 Meses|260')">
+                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.jpg" alt="Disney" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Disney+</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$135</span></li><li><span>6 Meses</span> <span>$260</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Crunchyroll Fijo', 'Hola, quiero un perfil Crunchyroll Fijo', '1 Mes|60; 3 Meses|150; 6 Meses|275')">
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Fijo" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Crunchyroll Fijo</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$60</span></li><li><span>3 Meses</span> <span>$150</span></li><li><span>6 Meses</span> <span>$275</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$60 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Crunchyroll Renovable', 'Hola, quiero Crunchyroll Renovable', '1 Mes|75; 3 Meses|170; 6 Meses|315; 12 Meses|590')">
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Renovable" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Crunchyroll Renovable</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$75</span></li><li><span>3 Meses</span> <span>$170</span></li><li><span>... hasta 12 Meses</span> <span>$590</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$75 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Viki Rakuten', 'Hola, quiero un perfil de Viki', '1 Mes|50; 3 Meses|90')">
+                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.jpg" alt="Viki Rakuten" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Viki Rakuten</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$90</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Paramount', 'Hola, quiero un perfil de Paramount', '1 Mes|50; 3 Meses|115; 6 Meses|200')">
+                        <div class="img-container"><img src="https://i.imgur.com/i0rERIv.jpg" alt="Paramount" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Paramount</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>6 Meses</span> <span>$200</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil VIX+', 'Hola, quiero un perfil de VIX+', '1 Mes|50; 3 Meses|115; 6 Meses|200; 12 Meses|350')">
+                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.jpg" alt="VIX+" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>VIX+</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>$50</span></li><li><span>3 Meses</span> <span>$115</span></li><li><span>... hasta 12 Meses</span> <span>$350</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Perfil Gaia', 'Hola, quiero un perfil de Gaia', '3 Meses|85; 6 Meses|140; 12 Meses|235')">
+                        <div class="img-container"><img src="https://i.imgur.com/KYB92z5.jpg" alt="Gaia" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Gaia</h3>
+                            <ul class="options-list"><li><span>3 Meses</span> <span>$85</span></li><li><span>6 Meses</span> <span>$140</span></li><li><span>12 Meses</span> <span>$235</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$35 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Universal+', 'Hola, quiero cuenta Universal+', 'Cuenta Completa 1 Mes|100')">
+                        <div class="img-container"><img src="https://i.imgur.com/6zsOvIy.jpg" alt="Universal" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Universal+</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Apple TV + MLS', 'Hola, quiero Apple TV con MLS', 'Paquete Fútbol 1 Mes|85')">
+                        <div class="img-container"><img src="https://i.imgur.com/qAETqyz.jpg" alt="Apple TV" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Apple TV + MLS</h3><ul class="options-list"><li><span>Paquete</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$85 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Telelatino', 'Hola, quiero Telelatino', 'Standard 1 Mes|120')">
+                        <div class="img-container"><img src="https://i.imgur.com/xgYGDYp.jpg" alt="Telelatino" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Telelatino</h3><ul class="options-list"><li><span>Standard</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$120 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Fox One', 'Hola, quiero Fox One', 'Cuenta Completa 1 Mes|105')">
+                        <div class="img-container"><img src="https://i.imgur.com/BtISAiQ.jpg" alt="Fox One" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Fox One</h3><ul class="options-list"><li><span>Cuenta Completa</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$105 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Deezer Familia', 'Hola, quiero Deezer Familia', 'Cuenta Nueva 1 Mes|100')">
+                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.jpg" alt="Deezer Familia" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Deezer Familia</h3><ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="streaming" onclick="openModal(this, 'Deezer Premium', 'Hola, quiero Deezer Premium', 'Nueva/Renovación 1 Mes|55')">
+                        <div class="img-container"><img src="https://i.imgur.com/eaqcGGH.jpg" alt="Deezer Premium" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Deezer Premium</h3><ul class="options-list"><li><span>Nueva o Renovación</span> <span>1 Mes</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$55 MXN</div></div></div>
+                    </div>
                 </div>
             </div>
-
-            <div class="service-card" onclick="openModal(this, 'Crunchyroll (Renovación)', 'Hola, quiero renovar Crunchyroll', '1 Mes|130; 12 Meses|1120')">
-                <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.png" alt="Crunchyroll Renovación" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Crunchyroll (Completa)</h3>
-                    <ul class="options-list"><li><span>Renovación</span> <span>1 Mes - $130</span></li><li><span>Renovación</span> <span>12 Meses - $1120</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$130 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'YouTube Premium', 'Hola, quiero YouTube Premium', '1 Mes (Invitación)|65; 3 Meses (Cuenta Nueva)|160')">
-                <div class="img-container"><img src="https://i.imgur.com/i0bdg6h.png" alt="YouTube Premium" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>YouTube Premium</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>3 Meses</span> <span>Cuenta Nueva - $160</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$65 MXN</div></div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-    <h2 id="edicion" class="section-title">Edición & Software</h2>
-    <div class="services-section">
-        <div class="services-grid">
-            
-            <div class="service-card" onclick="openModal(this, 'Google IA Pro', 'Hola, quiero Google IA Pro', '12 Meses|235')">
-                <div class="img-container"><img src="https://i.imgur.com/VpySN6K.png" alt="Google IA Pro" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Google IA Pro</h3><ul class="options-list"><li><span>Membresía Completa</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'ChatGPT Plus', 'Hola, quiero ChatGPT Plus', '1 Mes|145')">
-                <div class="img-container"><img src="https://i.imgur.com/R0wioDr.png" alt="ChatGPT Plus" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>ChatGPT Plus</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$145 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Canva Pro', 'Hola, quiero Canva Pro', '1 Mes (Promo)|60; 1 Mes (Invitación)|65')">
-                <div class="img-container"><img src="https://i.imgur.com/qMIAoBj.png" alt="Canva Pro" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Canva Pro</h3>
-                    <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>1 Mes (Promo)</span> <span>Invitación - $60</span></li></ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$60 MXN</div></div>
+        <div class="cat-section" data-group="cuentas">
+            <h2 class="section-title">Cuentas Nuevas & Renovaciones</h2>
+            <div class="services-section">
+                <div class="services-grid">
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Netflix Nueva', 'Hola, quiero cuenta nueva de Netflix', 'Cuenta Completa|245')">
+                        <div class="img-container"><img src="https://i.imgur.com/JdPWbY1.jpg" alt="Netflix Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Netflix Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$245 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'VIX Nueva', 'Hola, quiero cuenta nueva de Vix', 'Cuenta Completa|90')">
+                        <div class="img-container"><img src="https://i.imgur.com/zSvT8K6.jpg" alt="VIX Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>VIX Nueva</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$90 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Disney + ESPN', 'Hola, quiero Disney con ESPN', 'Cuenta Completa|170')">
+                        <div class="img-container"><img src="https://i.imgur.com/eKqXCJk.jpg" alt="Disney ESPN" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Disney + ESPN</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$170 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'MAX Platino', 'Hola, quiero MAX Platino', 'Cuenta Completa|100')">
+                        <div class="img-container"><img src="https://i.imgur.com/4F6ADP2.jpg" alt="Max Platino" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>MAX Platino</h3><div class="price-container"><span class="price-label">Completa</span><div class="price">$100 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Viki Rakuten Nueva', 'Hola, quiero Viki Rakuten cuenta nueva', 'Cuenta Nueva|70')">
+                        <div class="img-container"><img src="https://i.imgur.com/MM3bwsi.jpg" alt="Viki Nueva" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Viki Rakuten</h3><div class="price-container"><span class="price-label">Nueva</span><div class="price">$70 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Spotify (Cuenta)', 'Hola, me interesa cuenta de Spotify', '1 Mes|80; 3 Meses|165')">
+                        <div class="img-container"><img src="https://i.imgur.com/ETm5cQn.jpg" alt="Spotify" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Spotify</h3>
+                            <ul class="options-list"><li><span>Cuenta Nueva</span> <span>1 Mes - $80</span></li><li><span>Cuenta Nueva</span> <span>3 Meses - $165</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$80 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'Crunchyroll (Renovación)', 'Hola, quiero renovar Crunchyroll', '1 Mes|130; 12 Meses|1120')">
+                        <div class="img-container"><img src="https://i.imgur.com/Au6N8I8.jpg" alt="Crunchyroll Renovación" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Crunchyroll (Completa)</h3>
+                            <ul class="options-list"><li><span>Renovación</span> <span>1 Mes - $130</span></li><li><span>Renovación</span> <span>12 Meses - $1120</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$130 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="cuentas" onclick="openModal(this, 'YouTube Premium', 'Hola, quiero YouTube Premium', '1 Mes (Invitación)|65; 3 Meses (Cuenta Nueva)|160')">
+                        <div class="img-container"><img src="https://i.imgur.com/i0bdg6h.jpg" alt="YouTube Premium" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>YouTube Premium</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>3 Meses</span> <span>Cuenta Nueva - $160</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$65 MXN</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="service-card" onclick="openModal(this, 'CapCut Pro', 'Hola, quiero CapCut Pro', '1 Mes|65')">
-                <div class="img-container"><img src="https://i.imgur.com/yKKk0u7.png" alt="CapCut Pro" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>CapCut Pro</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$65 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Adobe Creative Cloud', 'Hola, quiero Adobe CC', 'Renovación|375')">
-                <div class="img-container"><img src="https://i.imgur.com/6CY3hpb.png" alt="Adobe CC" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Adobe Creative Cloud</h3><div class="price-container"><span class="price-label">Renovación</span><div class="price">$375 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Duolingo Plus', 'Hola, quiero Duolingo Plus', '1 Mes|55')">
-                <div class="img-container"><img src="https://i.imgur.com/K7IKJK8.png" alt="Duolingo" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Duolingo Plus</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$55 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Express VPN', 'Hola, quiero Express VPN', '1 Mes|65')">
-                <div class="img-container"><img src="https://i.imgur.com/8KX29ud.png" alt="Express VPN" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Express VPN</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$65 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Nord VPN', 'Hola, quiero Nord VPN', '3 Meses|100')">
-                <div class="img-container"><img src="https://i.imgur.com/H4skBvQ.png" alt="Nord VPN" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Nord VPN</h3><ul class="options-list"><li><span>Acceso Seguro</span> <span>3 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
-            </div>
-
-            <div class="service-card" onclick="openModal(this, 'Elevenlabs Creator', 'Hola, quiero Elevenlabs Creator', '1 Mes|225')">
-                <div class="img-container"><img src="https://i.imgur.com/zyhiIPY.png" alt="Elevenlabs" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info"><h3>Elevenlabs Creator</h3><div class="price-container"><span class="price-label">1 Mes</span><div class="price">$225 MXN</div></div></div>
-            </div>
-
         </div>
-    </div>
 
-    <h2 id="social" class="section-title social-title">Redes Sociales (Boost)</h2>
-    
-    <div class="terms-box">
-        <h3>⚠️ TÉRMINOS Y CONDICIONES</h3>
-        <div class="terms-grid term-social">
-            <ul>
-                <li>Garantía de 25 días (solo ante caída de todos los seguidores).</li>
-                <li>Servicios con bots: pueden caer, NO aplican en garantía.</li>
-                <li>No se hacen reembolsos.</li>
-            </ul>
-            <ul>
-                <li>Una mala configuración detiene el servicio (sin garantía).</li>
-                <li>Tiempo de entrega: hasta 7 días.</li>
-                <li>Todo uso es bajo responsabilidad del comprador.</li>
-                <li>Al comprar aceptas todos los términos.</li>
-            </ul>
+        <div class="cat-section" data-group="software">
+            <h2 id="edicion" class="section-title">Edición & Software</h2>
+            <div class="services-section">
+                <div class="services-grid">
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Google IA Pro', 'Hola, quiero Google IA Pro', '12 Meses|235')">
+                        <div class="img-container"><img src="https://i.imgur.com/VpySN6K.png" alt="Google IA Pro" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Google IA Pro</h3><ul class="options-list"><li><span>Membresía Completa</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'ChatGPT Plus', 'Hola, quiero ChatGPT Plus', '1 Mes|145')">
+                        <div class="img-container"><img src="https://i.imgur.com/R0wioDr.png" alt="ChatGPT Plus" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>ChatGPT Plus</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$145 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Canva Pro', 'Hola, quiero Canva Pro', '1 Mes (Promo)|60; 1 Mes (Invitación)|65')">
+                        <div class="img-container"><img src="https://i.imgur.com/qMIAoBj.png" alt="Canva Pro" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Canva Pro</h3>
+                            <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>1 Mes (Promo)</span> <span>Invitación - $60</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$60 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'CapCut Pro', 'Hola, quiero CapCut Pro', '1 Mes|65')">
+                        <div class="img-container"><img src="https://i.imgur.com/yKKk0u7.png" alt="CapCut Pro" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>CapCut Pro</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$65 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Adobe Creative Cloud', 'Hola, quiero Adobe CC', 'Renovación|375')">
+                        <div class="img-container"><img src="https://i.imgur.com/6CY3hpb.png" alt="Adobe CC" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Adobe Creative Cloud</h3><div class="price-container"><span class="price-label">Renovación</span><div class="price">$375 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Duolingo Plus', 'Hola, quiero Duolingo Plus', '1 Mes|55')">
+                        <div class="img-container"><img src="https://i.imgur.com/K7IKJK8.png" alt="Duolingo" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Duolingo Plus</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$55 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Express VPN', 'Hola, quiero Express VPN', '1 Mes|65')">
+                        <div class="img-container"><img src="https://i.imgur.com/8KX29ud.png" alt="Express VPN" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Express VPN</h3><div class="price-container"><span class="price-label">Precio</span><div class="price">$65 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Nord VPN', 'Hola, quiero Nord VPN', '3 Meses|100')">
+                        <div class="img-container"><img src="https://i.imgur.com/H4skBvQ.png" alt="Nord VPN" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Nord VPN</h3><ul class="options-list"><li><span>Acceso Seguro</span> <span>3 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$100 MXN</div></div></div>
+                    </div>
+                    <div class="service-card" data-category="software" onclick="openModal(this, 'Elevenlabs Creator', 'Hola, quiero Elevenlabs Creator', '1 Mes|225')">
+                        <div class="img-container"><img src="https://i.imgur.com/zyhiIPY.png" alt="Elevenlabs" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info"><h3>Elevenlabs Creator</h3><div class="price-container"><span class="price-label">1 Mes</span><div class="price">$225 MXN</div></div></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="terms-footer">
-            Se pueden hacer cantidades mayores o menores a lo publicado. También contamos con vistas, comentarios, menciones y servicios para Twitch, Spotify, Telegram y Discord.
+
+        <div class="cat-section" data-group="redes">
+            <h2 id="social" class="section-title social-title">Redes Sociales (Boost)</h2>
+            <div class="terms-box">
+                <h3>⚠️ TÉRMINOS Y CONDICIONES</h3>
+                <div class="terms-grid term-social">
+                    <ul>
+                        <li>Garantía de 25 días (solo ante caída de todos los seguidores).</li>
+                        <li>Servicios con bots: pueden caer, NO aplican en garantía.</li>
+                        <li>No se hacen reembolsos.</li>
+                    </ul>
+                    <ul>
+                        <li>Una mala configuración detiene el servicio (sin garantía).</li>
+                        <li>Tiempo de entrega: hasta 7 días.</li>
+                        <li>Todo uso es bajo responsabilidad del comprador.</li>
+                        <li>Al comprar aceptas todos los términos.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="services-section">
+                <div class="services-grid grid-social">
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Seguidores', 'Hola, quiero Seguidores en TikTok', '500 Seguidores|50; 1K Seguidores|72; 2K Seguidores|93; 3K Seguidores|148; 4K Seguidores|167; 5K Seguidores|185')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>TikTok Seguidores</h3>
+                            <ul class="options-list"><li><span>500 Seguidores</span> <span>$50</span></li><li><span>... hasta 5K Seg.</span> <span>$185</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Likes', 'Hola, quiero Likes en TikTok', '500 Likes|15; 1K Likes|22; 2K Likes|29; 3K Likes|36; 4K Likes|43; 5K Likes|55; 10K Likes|74')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>TikTok Likes</h3>
+                            <ul class="options-list"><li><span>500 Likes</span> <span>$15</span></li><li><span>... hasta 10K Likes</span> <span>$74</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$15 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Vistas', 'Hola, quiero Vistas en TikTok', '5K Vistas|17; 10K Vistas|24; 20K Vistas|29; 30K Vistas|34; 40K Vistas|39; 50K Vistas|44; 100K Vistas|65')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>TikTok Vistas</h3>
+                            <ul class="options-list"><li><span>5K Vistas</span> <span>$17</span></li><li><span>... hasta 100K Vistas</span> <span>$65</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$17 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Comentarios', 'Hola, quiero Comentarios en TikTok', '50 Comentarios|45; 100 Comentarios|75; 150 Comentarios|115; 200 Comentarios|145; 250 Comentarios|175')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>TikTok Comentarios</h3>
+                            <ul class="options-list"><li><span>50 Comentarios</span> <span>$45</span></li><li><span>... hasta 250 Com.</span> <span>$175</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$45 MXN</div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Globales', 'Hola, quiero Seguidores Globales en IG', '500 Seguidores|38; 1K Seguidores|65; 2K Seguidores|100; 3K Seguidores|145; 4K Seguidores|175; 5K Seguidores|185; 10K Seguidores|285')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>IG Seg. Globales</h3>
+                            <ul class="options-list"><li><span>500 Seguidores</span> <span>$38</span></li><li><span>... hasta 10K Seg.</span> <span>$285</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$38 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Latinos', 'Hola, quiero Seguidores Latinos en IG', '50 Seguidores|24; 100 Seguidores|42; 200 Seguidores|77; 300 Seguidores|98; 400 Seguidores|135; 500 Seguidores|170; 1K Seguidores|285')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>IG Seg. Latinos</h3>
+                            <ul class="options-list"><li><span>50 Latinos</span> <span>$24</span></li><li><span>... hasta 1K Latinos</span> <span>$285</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$24 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Likes', 'Hola, quiero Likes en IG', '1K Likes|25; 2K Likes|35; 3K Likes|45; 4K Likes|55; 5K Likes|65; 10K Likes|95; 20K Likes|155')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>IG Likes</h3>
+                            <ul class="options-list"><li><span>1K Likes</span> <span>$25</span></li><li><span>... hasta 20K Likes</span> <span>$155</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$25 MXN</div></div>
+                        </div>
+                    </div>
+
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Seguidores', 'Hola, quiero Seguidores en Facebook', '500 Seguidores|45; 1K Seguidores|60; 2K Seguidores|75; 3K Seguidores|95; 4K Seguidores|120; 5K Seguidores|150; 10K Seguidores|235')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Facebook Seg.</h3>
+                            <ul class="options-list"><li><span>500 Seguidores</span> <span>$45</span></li><li><span>... hasta 10K Seg.</span> <span>$235</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$45 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Reacciones', 'Hola, quiero Reacciones en Facebook', '100 Reacciones|15; 200 Reacciones|19; 300 Reacciones|23; 400 Reacciones|26; 500 Reacciones|29; 1K Reacciones|47; 2K Reacciones|74; 3K Reacciones|98; 4K Reacciones|130; 5K Reacciones|165; 10K Reacciones|215')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>FB Reacciones</h3>
+                            <ul class="options-list"><li><span>100 Reacciones</span> <span>$15</span></li><li><span>... hasta 10K Reac.</span> <span>$215</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$15 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Vistas', 'Hola, quiero Vistas en Facebook', '1K Vistas|18; 2K Vistas|23; 3K Vistas|29; 4K Vistas|36; 5K Vistas|47; 10K Vistas|76')">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Facebook Vistas</h3>
+                            <ul class="options-list"><li><span>1K Vistas</span> <span>$18</span></li><li><span>... hasta 10K Vistas</span> <span>$76</span></li></ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$18 MXN</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="services-section">
-        <div class="services-grid grid-social">
-            
-            <div class="service-card social-card" onclick="openModal(this, 'TikTok Seguidores', 'Hola, quiero Seguidores en TikTok', '500 Seguidores|50; 1K Seguidores|72; 2K Seguidores|93; 3K Seguidores|148; 4K Seguidores|167; 5K Seguidores|185')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>TikTok Seguidores</h3>
-                    <ul class="options-list">
-                        <li><span>500 Seguidores</span> <span>$50</span></li>
-                        <li><span>1K Seguidores</span> <span>$72</span></li>
-                        <li><span>... hasta 5K Seg.</span> <span>$185</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$50 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'TikTok Likes', 'Hola, quiero Likes en TikTok', '500 Likes|15; 1K Likes|22; 2K Likes|29; 3K Likes|36; 4K Likes|43; 5K Likes|55; 10K Likes|74')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>TikTok Likes</h3>
-                    <ul class="options-list">
-                        <li><span>500 Likes</span> <span>$15</span></li>
-                        <li><span>1K Likes</span> <span>$22</span></li>
-                        <li><span>... hasta 10K Likes</span> <span>$74</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$15 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'TikTok Vistas', 'Hola, quiero Vistas en TikTok', '5K Vistas|17; 10K Vistas|24; 20K Vistas|29; 30K Vistas|34; 40K Vistas|39; 50K Vistas|44; 100K Vistas|65')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>TikTok Vistas</h3>
-                    <ul class="options-list">
-                        <li><span>5K Vistas</span> <span>$17</span></li>
-                        <li><span>10K Vistas</span> <span>$24</span></li>
-                        <li><span>... hasta 100K Vistas</span> <span>$65</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$17 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'TikTok Comentarios', 'Hola, quiero Comentarios en TikTok', '50 Comentarios|45; 100 Comentarios|75; 150 Comentarios|115; 200 Comentarios|145; 250 Comentarios|175')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>TikTok Comentarios</h3>
-                    <ul class="options-list">
-                        <li><span>50 Comentarios</span> <span>$45</span></li>
-                        <li><span>100 Comentarios</span> <span>$75</span></li>
-                        <li><span>... hasta 250 Com.</span> <span>$175</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$45 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Instagram Seg. Globales', 'Hola, quiero Seguidores Globales en IG', '500 Seguidores|38; 1K Seguidores|65; 2K Seguidores|100; 3K Seguidores|145; 4K Seguidores|175; 5K Seguidores|185; 10K Seguidores|285')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>IG Seguidores Globales</h3>
-                    <ul class="options-list">
-                        <li><span>500 Seguidores</span> <span>$38</span></li>
-                        <li><span>1K Seguidores</span> <span>$65</span></li>
-                        <li><span>... hasta 10K Seg.</span> <span>$285</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$38 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Instagram Seg. Latinos', 'Hola, quiero Seguidores Latinos en IG', '50 Seguidores|24; 100 Seguidores|42; 200 Seguidores|77; 300 Seguidores|98; 400 Seguidores|135; 500 Seguidores|170; 1K Seguidores|285')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>IG Seguidores Latinos</h3>
-                    <ul class="options-list">
-                        <li><span>50 Latinos</span> <span>$24</span></li>
-                        <li><span>100 Latinos</span> <span>$42</span></li>
-                        <li><span>... hasta 1K Latinos</span> <span>$285</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$24 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Instagram Likes', 'Hola, quiero Likes en IG', '1K Likes|25; 2K Likes|35; 3K Likes|45; 4K Likes|55; 5K Likes|65; 10K Likes|95; 20K Likes|155')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>IG Likes</h3>
-                    <ul class="options-list">
-                        <li><span>1K Likes</span> <span>$25</span></li>
-                        <li><span>2K Likes</span> <span>$35</span></li>
-                        <li><span>... hasta 20K Likes</span> <span>$155</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$25 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Facebook Seguidores', 'Hola, quiero Seguidores en Facebook', '500 Seguidores|45; 1K Seguidores|60; 2K Seguidores|75; 3K Seguidores|95; 4K Seguidores|120; 5K Seguidores|150; 10K Seguidores|235')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Facebook Seguidores</h3>
-                    <ul class="options-list">
-                        <li><span>500 Seguidores</span> <span>$45</span></li>
-                        <li><span>1K Seguidores</span> <span>$60</span></li>
-                        <li><span>... hasta 10K Seg.</span> <span>$235</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$45 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Facebook Reacciones', 'Hola, quiero Reacciones en Facebook', '100 Reacciones|15; 200 Reacciones|19; 300 Reacciones|23; 400 Reacciones|26; 500 Reacciones|29; 1K Reacciones|47; 2K Reacciones|74; 3K Reacciones|98; 4K Reacciones|130; 5K Reacciones|165; 10K Reacciones|215')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Facebook Reacciones</h3>
-                    <ul class="options-list">
-                        <li><span>100 Reacciones</span> <span>$15</span></li>
-                        <li><span>500 Reacciones</span> <span>$29</span></li>
-                        <li><span>... hasta 10K Reac.</span> <span>$215</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$15 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Facebook Vistas', 'Hola, quiero Vistas en Facebook', '1K Vistas|18; 2K Vistas|23; 3K Vistas|29; 4K Vistas|36; 5K Vistas|47; 10K Vistas|76')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Facebook Vistas</h3>
-                    <ul class="options-list">
-                        <li><span>1K Vistas</span> <span>$18</span></li>
-                        <li><span>2K Vistas</span> <span>$23</span></li>
-                        <li><span>... hasta 10K Vistas</span> <span>$76</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$18 MXN</div></div>
-                </div>
-            </div>
-
-            <div class="service-card social-card" onclick="openModal(this, 'Facebook Comentarios', 'Hola, quiero Comentarios en Facebook', '20 Comentarios|52; 50 Comentarios|100; 100 Comentarios|175; 150 Comentarios|235; 200 Comentarios|250; 250 Comentarios|300')">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
-                <div class="service-info">
-                    <h3>Facebook Comentarios</h3>
-                    <ul class="options-list">
-                        <li><span>20 Comentarios</span> <span>$52</span></li>
-                        <li><span>50 Comentarios</span> <span>$100</span></li>
-                        <li><span>... hasta 250 Com.</span> <span>$300</span></li>
-                    </ul>
-                    <div class="price-container"><span class="price-label">Desde</span><div class="price">$52 MXN</div></div>
-                </div>
-            </div>
-
+    </div> <div class="payment-methods-banner">
+        <h3>MÉTODOS DE PAGO ACEPTADOS</h3>
+        <div class="payment-icons">
+            <div class="pay-tag">🏦 SPEI / Transferencia</div>
+            <div class="pay-tag">🏪 OXXO Pay</div>
+            <div class="pay-tag">🟨 Mercado Pago</div>
+            <div class="pay-tag" style="color: #F3BA2F; border-color: rgba(243, 186, 47, 0.3);">🔶 Binance Pay</div>
+            <div class="pay-tag" style="color: #26A17B; border-color: rgba(38, 161, 123, 0.3);">💵 USDT (Cripto)</div>
+            <div class="pay-tag" style="color: #345D9D; border-color: rgba(52, 93, 157, 0.3);">🪙 Litecoin (LTC)</div>
         </div>
     </div>
 
@@ -882,30 +733,12 @@
 
         <h3 style="text-align:center; color:#fff; margin-bottom:20px; text-transform:uppercase;">Costo de Recompensas</h3>
         <div class="token-grid">
-            <div class="token-card">
-                <div class="t-name">VIX+</div>
-                <div class="t-cost">5 TOKENS</div>
-            </div>
-            <div class="token-card">
-                <div class="t-name">MAX</div>
-                <div class="t-cost">7 TOKENS</div>
-            </div>
-            <div class="token-card">
-                <div class="t-name">Crunchyroll</div>
-                <div class="t-cost">7 TOKENS</div>
-            </div>
-            <div class="token-card">
-                <div class="t-name">Disney+</div>
-                <div class="t-cost">9 TOKENS</div>
-            </div>
-            <div class="token-card">
-                <div class="t-name">Prime Video</div>
-                <div class="t-cost">9 TOKENS</div>
-            </div>
-            <div class="token-card">
-                <div class="t-name">Netflix</div>
-                <div class="t-cost">10 TOKENS</div>
-            </div>
+            <div class="token-card"><div class="t-name">VIX+</div><div class="t-cost">5 TOKENS</div></div>
+            <div class="token-card"><div class="t-name">MAX</div><div class="t-cost">7 TOKENS</div></div>
+            <div class="token-card"><div class="t-name">Crunchyroll</div><div class="t-cost">7 TOKENS</div></div>
+            <div class="token-card"><div class="t-name">Disney+</div><div class="t-cost">9 TOKENS</div></div>
+            <div class="token-card"><div class="t-name">Prime Video</div><div class="t-cost">9 TOKENS</div></div>
+            <div class="token-card"><div class="t-name">Netflix</div><div class="t-cost">10 TOKENS</div></div>
         </div>
 
         <div class="rewards-cta">
@@ -913,7 +746,31 @@
         </div>
     </div>
 
-    <div id="recomendaciones" style="padding: 60px 5%; margin-top: 40px;">
+    <div id="faq">
+        <h2 class="section-title">Preguntas Frecuentes</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">¿En cuánto tiempo recibo mi pedido?</div>
+            <div class="faq-answer"><p>Por lo general, los accesos a perfiles y recargas de monedas se envían entre 5 y 15 minutos después de haber confirmado tu pago mediante WhatsApp. Los servicios de redes sociales pueden tardar hasta 7 días en completarse dependiendo de la cantidad.</p></div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">¿Cómo funciona la garantía?</div>
+            <div class="faq-answer"><p>Todos nuestros perfiles premium cuentan con garantía por el tiempo exacto que contrataste. Si tienes algún problema de acceso, nos escribes y lo solucionamos o reemplazamos la cuenta. *Nota: La garantía no aplica para servicios de Redes Sociales hechos con bots si hay caída.*</p></div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">¿Es seguro comprar Diamantes o Codpoints?</div>
+            <div class="faq-answer"><p>Es 100% seguro. Todas las recargas de juegos se hacen estrictamente a través de tu ID de jugador oficial. Nunca te pediremos correos ni contraseñas de tus cuentas de juego, por lo que no hay ningún riesgo de baneo.</p></div>
+        </div>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">¿Cómo obtengo los servicios gratis con Rewards?</div>
+            <div class="faq-answer"><p>Al recomendarnos, pídele a tu amigo o cliente que nos mencione tu nombre o tu número al momento de comprar. Automáticamente te sumaremos un Token. Cuando tengas suficientes, escríbenos para reclamar tu servicio de Streaming sin costo.</p></div>
+        </div>
+    </div>
+
+    <div id="recomendaciones" style="padding: 20px 5% 80px 5%;">
         <h2 class="section-title">Lo que dicen nuestros clientes</h2>
         <div class="review-form">
             <h3 style="color:white; text-align:center; margin-bottom:15px; text-transform:uppercase;">Deja tu Recomendación</h3>
@@ -963,7 +820,7 @@
             return "$" + p + " MXN";
         }
 
-        // Modal Dinámico con Imagen (Solución con separador ';')
+        // Modal Dinámico
         function openModal(element, title, msgText, optionsStr) {
             let imgSrc = element.querySelector('.service-img').src;
             document.getElementById('modalImg').src = imgSrc;
@@ -985,19 +842,15 @@
             if (options.length > 1) {
                 selectContainer.style.display = 'block';
                 selectElement.innerHTML = selectHtml;
-                
                 let initialPrice = options[0].split('|')[1];
                 let initialLabel = options[0].split('|')[0];
                 document.getElementById('modalPrice').innerText = formatPrice(initialPrice);
-                
                 currentItem = { title: title, price: parseInt(initialPrice), display: formatPrice(initialPrice), msg: msgText, optionLabel: initialLabel };
             } else {
                 selectContainer.style.display = 'none';
-                
                 let singlePrice = options[0].split('|')[1];
                 let singleLabel = options[0].split('|')[0];
                 document.getElementById('modalPrice').innerText = formatPrice(singlePrice);
-                
                 currentItem = { title: title, price: parseInt(singlePrice), display: formatPrice(singlePrice), msg: msgText, optionLabel: singleLabel };
             }
 
@@ -1018,19 +871,13 @@
             currentItem.optionLabel = newLabel;
         }
 
-        function closeModal() {
-            document.getElementById('purchaseModal').classList.remove('active');
-        }
-
-        function toggleCart() {
-            document.getElementById('cartSidebar').classList.toggle('active');
-        }
+        function closeModal() { document.getElementById('purchaseModal').classList.remove('active'); }
+        function toggleCart() { document.getElementById('cartSidebar').classList.toggle('active'); }
 
         function updateCartUI() {
             const container = document.getElementById('cartItemsContainer');
             const badge = document.getElementById('cartBadge');
             const totalEl = document.getElementById('cartTotalPrice');
-            
             badge.innerText = cart.length;
             
             if(cart.length === 0) {
@@ -1041,7 +888,6 @@
 
             container.innerHTML = '';
             let total = 0;
-
             cart.forEach((item, index) => {
                 total += item.price;
                 container.innerHTML += `
@@ -1051,8 +897,7 @@
                             <p>${item.display}</p>
                         </div>
                         <div class="remove-item" onclick="removeFromCart(${index})">✕</div>
-                    </div>
-                `;
+                    </div>`;
             });
             totalEl.innerText = "$" + total + " MXN";
         }
@@ -1068,10 +913,7 @@
             }
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
         function buyNowFromModal() {
             if(currentItem) {
@@ -1084,19 +926,80 @@
 
         function checkoutCart() {
             if(cart.length === 0) return alert("Tu carrito está vacío.");
-            
             const name = document.getElementById('cartNameInput').value.trim() || "(No especificado)";
             let text = `Hola, confirmo mi pedido en el Carrito:\n\n`;
             let total = 0;
-            
             cart.forEach(item => {
                 text += `▪️ ${item.title} - ${item.optionLabel} (${item.display})\n`;
                 total += item.price;
             });
-            
             text += `\nTotal estimado: $${total} MXN\nNombre: ${name}`;
             window.open(`https://wa.me/526611078412?text=${encodeURIComponent(text)}`, '_blank');
         }
+
+        /* FILTROS DE CATÁLOGO */
+        function filterCatalog(category) {
+            // Actualizar botones
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filtrar Tarjetas
+            document.querySelectorAll('.service-card').forEach(card => {
+                if(category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Ocultar Secciones Vacías
+            document.querySelectorAll('.cat-section').forEach(section => {
+                if(category === 'all' || section.getAttribute('data-group') === category) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        /* LÓGICA PREGUNTAS FRECUENTES (FAQ) */
+        function toggleFaq(element) {
+            let item = element.parentElement;
+            let answer = item.querySelector('.faq-answer');
+            
+            if (item.classList.contains('active')) {
+                item.classList.remove('active');
+                answer.style.maxHeight = null;
+            } else {
+                document.querySelectorAll('.faq-item').forEach(i => {
+                    i.classList.remove('active');
+                    i.querySelector('.faq-answer').style.maxHeight = null;
+                });
+                item.classList.add('active');
+                answer.style.maxHeight = answer.scrollHeight + "px";
+            }
+        }
+
+        /* NOTIFICACIONES DE VENTAS SIMULADAS (SOCIAL PROOF) */
+        const purchases = [
+            "Netflix (1 Mes)", "Disney+ (3 Meses)", "Diamantes Free Fire", "Spotify Premium", "VIX+ (Cuenta Nueva)", "TikTok Seguidores", "Codpoints (Xbox)"
+        ];
+        const locations = ["México", "Colombia", "Chile", "Perú", "Argentina", "Ecuador"];
+        const times = ["Hace 2 minutos", "Hace 5 minutos", "Hace 1 minuto", "Hace 10 minutos", "Recién ahora"];
+
+        setInterval(() => {
+            let popup = document.getElementById('socialProof');
+            let item = purchases[Math.floor(Math.random() * purchases.length)];
+            let loc = locations[Math.floor(Math.random() * locations.length)];
+            let time = times[Math.floor(Math.random() * times.length)];
+
+            popup.querySelector('.sp-text p').innerText = `Alguien de ${loc} acaba de comprar`;
+            document.getElementById('spItem').innerText = item;
+            popup.querySelector('.sp-time').innerText = time;
+
+            popup.classList.add('show');
+            setTimeout(() => { popup.classList.remove('show'); }, 4000); // Mostrar por 4 segundos
+        }, 18000); // Repetir cada 18 segundos
 
         /* Lógica de Reseñas */
         let selectedStars = 5;
@@ -1104,9 +1007,7 @@
         starSpans.forEach(s => {
             s.onclick = () => {
                 selectedStars = s.getAttribute('data-v');
-                starSpans.forEach(st => {
-                    st.classList.toggle('active', st.getAttribute('data-v') <= selectedStars);
-                });
+                starSpans.forEach(st => { st.classList.toggle('active', st.getAttribute('data-v') <= selectedStars); });
             };
         });
 
@@ -1126,10 +1027,7 @@
             card.innerHTML = `
                 <div class="customer-profile">
                     <div class="customer-avatar">${initial}</div>
-                    <div class="customer-info">
-                        <h4>${name}</h4>
-                        <div class="stars-display">${starsHtml}</div>
-                    </div>
+                    <div class="customer-info"><h4>${name}</h4><div class="stars-display">${starsHtml}</div></div>
                 </div>
                 <p>${msg}</p>
             `;
