@@ -3,184 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vessel Games | Catálogo Oficial Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    
+    <title>Vessel Games | Catálogo Premium</title>
     <style>
-        :root {
-            --primary: #8a2be2; --bg-color: #07070a; --card-bg: #12121a;
-            --text-light: #ffffff; --text-dim: #a0a0b0; --accent: #00ffcc; --token: #ff007f;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-color); color: var(--text-light); overflow-x: hidden; }
-
-        /* --- COMPONENTES --- */
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(7, 7, 10, 0.95); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: #fff; cursor: pointer; }
-        .logo span { color: var(--accent); }
-        .btn { background-color: var(--primary); color: white; padding: 12px 25px; border-radius: 30px; font-weight: 700; text-decoration: none; display: inline-block; transition: 0.3s; text-transform: uppercase; border: none; cursor: pointer; }
-        .btn:hover { background-color: #9d4edd; transform: translateY(-2px); }
-
-        /* --- CARROUSEL --- */
-        .mini-carousel-container { margin-top: 80px; width: 100%; overflow: hidden; padding: 20px 0; }
-        .mini-carousel-track { display: flex; gap: 20px; width: max-content; animation: scrollMini 50s linear infinite; } 
-        .mini-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 20px; display: flex; align-items: center; gap: 15px; font-size: 0.9rem; }
-        .mini-card img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
-        @keyframes scrollMini { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* --- FILTROS Y GRID --- */
-        .catalog-filters { display: flex; justify-content: center; gap: 10px; margin: 40px 0; flex-wrap: wrap; }
-        .filter-btn { background: #1a1a26; color: #fff; border: 1px solid #333; padding: 8px 15px; border-radius: 20px; cursor: pointer; }
-        .filter-btn.active { background: var(--primary); border-color: var(--primary); }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 0 5%; }
-        .service-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; padding: 20px; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
-        .service-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .service-img { width: 100%; height: 160px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-        .price { font-weight: 900; color: #fff; font-size: 1.2rem; }
-        .usd { color: var(--accent); font-size: 0.8rem; margin-left: 5px; }
-
-        /* --- SECCIONES NUEVAS --- */
-        .terms-box { background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 30px; margin: 40px 5%; border-left: 5px solid var(--token); backdrop-filter: blur(5px); }
-        .faq-item { background: #12121a; margin-bottom: 10px; border-radius: 10px; }
-        .faq-question { padding: 15px; cursor: pointer; display: flex; justify-content: space-between; }
-        .faq-answer { display: none; padding: 15px; color: var(--text-dim); border-top: 1px solid #222; }
+        :root { --primary: #8a2be2; --bg: #07070a; --card: #12121a; --text: #fff; --accent: #00ffcc; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background-color: var(--bg); color: var(--text); }
         
-        .review-wrapper { display: flex; flex-wrap: wrap; gap: 40px; padding: 40px 5%; }
-        .testimonial-card { background: #12121a; padding: 20px; border-radius: 15px; border: 1px solid #222; margin-bottom: 15px; }
+        /* Navbar */
+        nav { padding: 20px 5%; display: flex; justify-content: space-between; background: #0c0c10; position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: bold; font-size: 1.5rem; }
+        
+        /* Carrusel */
+        .carousel-container { width: 100%; overflow: hidden; padding: 20px 0; background: #0a0a0f; }
+        .carousel-track { display: flex; gap: 20px; animation: scroll 40s linear infinite; }
+        .mini-card { background: var(--card); padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 10px; min-width: 200px; border: 1px solid #222; }
+        .mini-card img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        .payment-methods-banner { background: #0a0a0f; padding: 40px 5%; text-align: center; }
-        .payment-icons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
-        .pay-tag { padding: 10px 20px; border: 1px solid #333; border-radius: 8px; color: #fff; }
+        /* Grid de Servicios */
+        .catalog { padding: 40px 5%; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; transition: 0.3s; }
+        .card:hover { border-color: var(--primary); }
+        .card img { width: 100%; height: 160px; border-radius: 10px; object-fit: cover; margin-bottom: 15px; }
+        .price-tag { font-weight: bold; color: var(--accent); margin-top: 10px; }
 
-        /* --- POPUP VENTAS --- */
-        .social-proof-popup { position: fixed; bottom: 30px; left: 30px; background: #1a1a26; padding: 15px; border-radius: 10px; border-left: 4px solid var(--accent); display: none; z-index: 2000; }
-        .social-proof-popup.show { display: flex; animation: slideIn 0.5s ease; }
-        @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        /* Boost Section */
+        .boost-section { padding: 40px 5%; border-top: 1px solid #222; }
+        .boost-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
 
-        /* --- MODAL --- */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:3000; }
-        .modal-overlay.active { display:flex; }
-        .modal-box { background:#0d0914; padding:30px; width:90%; max-width:400px; border-radius:20px; border:1px solid #333; }
+        /* FAQ */
+        .faq { padding: 40px 5%; }
+        .faq-item { background: #1a1a24; margin-bottom: 10px; padding: 15px; border-radius: 8px; cursor: pointer; }
+        
+        /* Popup Ventas */
+        #sale-popup { position: fixed; bottom: 20px; left: 20px; background: #1a1a24; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); display: none; z-index: 999; }
     </style>
 </head>
 <body>
 
-    <div class="social-proof-popup" id="socialProof">
-        <div style="margin-right:15px">🛍️</div>
-        <div>
-            <p id="spLocation" style="font-size:0.8rem; color:#aaa;">Alguien de México acaba de comprar</p>
-            <h4 id="spItem" style="color:#fff;">Disney+ (3 Meses)</h4>
-        </div>
-    </div>
-
     <nav>
-        <div class="logo">VESSEL<span>GAMES</span></div>
-        <div class="menu">
-            <a href="#catalogo-ancla">Catálogo</a>
-        </div>
+        <div class="logo">VESSEL GAMES</div>
     </nav>
 
-    <div class="hero">
-        <div class="hero-content">
-            <div class="badge">PROVEEDOR OFICIAL B2B</div>
-            <h1>TU MUNDO DE <span>ENTRETENIMIENTO</span></h1>
-            <p>Consigue tus servicios al costo más bajo.</p>
-            <a href="#catalogo-ancla" class="btn">🛒 Ver Catálogo</a>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <div class="mini-card"><img src="https://i.imgur.com/k2EcQDW.png" referrerpolicy="no-referrer"><div>Netflix<br><small>$90 MXN / $4.5 USD</small></div></div>
+            <div class="mini-card"><img src="https://i.imgur.com/8zUIcAF.jpg" referrerpolicy="no-referrer"><div>Free Fire<br><small>$195 MXN / $9.8 USD</small></div></div>
+            <div class="mini-card"><img src="https://i.imgur.com/Ymyilp2.png" referrerpolicy="no-referrer"><div>Prime<br><small>$50 MXN / $2.5 USD</small></div></div>
+            <div class="mini-card"><img src="https://i.imgur.com/4F6ADP2.png" referrerpolicy="no-referrer"><div>Max<br><small>$50 MXN / $2.5 USD</small></div></div>
         </div>
     </div>
 
-    <div class="mini-carousel-container">
-        <div class="mini-carousel-track">
-            <div class="mini-card"><img src="https://i.imgur.com/k2EcQDW.png" referrerpolicy="no-referrer"><div>NETFLIX <span class="c-primary">$90 / $4.5</span></div></div>
-            <div class="mini-card"><img src="https://i.imgur.com/8zUIcAF.jpg" referrerpolicy="no-referrer"><div>FREE FIRE <span class="c-accent">$195 / $9.8</span></div></div>
-            <div class="mini-card"><img src="https://i.imgur.com/Ymyilp2.png" referrerpolicy="no-referrer"><div>PRIME <span class="c-primary">$50 / $2.5</span></div></div>
-            <div class="mini-card"><img src="https://i.imgur.com/4F6ADP2.png" referrerpolicy="no-referrer"><div>MAX <span class="c-primary">$50 / $2.5</span></div></div>
+    <div class="catalog">
+        <div class="card">
+            <img src="https://i.imgur.com/k2EcQDW.png" referrerpolicy="no-referrer">
+            <h3>Netflix 1 Mes</h3>
+            <p class="price-tag">$90 MXN / $4.5 USD</p>
+        </div>
+        </div>
+
+    <div class="boost-section">
+        <h2>Servicios Boost (Redes Sociales)</h2>
+        <div class="boost-grid">
+            <div class="card"><h4>TikTok Seguidores</h4><p>$50 MXN / $2.5 USD</p></div>
+            <div class="card"><h4>Instagram Likes</h4><p>$30 MXN / $1.5 USD</p></div>
         </div>
     </div>
 
-    <div id="catalogo-ancla"></div>
-
-    <div class="services-grid" id="catalogo-main">
-        <div class="service-card" onclick="openModal(this, 'Perfil Netflix', 'Hola, quiero un perfil de Netflix', '1 Mes|90|4.5; 2 Meses|170|8.5')">
-            <div class="img-container"><img src="https://i.imgur.com/k2EcQDW.png" class="service-img" referrerpolicy="no-referrer"></div>
-            <div class="service-info">
-                <h3>Netflix</h3>
-                <div class="price">$90 MXN <span class="usd">$4.5 USD</span></div>
-            </div>
+    <div class="faq">
+        <h2>Preguntas Frecuentes</h2>
+        <div class="faq-item" onclick="this.querySelector('p').style.display='block'">
+            <strong>¿En cuánto tiempo recibo mi producto?</strong>
+            <p style="display:none; margin-top:10px; color:#aaa;">En servicios de Streaming el tiempo es de 10 minutos a 2 horas. En monedas de juego el tiempo es de 20 minutos a 2 horas.</p>
         </div>
-        </div>
-
-    <section id="faq" style="padding: 50px 5%;">
-        <h2 class="section-title">Preguntas Frecuentes</h2>
-        <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">¿En cuánto tiempo recibo mi producto?</div>
-            <div class="faq-answer"><p>En servicios de <b>Streaming</b> el tiempo es de 10 minutos a 2 horas. En <b>Monedas de juego</b>, de 20 minutos a 2 horas.</p></div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-question" onclick="toggleFaq(this)">¿Es seguro comprar diamantes o codpoints?</div>
-            <div class="faq-answer"><p>Es 100% seguro. Los diamantes se recargan vía tu ID de jugador. Los Codpoints se envían como códigos directos para tu cuenta.</p></div>
-        </div>
-    </section>
-
-    <div class="payment-methods-banner">
-        <h3>MÉTODOS DE PAGO</h3>
-        <div class="payment-icons">
-            <div class="pay-tag">🏦 Transferencia</div>
-            <div class="pay-tag">🏪 OXXO Pay</div>
-            <div class="pay-tag">💳 PayPal</div>
-            <div class="pay-tag">🔶 Binance</div>
+        <div class="faq-item" onclick="this.querySelector('p').style.display='block'">
+            <strong>¿Es seguro comprar diamantes o codpoints?</strong>
+            <p style="display:none; margin-top:10px; color:#aaa;">Es 100% seguro. Los diamantes se recargan vía ID de jugador y los Codpoints se envían como códigos directos para tu cuenta.</p>
         </div>
     </div>
 
-    <div class="modal-overlay" id="purchaseModal">
-        <div class="modal-box">
-            <div class="modal-close" onclick="closeModal()">✕</div>
-            <div id="modalTitle"></div>
-            <div id="modalSelectContainer">
-                <select id="modalServiceOptions" onchange="updateModalPrice()"></select>
-            </div>
-            <div id="modalPrice">$0.00</div>
-            <button class="btn" onclick="buyNowFromModal()">COMPRAR</button>
-        </div>
+    <div id="sale-popup">
+        <strong>Venta reciente:</strong>
+        <p id="sale-text">Alguien acaba de comprar</p>
     </div>
 
     <script>
-        // LÓGICA DE PRECIOS DOBLES
-        function openModal(element, title, msgText, optionsStr) {
-            let imgSrc = element.querySelector('.service-img').src;
-            document.getElementById('modalImg').src = imgSrc;
+        // Lógica de notificaciones aleatorias (cada 40 a 90 segundos)
+        function showSale() {
+            const popup = document.getElementById('sale-popup');
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.display = 'none'; }, 5000);
             
-            // Formato: Label|MXN|USD
-            let options = optionsStr.split(';').map(o => o.trim());
-            let selectHtml = '';
-            
-            options.forEach((opt) => {
-                let parts = opt.split('|');
-                selectHtml += `<option value="${parts[1]}" data-usd="${parts[2]}" data-label="${parts[0]}">${parts[0]} - $${parts[1]} MXN ($${parts[2]} USD)</option>`;
-            });
-
-            document.getElementById('modalServiceOptions').innerHTML = selectHtml;
-            document.getElementById('modalTitle').innerText = title;
-            updateModalPrice();
-            document.getElementById('purchaseModal').classList.add('active');
+            const randomTime = Math.floor(Math.random() * (90000 - 40000 + 1) + 40000);
+            setTimeout(showSale, randomTime);
         }
-
-        function updateModalPrice() {
-            let select = document.getElementById('modalServiceOptions');
-            let selectedOption = select.options[select.selectedIndex];
-            document.getElementById('modalPrice').innerText = `$${selectedOption.value} MXN / $${selectedOption.getAttribute('data-usd')} USD`;
-        }
-
-        // FAQ Toggle
-        function toggleFaq(el) { el.parentElement.classList.toggle('active'); el.parentElement.querySelector('.faq-answer').style.display = el.parentElement.classList.contains('active') ? 'block' : 'none'; }
-        
-        // Notificaciones aleatorias
-        setInterval(() => {
-            let popup = document.getElementById('socialProof');
-            popup.classList.add('show');
-            setTimeout(() => popup.classList.remove('show'), 3000);
-        }, Math.floor(Math.random() * 40000) + 30000);
+        showSale();
     </script>
 </body>
 </html>
