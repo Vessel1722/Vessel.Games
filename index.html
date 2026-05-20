@@ -159,88 +159,18 @@
         .gaming-card .price { color: var(--accent); }
         .social-card .price { color: var(--token); }
 
-        .boost-terms-box {
-            max-width: 1200px;
-            margin: 0 auto 28px auto;
-            padding: 28px;
-            border-radius: 24px;
-            background:
-                radial-gradient(circle at top right, rgba(255,0,127,0.16), transparent 28%),
-                radial-gradient(circle at bottom left, rgba(138,43,226,0.22), transparent 32%),
-                linear-gradient(180deg, rgba(14,14,22,0.98), rgba(10,10,16,0.98));
-            border: 1px solid rgba(255,0,127,0.18);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.38), inset 0 0 0 1px rgba(255,255,255,0.03);
-            position: relative;
-            overflow: hidden;
-        }
-        .boost-terms-box::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent 35%);
-            pointer-events: none;
-        }
+        /* --- PORTADA BOOST TERMS --- */
+        .boost-terms-box { max-width: 1200px; margin: 0 auto 28px auto; padding: 28px; border-radius: 24px; background: radial-gradient(circle at top right, rgba(255,0,127,0.16), transparent 28%), radial-gradient(circle at bottom left, rgba(138,43,226,0.22), transparent 32%), linear-gradient(180deg, rgba(14,14,22,0.98), rgba(10,10,16,0.98)); border: 1px solid rgba(255,0,127,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.38), inset 0 0 0 1px rgba(255,255,255,0.03); position: relative; overflow: hidden; }
+        .boost-terms-box::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent 35%); pointer-events: none; }
         .boost-terms-head, .boost-terms-grid { position: relative; z-index: 1; }
-        .boost-terms-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 14px;
-            border-radius: 999px;
-            border: 1px solid rgba(255,0,127,0.25);
-            background: rgba(255,0,127,0.08);
-            color: #ff77ba;
-            font-size: 0.74rem;
-            font-weight: 900;
-            letter-spacing: 0.12em;
-            margin-bottom: 14px;
-            text-transform: uppercase;
-        }
-        .boost-terms-head h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.45rem;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 0 0 18px rgba(255,0,127,0.2);
-        }
-        .boost-terms-head p {
-            color: var(--text-dim);
-            line-height: 1.7;
-            max-width: 760px;
-            margin-bottom: 20px;
-            font-size: 0.96rem;
-        }
-        .boost-terms-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 18px;
-        }
-        .boost-term-card {
-            background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 18px;
-            padding: 18px;
-            min-height: 145px;
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-        }
-        .boost-term-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(255,0,127,0.28);
-            box-shadow: 0 14px 32px rgba(0,0,0,0.25);
-        }
-        .boost-term-card strong {
-            display: block;
-            margin-bottom: 10px;
-            color: var(--token);
-            font-size: 0.98rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .boost-term-card p {
-            margin: 0;
-            color: var(--text-dim);
-            line-height: 1.7;
-            font-size: 0.92rem;
-        }
+        .boost-terms-badge { display: inline-flex; align-items: center; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(255,0,127,0.25); background: rgba(255,0,127,0.08); color: #ff77ba; font-size: 0.74rem; font-weight: 900; letter-spacing: 0.12em; margin-bottom: 14px; text-transform: uppercase; }
+        .boost-terms-head h3 { font-family: 'Orbitron', sans-serif; font-size: 1.45rem; margin-bottom: 10px; color: #fff; text-shadow: 0 0 18px rgba(255,0,127,0.2); }
+        .boost-terms-head p { color: var(--text-dim); line-height: 1.7; max-width: 760px; margin-bottom: 20px; font-size: 0.96rem; }
+        .boost-terms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .boost-term-card { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 18px; min-height: 145px; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
+        .boost-term-card:hover { transform: translateY(-4px); border-color: rgba(255,0,127,0.28); box-shadow: 0 14px 32px rgba(0,0,0,0.25); }
+        .boost-term-card strong { display: block; margin-bottom: 10px; color: var(--token); font-size: 0.98rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .boost-term-card p { margin: 0; color: var(--text-dim); line-height: 1.7; font-size: 0.92rem; }
 
         /* --- MÉTODOS DE PAGO BANNER --- */
         .payment-methods-banner { background: #0a0a0f; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 40px 5%; text-align: center; margin-top: 40px; }
@@ -304,19 +234,40 @@
         .btn-modern-buy { flex: 1; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.9rem; padding: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 0 15px rgba(138,43,226,0.4); text-transform: uppercase; }
         .btn-modern-buy:hover { background: #9d4edd; transform: translateY(-2px); }
 
-        /* --- NUEVO MODAL DE PAGO (CUENTAS Y COMPROBANTE) --- */
+        /* --- MODAL DATOS DE PAGO --- */
         .pay-methods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .pay-method-card { background: #14101d; border: 1px solid #2d2440; border-radius: 12px; padding: 15px; font-size: 0.85rem; line-height: 1.5; transition: border 0.3s;}
         .pay-method-card:hover { border-color: var(--primary); }
         .pay-method-card strong { color: var(--primary); display:block; margin-bottom:5px; font-size:0.95rem;}
         .pay-method-card p { margin: 2px 0; color: #fff; word-break: break-all;}
         .pay-method-card p span { color: var(--text-dim); font-size: 0.8rem; display: inline-block; width: 50px;}
-        
         .file-upload-wrapper { position: relative; text-align: center; border: 2px dashed var(--primary); border-radius: 12px; padding: 20px; background: rgba(138,43,226,0.05); cursor: pointer; transition: 0.3s; margin-bottom: 15px;}
         .file-upload-wrapper:hover { background: rgba(138,43,226,0.1); border-color: #d4a5ff;}
         .file-upload-wrapper input[type="file"] { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
         .file-upload-wrapper p { margin: 0; color: #fff; font-weight: 700; transition: color 0.3s;}
         .file-upload-wrapper span { font-size: 0.75rem; color: var(--text-dim); display:block; margin-top:5px;}
+
+        /* --- NUEVO MODAL JUEGOS RETRO --- */
+        .retro-modal-box { max-width: 900px; width: 95%; background: #0a0a0f; padding: 0; display: flex; flex-direction: column; height: 90vh;}
+        .retro-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;}
+        .retro-header h2 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: #fff; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 10px;}
+        .retro-info-banner { background: linear-gradient(135deg, rgba(138, 43, 226, 0.15), rgba(0, 255, 204, 0.05)); padding: 15px 20px; border-bottom: 1px solid rgba(138,43,226,0.2); font-size: 0.85rem; line-height: 1.5; color: #ddd; flex-shrink: 0;}
+        .retro-info-banner strong { color: #fff; }
+        .retro-info-banner .promo-text { color: var(--accent); font-weight: 900; font-size: 0.9rem; margin-top: 5px; display: block;}
+        .retro-search-container { padding: 15px 20px; flex-shrink: 0;}
+        .retro-grid { padding: 0 20px 20px 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; flex-grow: 1; align-content: start;}
+        .retro-card { background: #14101d; border: 1px solid #2d2440; border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between;}
+        .retro-card:hover { border-color: rgba(138,43,226,0.5); transform: translateY(-2px);}
+        .retro-card.selected { border-color: var(--accent); background: rgba(0, 255, 204, 0.05); box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);}
+        .r-title { font-weight: 700; color: #fff; font-size: 0.9rem; margin-bottom: 8px; line-height: 1.3;}
+        .r-bot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px;}
+        .r-price { color: var(--accent); font-weight: 900; font-size: 1.1rem;}
+        .retro-footer { background: #07070a; border-top: 1px solid rgba(255,255,255,0.05); padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
+        .retro-totals { display: flex; gap: 20px; font-size: 0.9rem; color: var(--text-dim);}
+        .retro-totals span strong { color: #fff; font-size: 1.1rem;}
+        .discount-label { color: var(--token) !important; font-weight: 900; }
+        .btn-add-retro { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; transition: 0.3s;}
+        .btn-add-retro:hover { background: #9d4edd; }
 
         /* --- VESSEL REWARDS REDISEÑADO --- */
         #recompensas { padding: 80px 5%; margin-top: 60px; border-top: 1px solid rgba(138, 43, 226, 0.2); position: relative; overflow: hidden; }
@@ -397,6 +348,8 @@
             .boost-term-card { min-height: auto; }
             .pay-methods-grid { grid-template-columns: 1fr; }
             .modal-box { padding: 20px; width: 95%; }
+            .retro-footer { flex-direction: column; align-items: stretch; }
+            .btn-add-retro { width: 100%; }
         }
         @media (max-width: 480px) {
             .hero h1 { font-size: 2rem; }
@@ -475,13 +428,59 @@
                         </svg>
                         CARRITO
                     </button>
+                    <!-- AL DARLE CLIC A ESTE BOTÓN, SE ABRE LA VENTANA DE PAGO -->
                     <button class="btn-modern-buy" onclick="buyNowFromModal()">COMPRAR</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- NUEVO MODAL DE PAGO (CUENTAS Y COMPROBANTE) -->
+    <!-- NUEVO MODAL INTERACTIVO PARA JUEGOS RETRO -->
+    <div class="modal-overlay" id="retroModal">
+        <div class="modal-box retro-modal-box">
+            <div class="retro-header">
+                <h2>Colección Xbox Retro</h2>
+                <div class="modal-close" style="position:relative; top:0; right:0;" onclick="closeRetroModal()">✕</div>
+            </div>
+            
+            <div class="retro-info-banner">
+                <strong>⚠️ Información Importante:</strong><br>
+                Estos juegos se entregan en una <strong>cuenta nueva con acceso completo</strong>. Podrás cambiar la contraseña y agregar tu propio número o correo de recuperación de inmediato.<br><br>
+                <span>🎮 = Xbox 360 | 🕹️ = Xbox Clásico. ¡Todos son 100% compatibles con <strong>Xbox One</strong> y <strong>Xbox Series X/S</strong>!</span>
+                <span class="promo-text">🔥 ¡PROMOCIÓN! Selecciona 3 o más juegos y obtén 10% DE DESCUENTO automático.</span>
+            </div>
+
+            <div class="retro-search-container">
+                <div class="input-icon-wrapper" style="margin-bottom:0;">
+                    <input type="text" id="retroSearch" class="modal-input" placeholder="Buscar juego por nombre..." onkeyup="filterRetroGrid()">
+                    <svg class="input-user-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="retro-grid" id="retroGridContainer">
+                <!-- Se inyecta con JavaScript -->
+            </div>
+
+            <div class="retro-footer">
+                <div class="retro-totals">
+                    <span>Seleccionados: <strong id="r-count">0</strong></span>
+                    <span>Subtotal: <strong id="r-subtotal">$0</strong></span>
+                    <span id="r-discount-label" style="display:none;" class="discount-label">Descuento: <strong id="r-discount">-$0</strong></span>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <div style="text-align:right;">
+                        <span style="display:block; font-size:0.8rem; color:var(--text-dim);">Total Final</span>
+                        <span id="r-total" style="font-size:1.5rem; font-weight:900; color:#fff;">$0</span>
+                    </div>
+                    <button class="btn-add-retro" onclick="addRetroToCart()">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PAGO (CUENTAS Y COMPROBANTE) -->
     <div class="modal-overlay" id="paymentModal">
         <div class="modal-box" style="max-width: 550px;">
             <div class="modal-close" onclick="closePaymentModal()">✕</div>
@@ -615,12 +614,16 @@
                             <div class="price-container"><span class="price-label">Desde</span><div class="price">$200 MXN</div></div>
                         </div>
                     </div>
-                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Juegos de Xbox', 'Hola, quiero un juego o Game Pass', 'Game Pass Ultimate (1 Mes)|290; Juego Digital|0')">
-                        <div class="img-container"><img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Xbox Juegos" class="service-img" referrerpolicy="no-referrer"></div>
+                    <!-- TARJETA NUEVA: COLECCIÓN XBOX RETRO QUE ABRE EL BUSCADOR INTERACTIVO -->
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openRetroModal()">
+                        <div class="img-container"><img src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Xbox Retro" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
-                            <h3>Juegos de Xbox</h3>
-                            <ul class="options-list"><li><span>Game Pass Ultimate (1 Mes)</span> <span>$290</span></li><li><span>Cualquier título digital</span> <span>Cotizar</span></li></ul>
-                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$290 MXN</div></div>
+                            <h3>Juegos Retro (Xbox)</h3>
+                            <ul class="options-list">
+                                <li><span style="color:#fff; font-weight:700;">Xbox 360 & Clásico</span> <span style="color:var(--accent);">Cuentas Nuevas</span></li>
+                                <li><span>+260 Títulos Listos</span> <span>Desc. en Paquete</span></li>
+                            </ul>
+                            <div class="price-container"><span class="price-label">Desde</span><div class="price">$35 MXN</div></div>
                         </div>
                     </div>
                 </div>
@@ -1083,9 +1086,343 @@
         let currentItem = null;
         let selectedCurrency = "MXN";
         let exchangeRate = 20;
-        
-        // Variable esencial para almacenar el texto antes de ir a pagar
         let pendingOrderText = ""; 
+
+        // LISTA DE JUEGOS RETRO PARA EL MODAL INTERACTIVO
+        const retroGamesRaw = `🎮 Assassin's Creed $95
+        🎮 Assassin's Creed II $95
+        🎮 Assassin's Creed Revelations $95
+        🎮 Assassin's Creed® Rogue $100
+        🎮 A Kingdom for Keflings $75
+        🎮 A World of Kefling $75
+        🕹 Advent Rising $70
+        🎮 Adventure Time: The Secret of the Nameless Kingdom $90
+        🎮 Alan Wake $100
+        🎮 Alan Wake's American Nightmare $70
+        🎮 Alien Hominid HD $70
+        🎮 Army Of Two $100
+        🕹 Armed and Dangerous $85
+        🎮 Band of Bugs + DLC $95
+        🎮 Banjo-Kazooie $95
+        🎮 Banjo-Kazooie: Nuts & Bolts $95
+        🎮 Banjo-Tooie $90
+        🎮 BattleBlock Theater $80
+        🎮 Battlefield 1943 $70
+        🎮 Battlestations: Midway $100
+        🎮 Battlestations Pacific $100
+        🎮 BAYONETTA $95
+        🎮 Bellator: MMA Onslaught $75
+        🎮 BioShock Infinite $140
+        🎮 BioShock 2 $120
+        🕹 Black $100
+        🎮 BCFx-Doug Williams Ed. $85
+        🕹 BLiNX: The Time Sweeper $95
+        🎮 Blood Knights $70
+        🎮 Bloodforge $70
+        🕹 BloodRayne 2 $85
+        🎮 Blue Dragon $85
+        🎮 Borderlands $100
+        🎮 Borderlands 2 $100
+        🎮 Bound by Flame $85
+        🎮 Binary Domain $95
+        🎮 Braid $70
+        🎮 Brave $90
+        🕹 Breakdown $80
+        🎮 Brothers in Arms: Hell's Highway $85
+        🎮 Brutal Legend $90
+        🎮 Bully: Scholarship Edition $125
+        🎮 Cars 2 $95
+        🎮 Cars: La Copa Int. de Mate $95
+        🎮 Call of Duty®: World at War $145
+        🎮 Call of Duty® 2 $145
+        🎮 Call of Duty® 3 $145
+        🎮 Call of Duty®: Modern Warfare® 2 $165
+        🎮 Call of Duty®: Modern Warfare® 3 $165
+        🎮 Call of Duty® 4: Modern Warfare® $165
+        🎮 Call of Juarez: Bound in Blood $85
+        🎮 Call of Juarez: The Cartel $100
+        🎮 Call of Juarez Gunslinger $85
+        🎮 CAPCOM ARCADE CABINET $35
+        🎮 Castle of Illusion Starring Mickey Mouse $95
+        🎮 CastleStorm $70
+        🎮 Castlevania: Lords of Shadow $95
+        🎮 Castlevania: Lords of Shadow - Mirror of Fate HD $95
+        🎮 Castlevania: Lords of Shadow 2 $100
+        🎮 Castlevania: Symphony of the Night $75
+        🎮 Cloning Clyde $35
+        🕹 Chicken Little $85
+        🎮 Child Of Eden $85
+        🎮 Command and Conquer 3 Tiberium Wars $165
+        🎮 Comic Jumper $85
+        🎮 Conan $95
+        🎮 Condemned Criminal Origins $95
+        🕹 Conker: Live and Reloaded $95
+        🎮 Costume Quest $85
+        🎮 Costume Quest 2 $90
+        🕹 Crimson Skies: High Road to Revenge $85
+        🎮 CRYSTAL DEFENDERS $75
+        🎮 Crysis $145
+        🎮 Crysis 2 $100
+        🎮 Darksiders $100
+        🎮 Dark Void $165
+        🎮 De Blob 2 $95
+        🎮 Deadfall Adventures $100
+        🎮 DEADLY PREMONITION $95
+        🎮 DEAD RISING 2: CASE WEST $75
+        🎮 Dead Space $95
+        🎮 Dead Space 2 $100
+        🎮 Dead Space 3 $100
+        🕹 DEAD OR ALIVE 1 Ultimate $95
+        🕹 DEAD OR ALIVE 2 Ultimate $95
+        🕹 DEAD OR ALIVE 3 $100
+        🎮 Deadliest Warrior $70
+        🎮 Deadliest Warrior Legends $70
+        🎮 Death By Cube $100
+        🎮 DEUS EX: HUMAN REVOLUTION $200
+        🕹 Destroy All Humans! $95
+        🎮 Disney Bolt $90
+        🎮 Disney Epic Mickey El Poder de Dos $95
+        🎮 Double Dragon Neon $70
+        🎮 Dragon Age: Origins + DLC $100
+        🎮 Dragon's Lair $70
+        🎮 DuckTales Remastered $135
+        🎮 Dungeons & Dragons: Chronicles Of Mystara $165
+        🎮 Dungeon Siege III $90
+        🎮 Eat Lead $90
+        🎮 Earth Defense Force 2017 $95
+        🎮 Earth Defense Force 2025 $165
+        🎮 Enslaved $95
+        🎮 Escape Dead Island $80
+        🎮 Fable Anniversary $120
+        🎮 Fable II $90
+        🎮 Fable III $90
+        🎮 Fable Heroes $80
+        🎮 Faery: Legends Of Avalon $80
+        🎮 Far Cry Classic $70
+        🎮 Far Cry® 2 $85
+        🎮 Far Cry 3 $90
+        🎮 Far Cry® 3 Blood Dragon $85
+        🎮 F.E.A.R. 2 $185
+        🎮 FIGHT NIGHT CHAMPION $170
+        🎮 Fighting Vipers $40
+        🎮 FINAL FANTASY XIII $100
+        🎮 FINAL FANTASY XIII-2 $100
+        🎮 FFXIII LIGHTNING RETURNS $100
+        🎮 Flashback $75
+        🎮 Foul Play $65
+        🎮 From Dust $75
+        🎮 Frontlines:Fuel of War $85
+        🕹 Full Spectrum Warrior $85
+        🕹 Fuzion Frenzy $80
+        🎮 Gears Of War $120
+        🎮 Gears Of War 2 $120
+        🎮 Gears Of War 3 $120
+        🎮 Gears Of War: Judgment $120
+        🎮 Grand Theft Auto IV $100
+        🎮 Geometry Wars Evolved² $70 
+        🎮 Geometry Wars 3: Dimensions Evolved $75
+        🎮 Girl Fight $70
+        🎮 Goat Simulator $75
+        🕹 Gladius $75
+        🕹 Gunvalkyrie $70
+        🎮 Gyromancer $75
+        🎮 Hard Corps: Uprising $95
+        🎮 Haunted House $45
+        🎮 Heavy Weapon $90
+        🎮 Hitman HD Pack $95
+        🎮 Hitman: Absolution $95
+        🎮 Hitman: Blood Money $95
+        🕹 Hunter: The Reckoning $95
+        🎮 Hydro Thunder $75
+        🎮 Hydrophobia $65
+        🎮 I Am Alive $75
+        🎮 ilomilo $45
+        🕹 Indiana Jones And The Emperor's Tomb $95
+        🎮 Infinite Undiscovery $95
+        🎮 Injustice: GODS AMONG US $100
+        🎮 Insanely Twisted Shadow Planet $80
+        🕹 Jade Empire $75
+        🎮 Joy Ride Turbo $75
+        🎮 JUJU $80
+        🎮 Just Cause $90
+        🎮 Just Cause 2 $95
+        🎮 Kameo: Elements of Power $80
+        🎮 Kane & Lynch 2 $100
+        🎮 Killer Is Dead $90
+        🎮 Lazy Raiders $65
+        🎮 LEGO Indiana Jones: La trilogía original $100
+        🎮 LEGO® Indiana Jones™ 2 $100
+        🎮 LEGO Piratas del Caribe El Videojuego $100
+        🎮 LEGO Star Wars II: The Original Trilogy $135
+        🎮 LEGO Star Wars III $95
+        🎮 LEGO Star Wars: TCS $115
+        🎮 Lost Odyssey $100
+        🎮 Lost Planet 2 $170
+        🎮 Lost Planet 3 $185
+        🎮 Mafia II $100
+        🕹 Manhunt $135
+        🎮 Mars: War Logs $75
+        🎮 Marlow Briggs and the Mask of the Death $75
+        🎮 Mass Effect $85
+        🎮 Mass Effect 2 $95
+        🎮 Mass Effect 3 $120
+        🕹 Max Payne $125
+        🕹 Max Payne 2: The Fall of Max Payne $125
+        🎮 Max Payne 3 $150
+        🎮 Medal of Honor Airborne $135
+        🎮 Meet The Robinsons $95
+        🎮 METAL GEAR RISING: REVENGEANCE $100
+        🎮 METAL SLUG 3 $70
+        🕹 Mercenaries: Playground Of Destruction $80
+        🎮 Midnight Club: Los Angeles Complete $100
+        🎮 Midway Arcade Origins $80
+        🎮 Might & Magic Clash of Heroes $85
+        🎮 Mini Ninjas $85
+        🎮 Mirror’s Edge $95
+        🎮 Monaco: What’s Yours is Mine $70
+        🎮 Monday Night Combat $70
+        🎮 Monkey Island Special Edition $60
+        🎮 Monkey Island 2 Special Edition $70
+        🎮 Ms. Splosion Man $75
+        🎮 MX vs. ATV Alive $90
+        🎮 MX vs. ATV Reflex $85
+        🕹 MX Unleashed $85
+        🎮 NEOGEO BATTLE COLISEUM $65
+        🎮 NINJA GAIDEN 3: RE $140
+        🎮 NIER $185
+        🕹 Oddworld: Munch's Oddysee $85
+        🎮 Orcs Must Die! $70
+        🕹 Otogi: Myth of Demons $90
+        🕹 Otogi 2: Immortal Warriors $90
+        🎮 Outpost Kaloki X $65
+        🎮 Outland $70
+        🎮 Pac-Man: Championship Edition DX+ $65
+        🕹 Panzer Dragoon Orta $55
+        🎮 Peggle $65
+        🎮 Perfect Dark $70
+        🎮 Perfect Dark Zero $85
+        🎮 Planets Under Attack $75
+        🎮 Plantas vs Zombis $90
+        🎮 Portal: Still Alive $80
+        🎮 Port Royale 3 $85
+        🕹 Psychonauts $85
+        🎮 Putty Squad $75
+        🎮 Quantum Conundrum $65
+        🎮 Radiant Silvergun $75
+        🎮 Raskulls $65
+        🎮 Rayman® Origins $60
+        🎮 Rayman 3 HD $60
+        🎮 Rayman® Legends $95
+        🎮 R.A.W. - Realms of Ancient War $100
+        🎮 Red Dead Redemption + DLC $140
+        🕹 Red Dead Revolver $130
+        🎮 Red Faction: Armageddon $70
+        🕹 Red faction II $65
+        🎮 RESIDENT EVIL CODE: Veronica X $145
+        🎮 Rock Of Ages $70
+        🎮 Rumble Roses XX $85
+        🎮 Sacred Citadel $65
+        🎮 Sacred 2: Fallen Angel $95
+        🎮 Sacred 3 $95
+        🎮 Saints Row $85
+        🎮 Saints Row 2 $95
+        🎮 Saints Row: Gat Out of Hell $95
+        🎮 Saints Row®: The Third™ $90
+        🎮 Saints Row IV $100
+        🎮 ScreamRide $90
+        🕹 Secret Weapons Over Normandy $70
+        🎮 Shadow Complex $80
+        🎮 Shadowrun $85
+        🕹 Sid Meier's Pirates! $80
+        🕹 Sid Meier's Civilization Revolution $100
+        🎮 Sine Mora $70
+        🎮 Skate 3 $100
+        🎮 Skydive $50
+        🎮 Slender: The Arrival (2014) $70
+        🎮 Sniper Elite V2 $100
+        🎮 Sonic Unleashed $95
+        🎮 Sonic All-Star Racing Transformed $95
+        🎮 Space Invaders Infinity Gene $65
+        🎮 SpongeBob: Truth-Sq. $95
+        🎮 Split/Second $95
+        🎮 Splosion Man $65
+        🎮 Stacking $75
+        🎮 Star Ocean: The Last Hope $90
+        🕹 STAR WARS Battlefront $85
+        🕹 Star Wars Battlefront II $85
+        🕹 Star Wars Jedi Knight II: Jedi Outcast $75
+        🕹 Star Wars Episode III: Revenge Of The Sith $75
+        🕹 Star Wars Jedi Starfighter $80
+        🕹 STAR WARS Starfighter Special Edition $95
+        🕹 Star Wars Jedi Knight: Jedi Academy $80
+        🕹 Star Wars KOTOR II $75
+        🕹 Star Wars Republic Commando $90
+        🕹 Star Wars: The Clone Wars $85
+        🎮 Star Wars: The Force Unleashed $100
+        🎮 Star Wars: The Force Unleashed II $100
+        🕹 STAR WARS™ - Knights of the Old Republic™ $85
+        🎮 Street Fighters IV $165
+        🎮 SUPER STREETFIGHTER IV ARCADE EDITION $165
+        🎮 Super Meat Boy $85
+        🎮 Supreme Commander 2 $90
+        🎮 SSX $95
+        🕹 SSX 3 $80
+        🎮 Rockstar Table Tennis $95
+        🎮 Tekken 6 $90
+        🎮 Texas Hold'em $40
+        🕹 TimeSplitters Future Perfect $75
+        🕹 TimeSplitters 2 $90
+        🎮 The Bureau $95
+        🎮 The King Of Fighters XIII $100
+        🕹 The Elder Scrolls III: Morrowind $85
+        🎮 The Maw $65
+        🎮 The Splatters $70
+        🎮 The Walking Dead: Michonne - Season Pass $65
+        🎮 The Walking Dead: Season Two - SEASON PASS $80
+        🎮 The Walking Dead: A Telltale Games Series (2,3,4,5) $80
+        🎮 Tom Clancy’s Splinter Cell® Blacklist™ $100
+        🎮 Tom Clancy's Ghost Recon Advanced Warfighter 2 $90
+        🎮 Tom Clancy's Rainbow Six Vegas $100
+        🎮 Tom Clancy's Rainbow Six Vegas 2 $95
+        🎮 Tom Clancy's Splinter Cell® Conviction™ $100
+        🕹 Tom Clancy's Splinter Cell® Chaos Theory $90
+        🎮 Tom Clancy's Splinter Cell® Double Agent™ $100
+        🎮 Torchlight $65
+        🎮 Toy Story 3 $100
+        🎮 Trials HD $70
+        🕹 Thrillville $80
+        🎮 Thrillville: FDC $85
+        🎮 Tropico 4 $75
+        🎮 Tron: Evolution $85
+        🎮 Unbound Saga $70
+        🎮 Unreal Tournament® 3 $85
+        🎮 VANQUISH $100
+        🎮 Virtua Fighter 5 Final Showdown $75
+        🎮 Viva Piñata: TIP $90
+        🎮 Viva Piñata Party Animals $90
+        🎮 Wolfenstein 3D $60
+        🎮 World Of Soccer $70
+        🎮 XCOM Enemy Within $100
+        🎮 XCOM Enemy Unknown $175`;
+
+        let parsedRetroGames = [];
+        let selectedRetroGames = [];
+
+        function initRetroGames() {
+            let lines = retroGamesRaw.split('\n');
+            lines.forEach((line, index) => {
+                let match = line.trim().match(/([🎮🕹])\s+(.+?)\s+\$(\d+)/);
+                if(match) {
+                    parsedRetroGames.push({
+                        id: 'rg-' + index,
+                        icon: match[1],
+                        name: match[2].trim(),
+                        price: parseInt(match[3])
+                    });
+                }
+            });
+        }
+        initRetroGames();
 
         function formatPrice(p) {
             const amount = parseFloat(String(p).replace(/[^\d.]/g, '')) || 0;
@@ -1126,6 +1463,12 @@
                         opt.textContent = `${label} - ${formatPrice(opt.value)}`;
                     });
                 }
+            }
+            
+            // Actualiza también los precios del modal retro si está abierto
+            if(document.getElementById('retroModal').classList.contains('active')){
+                filterRetroGrid();
+                updateRetroFooter();
             }
 
             if (typeof updateCartUI === 'function' && cart.length >= 0) {
@@ -1214,11 +1557,13 @@
             let total = 0;
             cart.forEach((item, index) => {
                 total += item.price;
+                let detailsHtml = item.details ? `<p style="font-size:0.75rem; color:var(--text-dim); margin-top:3px; line-height:1.4;">${item.details}</p>` : '';
                 container.innerHTML += `
                     <div class="cart-item">
                         <div class="cart-item-info">
                             <h4>${item.title} <span style="color:var(--accent); font-size:0.75rem;">(${item.optionLabel})</span></h4>
                             <p>${item.display}</p>
+                            ${detailsHtml}
                         </div>
                         <div class="remove-item" onclick="removeFromCart(${index})">✕</div>
                     </div>`;
@@ -1243,10 +1588,7 @@
         function buyNowFromModal() {
             if(currentItem) {
                 const name = document.getElementById('buyerName').value.trim() || "(No especificado)";
-                // Guardamos el texto del pedido en la variable global
                 pendingOrderText = `${currentItem.msg}: ${currentItem.optionLabel} (${currentItem.display}). Mi nombre es: ${name}`;
-                
-                // Cerramos ventana de producto y abrimos ventana de métodos de pago
                 closeModal();
                 openPaymentModal(currentItem.display);
             }
@@ -1260,14 +1602,12 @@
             let total = 0;
             cart.forEach(item => {
                 text += `▪️ ${item.title} - ${item.optionLabel} (${item.display})\n`;
+                if(item.details) text += `   Juegos: ${item.details}\n`;
                 total += item.price;
             });
             text += `\nTotal estimado: $${total} MXN\nNombre: ${name}`;
             
-            // Guardamos el texto del pedido múltiple
             pendingOrderText = text;
-            
-            // Cerramos carrito y abrimos métodos de pago
             toggleCart(); 
             openPaymentModal(`$${total} MXN`);
         }
@@ -1275,8 +1615,6 @@
         /* --- CONTROL DEL MODAL DE DATOS DE PAGO --- */
         function openPaymentModal(totalDisplay) {
             document.getElementById('payModalTotal').innerText = totalDisplay;
-            
-            // Limpia el input de archivo por si había algo antes
             const fileInput = document.getElementById('proofInput');
             if(fileInput) fileInput.value = '';
             
@@ -1285,8 +1623,6 @@
                 fileText.innerText = "📤 Toca aquí para subir tu foto o captura";
                 fileText.style.color = "#fff";
             }
-            
-            // Muestra la ventana
             document.getElementById('paymentModal').classList.add('active');
         }
 
@@ -1307,19 +1643,119 @@
 
         function sendOrderWithProof() {
             const fileInput = document.getElementById('proofInput');
-            
-            // Valida que el usuario haya subido la foto primero
             if(!fileInput.files || fileInput.files.length === 0) {
                 alert("⚠️ Por favor, selecciona la foto o captura de tu comprobante primero.");
                 return;
             }
-            
-            // Adjunta aviso en el texto para WA
             let finalWAtext = pendingOrderText + `\n\n*Adjunto comprobante de pago en la imagen.*`;
-            
-            // Manda a WhatsApp
             window.open(`https://wa.me/526611078412?text=${encodeURIComponent(finalWAtext)}`, '_blank');
             closePaymentModal();
+        }
+
+        /* --- LÓGICA DEL NUEVO BUSCADOR RETRO --- */
+        function openRetroModal() {
+            selectedRetroGames = [];
+            document.getElementById('retroSearch').value = '';
+            filterRetroGrid();
+            updateRetroFooter();
+            document.getElementById('retroModal').classList.add('active');
+        }
+
+        function closeRetroModal() {
+            document.getElementById('retroModal').classList.remove('active');
+        }
+
+        function filterRetroGrid() {
+            const query = document.getElementById('retroSearch').value.toLowerCase();
+            const container = document.getElementById('retroGridContainer');
+            container.innerHTML = '';
+
+            parsedRetroGames.forEach(game => {
+                if(game.name.toLowerCase().includes(query)) {
+                    const isSelected = selectedRetroGames.some(g => g.id === game.id);
+                    const card = document.createElement('div');
+                    card.className = `retro-card ${isSelected ? 'selected' : ''}`;
+                    card.onclick = () => toggleRetroGame(game.id);
+                    card.innerHTML = `
+                        <div class="r-title">${game.icon} ${game.name}</div>
+                        <div class="r-bot">
+                            <span class="r-price">${formatPrice(game.price)}</span>
+                            ${isSelected ? '<span style="color:var(--accent);">✓ Agregado</span>' : '<span style="color:var(--text-dim); font-size:0.8rem;">+ Seleccionar</span>'}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        function toggleRetroGame(id) {
+            const index = selectedRetroGames.findIndex(g => g.id === id);
+            if(index > -1) {
+                selectedRetroGames.splice(index, 1);
+            } else {
+                const game = parsedRetroGames.find(g => g.id === id);
+                selectedRetroGames.push(game);
+            }
+            filterRetroGrid();
+            updateRetroFooter();
+        }
+
+        function updateRetroFooter() {
+            let count = selectedRetroGames.length;
+            let subtotal = selectedRetroGames.reduce((sum, g) => sum + g.price, 0);
+            let discount = 0;
+            let total = subtotal;
+
+            document.getElementById('r-count').innerText = count;
+            document.getElementById('r-subtotal').innerText = formatPrice(subtotal);
+
+            const discountLabel = document.getElementById('r-discount-label');
+            if(count >= 3) {
+                discount = subtotal * 0.10;
+                total = subtotal - discount;
+                document.getElementById('r-discount').innerText = "-" + formatPrice(discount);
+                discountLabel.style.display = 'inline';
+            } else {
+                discountLabel.style.display = 'none';
+            }
+
+            document.getElementById('r-total').innerText = formatPrice(total);
+        }
+
+        function addRetroToCart() {
+            if(selectedRetroGames.length === 0) {
+                alert("Selecciona al menos 1 juego retro para agregar al carrito.");
+                return;
+            }
+
+            let count = selectedRetroGames.length;
+            let subtotal = selectedRetroGames.reduce((sum, g) => sum + g.price, 0);
+            let total = subtotal;
+            let displayStr = formatPrice(subtotal);
+
+            if(count >= 3) {
+                total = subtotal - (subtotal * 0.10);
+                displayStr = `${formatPrice(total)} (10% OFF Aplicado)`;
+            }
+
+            let gamesListStr = selectedRetroGames.map(g => `${g.icon} ${g.name}`).join(', ');
+
+            let cartItem = {
+                title: "Colección Xbox Retro",
+                optionLabel: `${count} Juegos`,
+                price: total,
+                display: displayStr,
+                msg: "Hola, quiero este paquete de Juegos Retro de Xbox",
+                details: gamesListStr
+            };
+
+            cart.push(cartItem);
+            updateCartUI();
+            closeRetroModal();
+
+            const btn = document.querySelector('.cart-float-btn');
+            btn.style.transform = 'scale(1.2)';
+            setTimeout(() => btn.style.transform = '', 200);
         }
 
         /* --- OTROS SCRIPTS (Filtros, FAQ, Proof, etc) --- */
