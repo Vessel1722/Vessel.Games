@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vessel Games | Catálogo Oficial Premium</title>
+    <title>Vessel Games | Catálogo Oficial Premium · Móvil Optimizada</title>
     <link rel="preload" as="image" href="https://i.imgur.com/VjjdVsd.jpg" fetchpriority="high">
     <style>
         :root {
@@ -509,9 +509,53 @@
             .hero::before { background: linear-gradient(180deg, rgba(5,5,8,.90), rgba(5,5,8,.72)); }
         }
 
+
+
+        /* --- V5 BUSCADOR, PESTAÑAS MÓVILES Y CONFIANZA --- */
+        .catalog-tools { max-width: 1180px; margin: 18px auto 14px auto; padding: 0 5%; display: grid; grid-template-columns: 1.4fr .8fr; gap: 14px; align-items: center; }
+        .search-box-v5 { position: relative; }
+        .search-box-v5 input { width: 100%; padding: 16px 50px 16px 18px; border-radius: 18px; border: 1px solid rgba(138,43,226,.28); background: linear-gradient(135deg, rgba(18,18,26,.96), rgba(12,12,18,.96)); color: #fff; outline: none; font-weight: 700; box-shadow: 0 12px 30px rgba(0,0,0,.24); }
+        .search-box-v5 input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,255,204,.08), 0 14px 34px rgba(0,0,0,.28); }
+        .search-icon-v5 { position:absolute; right:16px; top:50%; transform:translateY(-50%); opacity:.75; }
+        .catalog-count-v5 { color: var(--text-dim); font-size: .85rem; text-align: right; }
+        .catalog-count-v5 strong { color: #fff; }
+        .mobile-tabs-label { display:none; color:var(--text-dim); font-size:.78rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; padding:0 5%; margin-top:12px; }
+        .no-results-v5 { display:none; max-width:700px; margin:25px auto 10px auto; padding:22px; border-radius:18px; background:rgba(18,18,26,.74); border:1px solid rgba(255,255,255,.08); text-align:center; color:var(--text-dim); }
+        .trust-section-v5 { padding: 70px 5%; border-top: 1px solid rgba(255,255,255,.05); }
+        .trust-grid-v5 { max-width: 1200px; margin: 0 auto; display:grid; grid-template-columns: repeat(4,1fr); gap:18px; }
+        .trust-card-v5 { background: linear-gradient(180deg, rgba(18,18,26,.95), rgba(9,9,14,.95)); border:1px solid rgba(255,255,255,.07); border-radius:22px; padding:24px; box-shadow:0 16px 42px rgba(0,0,0,.25); position:relative; overflow:hidden; }
+        .trust-card-v5::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at top right, rgba(138,43,226,.16), transparent 34%); pointer-events:none; }
+        .trust-card-v5 b { display:block; color:#fff; font-size:1.05rem; margin:12px 0 8px; position:relative; }
+        .trust-card-v5 p { color:var(--text-dim); line-height:1.55; font-size:.9rem; position:relative; }
+        .trust-icon-v5 { font-size:1.9rem; position:relative; }
+        .guarantee-box-v5 { max-width:1200px; margin: 24px auto 0 auto; padding: 28px; border-radius:26px; border:1px solid rgba(0,255,204,.18); background: radial-gradient(circle at top left, rgba(0,255,204,.15), transparent 32%), linear-gradient(135deg, rgba(9,18,18,.96), rgba(18,10,24,.96)); display:grid; grid-template-columns: 1fr auto; gap:18px; align-items:center; box-shadow:0 18px 48px rgba(0,0,0,.3); }
+        .guarantee-box-v5 h3 { font-family:'Orbitron','Montserrat',system-ui,sans-serif; font-size:1.55rem; margin-bottom:8px; color:#fff; }
+        .guarantee-box-v5 p { color:var(--text-dim); line-height:1.6; }
+        .guarantee-badge-v5 { padding:14px 18px; border-radius:999px; background:rgba(0,255,204,.10); border:1px solid rgba(0,255,204,.28); color:var(--accent); font-weight:900; white-space:nowrap; }
+        .announcement-v5 { display:none; margin-top:74px; background:linear-gradient(90deg, rgba(138,43,226,.95), rgba(255,0,127,.78)); color:#fff; text-align:center; font-weight:900; padding:9px 5%; letter-spacing:.03em; }
+        .img-container { position:relative; }
+        @media (max-width: 768px) {
+            .catalog-tools { grid-template-columns:1fr; gap:8px; margin-top:10px; padding:0 12px; }
+            .catalog-count-v5 { text-align:left; padding-left:4px; }
+            .mobile-tabs-label { display:block; }
+            .catalog-filters { border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06); }
+            .filter-btn { flex: 0 0 auto; border-radius:16px; min-width:112px; text-align:center; }
+            .filter-btn.active { transform:translateY(-1px); }
+            .trust-section-v5 { padding:46px 12px; }
+            .trust-grid-v5 { grid-template-columns:1fr 1fr; gap:10px; }
+            .trust-card-v5 { padding:16px; border-radius:18px; }
+            .trust-card-v5 b { font-size:.94rem; }
+            .trust-card-v5 p { font-size:.8rem; }
+            .guarantee-box-v5 { grid-template-columns:1fr; padding:20px; border-radius:22px; }
+            .guarantee-badge-v5 { width:fit-content; }
+            .announcement-v5 { margin-top:104px; font-size:.78rem; padding:8px 12px; }
+        }
+        @media (max-width: 460px) { .trust-grid-v5 { grid-template-columns:1fr; } }
+
     </style>
 </head>
 <body>
+<!-- VESSELGAMES: portada, Telegram, categorías, Rewards, FAQ, modal de pago, buscador y optimización móvil. -->
 
     <div class="social-proof-popup" id="socialProof">
         <div class="sp-icon">🛍️</div>
@@ -713,6 +757,7 @@
                 <a href="#recompensas">Rewards</a>
                 <a href="#faq">FAQ</a>
                 <button class="btn-login" type="button" onclick="openLoginModal()">Mi cuenta</button>
+                <a class="btn-login" href="/admin.html" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Admin</a>
             </div>
             <div class="currency-switcher" aria-label="Selector de moneda">
                 <button class="currency-btn active" type="button" data-currency="MXN" onclick="setCurrency('MXN')">MXN</button>
@@ -726,6 +771,7 @@
         <a href="https://wa.me/526611078412?text=Hola,%20quiero%20hacer%20un%20pedido." target="_blank"><b>💬</b><span>WhatsApp</span></a>
         <button type="button" onclick="toggleCart()"><b>🧺</b><span>Carrito</span></button>
         <button type="button" onclick="openLoginModal()"><b>👤</b><span>Cuenta</span></button>
+        <a href="/admin.html"><b>⚙️</b><span>Admin</span></a>
     </div>
 
     <div class="hero">
@@ -775,14 +821,23 @@
     <div id="catalogo-ancla"></div>
 
     <div id="catalogo-main">
-        <div class="catalog-filters">
-            <button class="filter-btn active" onclick="filterCatalog('all')">Ver Todo</button>
-            <button class="filter-btn" onclick="filterCatalog('gaming')">Gaming</button>
-            <button class="filter-btn" onclick="filterCatalog('streaming')">Streaming</button>
-            <button class="filter-btn" onclick="filterCatalog('cuentas')">Cuentas Nuevas</button>
-            <button class="filter-btn" onclick="filterCatalog('software')">Software</button>
-            <button class="filter-btn" onclick="filterCatalog('redes')">Redes Sociales</button>
+        <div class="mobile-tabs-label">Categorías rápidas · desliza para ver más</div>
+        <div class="catalog-filters" id="catalogTabsV5">
+            <button class="filter-btn active" onclick="filterCatalog('all')">Todo</button>
+            <button class="filter-btn" onclick="filterCatalog('gaming')">🎮 Gaming</button>
+            <button class="filter-btn" onclick="filterCatalog('streaming')">🎬 Streaming</button>
+            <button class="filter-btn" onclick="filterCatalog('cuentas')">👤 Cuentas</button>
+            <button class="filter-btn" onclick="filterCatalog('software')">💻 Software</button>
+            <button class="filter-btn" onclick="filterCatalog('redes')">📈 Redes</button>
         </div>
+        <div class="catalog-tools">
+            <div class="search-box-v5">
+                <input type="search" id="catalogSearchV5" placeholder="Buscar Netflix, Robux, Office, Halo, ChatGPT..." autocomplete="off" oninput="applyCatalogFiltersV5()">
+                <span class="search-icon-v5">🔎</span>
+            </div>
+            <div class="catalog-count-v5" id="catalogCountV5"><strong>0</strong> servicios disponibles</div>
+        </div>
+        <div class="no-results-v5" id="noResultsV5">No encontré productos con ese nombre. Prueba con otra palabra o escríbenos por WhatsApp.</div>
 
         <div class="cat-section" data-group="gaming">
             <h2 class="section-title gaming-title">Gaming & Monedas</h2>
@@ -1179,6 +1234,24 @@
         </div>
     </div> 
     
+
+    <section class="trust-section-v5" id="como-comprar">
+        <h2 class="section-title" style="padding-top:0; margin-top:0;">Cómo comprar</h2>
+        <div class="trust-grid-v5">
+            <div class="trust-card-v5"><div class="trust-icon-v5">1️⃣</div><b>Elige tu producto</b><p>Busca el servicio, abre la tarjeta y selecciona el paquete que necesitas.</p></div>
+            <div class="trust-card-v5"><div class="trust-icon-v5">2️⃣</div><b>Agrega al carrito</b><p>Puedes comprar un servicio o juntar varios para mandar todo en un solo pedido.</p></div>
+            <div class="trust-card-v5"><div class="trust-icon-v5">3️⃣</div><b>Realiza tu pago</b><p>Usa transferencia, OXXO, PayPal o Binance y guarda tu comprobante.</p></div>
+            <div class="trust-card-v5"><div class="trust-icon-v5">4️⃣</div><b>Recibe soporte</b><p>Envíanos el comprobante por WhatsApp y procesamos tu pedido lo antes posible.</p></div>
+        </div>
+        <div class="guarantee-box-v5" id="garantia">
+            <div>
+                <h3>🛡️ Garantía VesselGames</h3>
+                <p>Si tu producto presenta algún problema, revisamos tu caso y te damos soporte hasta solucionarlo. Conserva tu comprobante y el chat de compra para validar más rápido tu garantía.</p>
+            </div>
+            <div class="guarantee-badge-v5">Soporte post-compra</div>
+        </div>
+    </section>
+
     <div class="payment-methods-banner">
         <h3>MÉTODOS DE PAGO ACEPTADOS</h3>
         <div class="payment-icons">
@@ -1293,6 +1366,11 @@
         <p>&copy; 2026 Vessel Games Oficial | Envíos inmediatos vía WhatsApp.</p>
     </footer>
 
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         let cart = [];
         let currentItem = null;
@@ -2412,6 +2490,158 @@
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(enhanceProductCards, 250);
         });
+
+
+
+        /* --- V5: búsqueda y filtros combinados --- */
+        let activeCatalogCategoryV5 = 'all';
+        const ADMIN_KEY_V5 = 'vesselAdminSettingsV5';
+        const ADMIN_UNLOCK_KEY_V5 = 'vesselAdminUnlockedV5';
+
+        function normalizeTextV5(text) {
+            return String(text || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        }
+
+        function getCardTitleV5(card) {
+            return card.querySelector('h3')?.innerText?.trim() || 'Producto';
+        }
+
+        function applyCatalogFiltersV5() {
+            const q = normalizeTextV5(document.getElementById('catalogSearchV5')?.value || '');
+            let visibleCount = 0;
+            document.querySelectorAll('.service-card').forEach(card => {
+                const cat = card.getAttribute('data-category') || '';
+                const text = normalizeTextV5(card.innerText + ' ' + (card.getAttribute('data-note') || '') + ' ' + (card.getAttribute('onclick') || ''));
+                const categoryOk = activeCatalogCategoryV5 === 'all' || cat === activeCatalogCategoryV5;
+                const searchOk = !q || text.includes(q);
+
+                const show = categoryOk && searchOk;
+                card.style.display = show ? 'flex' : 'none';
+                if (show) visibleCount++;
+            });
+            document.querySelectorAll('.cat-section').forEach(section => {
+                const sectionCards = Array.from(section.querySelectorAll('.service-card'));
+                const anyVisible = sectionCards.some(card => card.style.display !== 'none');
+                section.style.display = anyVisible ? 'block' : 'none';
+            });
+            const count = document.getElementById('catalogCountV5');
+            if (count) count.innerHTML = `<strong>${visibleCount}</strong> servicio${visibleCount === 1 ? '' : 's'} disponible${visibleCount === 1 ? '' : 's'}`;
+            const noResults = document.getElementById('noResultsV5');
+            if (noResults) noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        function filterCatalog(category) {
+            activeCatalogCategoryV5 = category || 'all';
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const clicked = event?.currentTarget || Array.from(document.querySelectorAll('.filter-btn')).find(btn => btn.getAttribute('onclick')?.includes(`'${activeCatalogCategoryV5}'`));
+            if (clicked) clicked.classList.add('active');
+            applyCatalogFiltersV5();
+            document.getElementById('catalogSearchV5')?.focus({preventScroll:true});
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(applyCatalogFiltersV5, 350);
+        });
+
+
+        /* --- SUPABASE REAL: carga productos y ajustes desde la nube --- */
+        const VESSEL_SUPABASE_URL = 'https://cdfyzmwccdqmljwhqnjm.supabase.co';
+        const VESSEL_SUPABASE_KEY = 'sb_publishable_cl0-ImakwDc9X1ZcNiJPlg_7J3L5VUm';
+        const vesselSupabase = window.supabase?.createClient(VESSEL_SUPABASE_URL, VESSEL_SUPABASE_KEY);
+
+        function escapeHtmlVG(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+        function escapeJSVG(value) {
+            return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, ' ');
+        }
+        function optionStringVG(options) {
+            const arr = Array.isArray(options) ? options : [];
+            return arr.map(o => `${String(o.label || '').replace(/;/g, ',')}|${parseFloat(o.price_mxn || 0) || 0}`).join('; ');
+        }
+        function productPriceTextVG(options) {
+            const arr = Array.isArray(options) ? options : [];
+            const nums = arr.map(o => parseFloat(o.price_mxn || 0)).filter(n => n > 0);
+            if (!nums.length) return 'Cotizar';
+            const min = Math.min(...nums);
+            return '$' + min.toFixed(0) + ' MXN';
+        }
+        function optionsListHtmlVG(options) {
+            const arr = Array.isArray(options) ? options : [];
+            if (!arr.length) return '<li><span>Consultar</span><span>Cotizar</span></li>';
+            return arr.slice(0, 6).map(o => `<li><span>${escapeHtmlVG(o.label || 'Opción')}</span><span>$${parseFloat(o.price_mxn || 0).toFixed(0)}</span></li>`).join('');
+        }
+        function buildCardVG(product) {
+            const category = product.category || 'otros';
+            const cls = category === 'gaming' ? 'service-card gaming-card' : category === 'redes' ? 'service-card social-card' : 'service-card';
+            const image = product.image_url || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=900&q=80';
+            const badge = product.badge ? `<div class="limited-badge">${escapeHtmlVG(product.badge)}</div>` : '';
+            const note = product.delivery_note ? `<p class="service-note">${escapeHtmlVG(product.delivery_note)}</p>` : '';
+            const optionsStr = optionStringVG(product.options || []);
+            const click = product.card_type === 'retro'
+                ? 'openRetroModal()'
+                : `openModal(this, '${escapeJSVG(product.name)}', '${escapeJSVG(product.whatsapp_text || ('Hola, quiero ' + product.name))}', '${escapeJSVG(optionsStr)}')`;
+            return `
+                <div class="${cls}" data-category="${escapeHtmlVG(category)}" data-note="${escapeHtmlVG(product.delivery_note || '')}" onclick="${click}">
+                    <div class="img-container">
+                        <img src="${escapeHtmlVG(image)}" class="service-img" alt="${escapeHtmlVG(product.name)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                        ${badge}
+                    </div>
+                    <div class="service-info">
+                        <h3>${escapeHtmlVG(product.name)}</h3>
+                        ${note}
+                        <ul class="options-list">${optionsListHtmlVG(product.options || [])}</ul>
+                        <div class="price-container"><span class="price-label">Desde</span><span class="price">${productPriceTextVG(product.options || [])}</span></div>
+                    </div>
+                </div>`;
+        }
+        function applySettingsVG(settings) {
+            if (!settings) return;
+            if (settings.primary_color) document.documentElement.style.setProperty('--primary', settings.primary_color);
+            const badge = document.querySelector('.hero .badge');
+            if (badge && settings.hero_badge) badge.textContent = settings.hero_badge;
+            const title = document.querySelector('.hero h1');
+            if (title && settings.hero_title_html) title.innerHTML = settings.hero_title_html;
+            const subtitle = document.querySelector('.hero p');
+            if (subtitle && settings.hero_subtitle) subtitle.textContent = settings.hero_subtitle;
+            if (settings.whatsapp_number) {
+                document.querySelectorAll('a[href*="wa.me/"]').forEach(a => {
+                    const msg = (a.href.split('?text=')[1] || 'Hola,%20quiero%20hacer%20un%20pedido.');
+                    a.href = 'https://wa.me/' + String(settings.whatsapp_number).replace(/\D/g,'') + '?text=' + msg;
+                });
+            }
+            if (settings.telegram_url) document.querySelectorAll('a[href*="t.me/"]').forEach(a => { a.href = settings.telegram_url; });
+            const guarantee = document.querySelector('.guarantee-box-v5 p');
+            if (guarantee && settings.guarantee_text) guarantee.textContent = settings.guarantee_text;
+        }
+        async function loadVesselSupabaseData() {
+            if (!vesselSupabase) return;
+            try {
+                const [{ data: settings }, { data: products, error }] = await Promise.all([
+                    vesselSupabase.from('site_settings').select('*').eq('id', 1).maybeSingle(),
+                    vesselSupabase.from('products').select('*').eq('active', true).order('sort_order', { ascending: true }).order('name', { ascending: true })
+                ]);
+                if (settings) applySettingsVG(settings);
+                if (error) throw error;
+                if (!products || !products.length) return;
+                const groups = ['gaming','streaming','cuentas','software','redes'];
+                groups.forEach(g => {
+                    const grid = document.querySelector(`.cat-section[data-group="${g}"] .services-grid`);
+                    if (grid) grid.innerHTML = '';
+                });
+                products.forEach(product => {
+                    const grid = document.querySelector(`.cat-section[data-group="${product.category || 'otros'}"] .services-grid`);
+                    if (grid) grid.insertAdjacentHTML('beforeend', buildCardVG(product));
+                });
+                if (typeof updateDisplayedPrices === 'function') updateDisplayedPrices();
+                if (typeof enhanceProductCards === 'function') enhanceProductCards();
+                if (typeof initRevealAnimations === 'function') initRevealAnimations();
+                if (typeof applyCatalogFiltersV5 === 'function') applyCatalogFiltersV5();
+            } catch (err) {
+                console.warn('No se pudieron cargar datos de Supabase. Se usará catálogo local.', err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => setTimeout(loadVesselSupabaseData, 250));
 
     </script>
 </body>
