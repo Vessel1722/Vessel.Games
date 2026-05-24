@@ -734,21 +734,6 @@
 
 
 
-    <!-- MODAL LOGIN / CUENTA CLIENTE -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-box">
-            <div class="modal-close" onclick="closeLoginModal()">✕</div>
-            <div class="modal-title" style="text-align:center; margin-bottom:10px;">MI CUENTA VESSEL</div>
-            <p style="text-align:center; color:var(--text-dim); font-size:.9rem; line-height:1.6; margin-bottom:22px;">Guarda tu nombre para pedidos más rápidos. Esta versión funciona en el navegador; para login real con contraseña se conecta a Firebase/Supabase.</p>
-            <label>Nombre</label>
-            <input type="text" id="loginName" class="modal-input" placeholder="Ej: Juan Pérez" style="padding-right:15px; margin-bottom:14px;">
-            <label>WhatsApp</label>
-            <input type="tel" id="loginPhone" class="modal-input" placeholder="Ej: 6611078412" style="padding-right:15px; margin-bottom:20px;">
-            <button class="btn-post" onclick="saveLocalAccount()">GUARDAR MI CUENTA</button>
-            <button class="btn-modern-cart" style="width:100%; margin-top:12px;" onclick="logoutLocalAccount()">Cerrar sesión local</button>
-        </div>
-    </div>
-
     <nav>
         <a class="brand-logo" href="#" aria-label="VesselGames inicio"><div class="brand-mark"></div><div class="brand-word"><span class="brand-name">VESSEL<span>GAMES</span></span><span class="brand-tagline">Digital Store</span></div></a>
         <div class="menu-right">
@@ -858,7 +843,7 @@
                         </div>
                     </div>
                     <div class="service-card gaming-card" data-category="gaming" data-note="Entrega en código digital para Halo Infinite. Se envía el código para canjear los créditos." onclick="openModal(this, 'Créditos Halo Infinite', 'Hola, quiero comprar créditos para Halo Infinite en código', '500 créditos|70; 1,000 créditos|125; 2,200 créditos|195; 5,600 créditos|500; 11,500 créditos|1000')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Créditos Halo Infinite" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/zeuFahH.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/zeuFahH.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/zeuFahH.webp';}" alt="Créditos Halo Infinite" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Créditos Halo Infinite</h3>
                             <ul class="options-list"><li><span>500 créditos</span> <span>$70</span></li><li><span>1,000 créditos</span> <span>$125</span></li><li><span>... hasta 11,500</span> <span>$1,000</span></li></ul>
@@ -867,7 +852,7 @@
                         </div>
                     </div>
                     <div class="service-card gaming-card" data-category="gaming" data-note="Servicio vía recarga. Se ocupa acceso a la cuenta. Tarda de 3 a 5 días en reflejarse porque es vía Game Pass." onclick="openModal(this, 'Robux para Roblox', 'Hola, quiero comprar Robux para Roblox vía recarga Game Pass', '1,000 Robux|195; 2,000 Robux|355; 3,000 Robux|545; 4,000 Robux|675; 5,000 Robux|865; 10,000 Robux|1645')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="Robux para Roblox" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/ldBHY3o.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/ldBHY3o.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/ldBHY3o.webp';}" alt="Robux para Roblox" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Robux para Roblox</h3>
                             <ul class="options-list"><li><span>1,000 Robux</span> <span>$195</span></li><li><span>2,000 Robux</span> <span>$355</span></li><li><span>... hasta 10,000</span> <span>$1,645</span></li></ul>
@@ -877,7 +862,7 @@
                     </div>
                     <!-- TARJETA NUEVA: COLECCIÓN XBOX RETRO QUE ABRE EL BUSCADOR INTERACTIVO -->
                     <div class="service-card gaming-card" data-category="gaming" onclick="openRetroModal()">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&q=80" alt="Xbox Retro" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/CwZeUfr.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/CwZeUfr.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/CwZeUfr.webp';}" alt="Xbox Retro" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Juegos Retro (Xbox)</h3>
                             <ul class="options-list">
@@ -1064,7 +1049,7 @@
                         <div class="service-info"><h3>Google IA Pro</h3><ul class="options-list"><li><span>Membresía Completa</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="software" onclick="openModal(this, 'Office 365', 'Hola, quiero Office 365 12 meses cuenta nueva', '12 Meses Cuenta Nueva|235')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Microsoft_365_%282022%29.svg" alt="Office 365" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/T5x8MXS.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/T5x8MXS.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/T5x8MXS.webp';}" alt="Office 365" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Office 365</h3><ul class="options-list"><li><span>Cuenta nueva</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="software" onclick="openModal(this, 'ChatGPT Plus', 'Hola, quiero ChatGPT Plus', '1 Mes|145')">
@@ -1146,7 +1131,7 @@
             <div class="services-section">
                 <div class="services-grid grid-social">
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Seguidores', 'Hola, quiero Seguidores en TikTok', '500 Seguidores|50; 1K Seguidores|72; 2K Seguidores|93; 3K Seguidores|148; 4K Seguidores|167; 5K Seguidores|185')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Seguidores</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$50</span></li><li><span>... hasta 5K Seg.</span> <span>$185</span></li></ul>
@@ -1154,7 +1139,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Likes', 'Hola, quiero Likes en TikTok', '500 Likes|15; 1K Likes|22; 2K Likes|29; 3K Likes|36; 4K Likes|43; 5K Likes|55; 10K Likes|74')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Likes</h3>
                             <ul class="options-list"><li><span>500 Likes</span> <span>$15</span></li><li><span>... hasta 10K Likes</span> <span>$74</span></li></ul>
@@ -1162,7 +1147,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Vistas', 'Hola, quiero Vistas en TikTok', '5K Vistas|17; 10K Vistas|24; 20K Vistas|29; 30K Vistas|34; 40K Vistas|39; 50K Vistas|44; 100K Vistas|65')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Vistas</h3>
                             <ul class="options-list"><li><span>5K Vistas</span> <span>$17</span></li><li><span>... hasta 100K Vistas</span> <span>$65</span></li></ul>
@@ -1170,7 +1155,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Comentarios', 'Hola, quiero Comentarios en TikTok', '50 Comentarios|45; 100 Comentarios|75; 150 Comentarios|115; 200 Comentarios|145; 250 Comentarios|175')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Comentarios</h3>
                             <ul class="options-list"><li><span>50 Comentarios</span> <span>$45</span></li><li><span>... hasta 250 Com.</span> <span>$175</span></li></ul>
@@ -1179,7 +1164,7 @@
                     </div>
                     
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Globales', 'Hola, quiero Seguidores Globales en IG', '500 Seguidores|38; 1K Seguidores|65; 2K Seguidores|100; 3K Seguidores|145; 4K Seguidores|175; 5K Seguidores|185; 10K Seguidores|285')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Seg. Globales</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$38</span></li><li><span>... hasta 10K Seg.</span> <span>$285</span></li></ul>
@@ -1187,7 +1172,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Latinos', 'Hola, quiero Seguidores Latinos en IG', '50 Seguidores|24; 100 Seguidores|42; 200 Seguidores|77; 300 Seguidores|98; 400 Seguidores|135; 500 Seguidores|170; 1K Seguidores|285')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Seg. Latinos</h3>
                             <ul class="options-list"><li><span>50 Latinos</span> <span>$24</span></li><li><span>... hasta 1K Latinos</span> <span>$285</span></li></ul>
@@ -1195,7 +1180,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Likes', 'Hola, quiero Likes en IG', '1K Likes|25; 2K Likes|35; 3K Likes|45; 4K Likes|55; 5K Likes|65; 10K Likes|95; 20K Likes|155')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611262588024-d12430b98920?w=800&q=80" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Likes</h3>
                             <ul class="options-list"><li><span>1K Likes</span> <span>$25</span></li><li><span>... hasta 20K Likes</span> <span>$155</span></li></ul>
@@ -1204,7 +1189,7 @@
                     </div>
 
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Seguidores', 'Hola, quiero Seguidores en Facebook', '500 Seguidores|45; 1K Seguidores|60; 2K Seguidores|75; 3K Seguidores|95; 4K Seguidores|120; 5K Seguidores|150; 10K Seguidores|235')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Facebook Seg.</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$45</span></li><li><span>... hasta 10K Seg.</span> <span>$235</span></li></ul>
@@ -1212,7 +1197,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Reacciones', 'Hola, quiero Reacciones en Facebook', '100 Reacciones|15; 200 Reacciones|19; 300 Reacciones|23; 400 Reacciones|26; 500 Reacciones|29; 1K Reacciones|47; 2K Reacciones|74; 3K Reacciones|98; 4K Reacciones|130; 5K Reacciones|165; 10K Reacciones|215')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>FB Reacciones</h3>
                             <ul class="options-list"><li><span>100 Reacciones</span> <span>$15</span></li><li><span>... hasta 10K Reac.</span> <span>$215</span></li></ul>
@@ -1220,7 +1205,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Vistas', 'Hola, quiero Vistas en Facebook', '1K Vistas|18; 2K Vistas|23; 3K Vistas|29; 4K Vistas|36; 5K Vistas|47; 10K Vistas|76')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1611162618479-ee3d24aaaa76?w=800&q=80" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Facebook Vistas</h3>
                             <ul class="options-list"><li><span>1K Vistas</span> <span>$18</span></li><li><span>... hasta 10K Vistas</span> <span>$76</span></li></ul>
@@ -1872,30 +1857,6 @@
             const btn = document.querySelector('.cart-float-btn');
             btn.classList.add('pulse-glow');
             setTimeout(() => btn.classList.remove('pulse-glow'), 1400);
-        }
-
-        function openLoginModal() {
-            const account = JSON.parse(localStorage.getItem('vesselAccount') || '{}');
-            document.getElementById('loginName').value = account.name || '';
-            document.getElementById('loginPhone').value = account.phone || '';
-            document.getElementById('loginModal').classList.add('active');
-        }
-        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
-        function saveLocalAccount() {
-            const name = document.getElementById('loginName').value.trim();
-            const phone = document.getElementById('loginPhone').value.trim();
-            if(!name || !phone) return alert('Agrega tu nombre y WhatsApp.');
-            localStorage.setItem('vesselAccount', JSON.stringify({ name, phone }));
-            document.getElementById('buyerName').value = name;
-            document.getElementById('cartNameInput').value = name;
-            closeLoginModal();
-            alert('Cuenta guardada en este dispositivo.');
-        }
-        function logoutLocalAccount() {
-            localStorage.removeItem('vesselAccount');
-            document.getElementById('loginName').value = '';
-            document.getElementById('loginPhone').value = '';
-            alert('Sesión local cerrada.');
         }
 
         /* --- MODAL PRINCIPAL DE PRODUCTO --- */
