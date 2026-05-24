@@ -259,6 +259,9 @@
         .retro-card:hover { border-color: rgba(138,43,226,0.5); transform: translateY(-2px);}
         .retro-card.selected { border-color: var(--accent); background: rgba(0, 255, 204, 0.05); box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);}
         .r-title { font-weight: 700; color: #fff; font-size: 0.9rem; margin-bottom: 8px; line-height: 1.3;}
+        .platform-badge { display:inline-flex; align-items:center; justify-content:center; min-width:52px; margin-right:7px; padding:3px 7px; border-radius:999px; font-size:.62rem; font-weight:900; letter-spacing:.04em; vertical-align:middle; }
+        .platform-360 { color:#04120f; background:var(--accent); box-shadow:0 0 12px rgba(0,255,204,.22); }
+        .platform-classic { color:#fff; background:var(--primary); box-shadow:0 0 12px rgba(138,43,226,.22); }
         .r-bot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px;}
         .r-price { color: var(--accent); font-weight: 900; font-size: 1.1rem;}
         .retro-footer { background: #07070a; border-top: 1px solid rgba(255,255,255,0.05); padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
@@ -653,7 +656,7 @@
             <div class="retro-info-banner">
                 <strong>⚠️ Información Importante:</strong><br>
                 Estos juegos se entregan en una <strong>cuenta nueva con acceso completo</strong>. Podrás cambiar la contraseña y agregar tu propio número o correo de recuperación de inmediato.<br><br>
-                <span>🎮 = Xbox 360 | 🕹️ = Xbox Clásico. ¡Todos son 100% compatibles con <strong>Xbox One</strong> y <strong>Xbox Series X/S</strong>!</span>
+                <span><strong style="color:var(--accent);">360</strong> = Xbox 360 | <strong style="color:var(--primary);">CLÁSICO</strong> = Xbox Clásico. ¡Todos son 100% compatibles con <strong>Xbox One</strong> y <strong>Xbox Series X/S</strong>!</span>
                 <span class="promo-text">🔥 ¡PROMOCIÓN! Selecciona 3 o más juegos y obtén 10% DE DESCUENTO automático.</span>
             </div>
 
@@ -872,6 +875,22 @@
                             <div class="price-container"><span class="price-label">Desde</span><div class="price">$35 MXN</div></div>
                         </div>
                     </div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Game Pass Ultimate Código MX', 'Hola, quiero Game Pass Ultimate Código MX', 'Código MX|290')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/soHmMpn.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/soHmMpn.webp';}" alt="Game Pass Ultimate Código MX" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Game Pass Ultimate</h3>
+                            <ul class="options-list"><li><span>Código MX</span> <span>$290</span></li><li><span>Xbox One / Series</span> <span>Digital</span></li></ul>
+                            <div class="price-container"><span class="price-label">Precio</span><div class="price">$290 MXN</div></div>
+                        </div>
+                    </div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="window.open('https://wa.me/526611078412?text=Hola,%20quiero%20cotizar%20un%20juego%20para%20Xbox%20One%20o%20Xbox%20Series.', '_blank')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/soHmMpn.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/soHmMpn.webp';}" alt="Cotizar juego Xbox" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Cotizar juego Xbox</h3>
+                            <ul class="options-list"><li><span>Xbox One / Series</span> <span>WhatsApp</span></li><li><span>Juego específico</span> <span>Cotizar</span></li></ul>
+                            <div class="price-container"><span class="price-label">Acción</span><div class="price">Cotizar</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1088,6 +1107,19 @@
                         <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/zyhiIPY.png" alt="Elevenlabs" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Elevenlabs Creator</h3><div class="price-container"><span class="price-label">1 Mes</span><div class="price">$225 MXN</div></div></div>
                     </div>
+                    <div class="service-card" data-category="software" data-note="Servicio para recibir códigos de verificación en apps o páginas compatibles. El número es de un solo uso y sirve solamente para recibir el código solicitado. Debes estar pendiente para recibir el número, mandar el código de verificación de inmediato y colocar el código cuando se te entregue. Si tardas demasiado en mandar o usar el código, el número puede perderse por ser de un solo uso; si necesitas otro código, se compra otro número. Garantía: se entrega un código funcional para activar tu registro en la app o página solicitada. Uso permitido solo para registros propios y legítimos." onclick="openModal(this, 'Servicio de SMS', 'Hola, quiero un Servicio de SMS para recibir un código de verificación', 'WhatsApp|45; Telegram|45; Facebook|45; Amazon|45; TikTok|45; Uber|45; Discord|45; Otra página o app|45')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/VRmAJB6.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/VRmAJB6.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/VRmAJB6.webp';}" alt="Servicio de SMS" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Servicio de SMS</h3>
+                            <ul class="options-list">
+                                <li><span>WhatsApp / Telegram</span> <span>$45</span></li>
+                                <li><span>Facebook, Amazon, TikTok</span> <span>$45</span></li>
+                                <li><span>Uber, Discord u otra app</span> <span>$45</span></li>
+                            </ul>
+                            <div class="service-note">Número de un solo uso para recibir códigos de verificación. Debes estar pendiente al momento de solicitarlo.</div>
+                            <div class="price-container"><span class="price-label">Cualquier número</span><div class="price">$45 MXN</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1287,12 +1319,12 @@
         
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">¿En cuánto tiempo recibo mi pedido?</div>
-            <div class="faq-answer"><p>Por lo general, los accesos a perfiles y recargas de monedas se envían entre 5 y 15 minutos después de haber confirmado tu pago mediante WhatsApp. Los servicios de redes sociales pueden tardar hasta 7 días en completarse dependiendo de la cantidad.</p></div>
+            <div class="faq-answer"><p>Por lo general, el tiempo de espera es de 20 minutos a 2 horas después de confirmar tu pago por WhatsApp. El tiempo exacto depende de los pedidos que haya antes del tuyo. Los servicios de redes sociales pueden tardar hasta 7 días en completarse dependiendo de la cantidad.</p></div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">¿Cómo funciona la garantía?</div>
-            <div class="faq-answer"><p>Todos nuestros perfiles premium cuentan con garantía por el tiempo exacto que contrataste. Si tienes algún problema de acceso, nos escribes y lo solucionamos o reemplazamos la cuenta. *Nota: La garantía no aplica para servicios de Redes Sociales hechos con bots si hay caída.*</p></div>
+            <div class="faq-answer"><p>En streaming, los servicios de 1 mes cuentan con 25 días de garantía. Si tienes algún problema de acceso dentro del periodo de garantía, nos escribes y revisamos tu caso para solucionarlo o reemplazar el acceso. *Nota: La garantía no aplica para servicios de Redes Sociales hechos con bots si hay caída.*</p></div>
         </div>
 
         <div class="faq-item">
@@ -1373,335 +1405,394 @@
         ];
 
         // LISTA DE JUEGOS RETRO PARA EL MODAL INTERACTIVO
-        const retroGamesRaw = `🎮 Assassin's Creed $95
-        🎮 Assassin's Creed II $95
-        🎮 Assassin's Creed Revelations $95
-        🎮 Assassin's Creed® Rogue $100
-        🎮 A Kingdom for Keflings $75
-        🎮 A World of Kefling $75
-        🕹 Advent Rising $70
-        🎮 Adventure Time: The Secret of the Nameless Kingdom $90
-        🎮 Alan Wake $100
-        🎮 Alan Wake's American Nightmare $70
-        🎮 Alien Hominid HD $70
-        🎮 Army Of Two $100
-        🕹 Armed and Dangerous $85
-        🎮 Band of Bugs + DLC $95
-        🎮 Banjo-Kazooie $95
-        🎮 Banjo-Kazooie: Nuts & Bolts $95
-        🎮 Banjo-Tooie $90
-        🎮 BattleBlock Theater $80
-        🎮 Battlefield 1943 $70
-        🎮 Battlestations: Midway $100
-        🎮 Battlestations Pacific $100
-        🎮 BAYONETTA $95
-        🎮 Bellator: MMA Onslaught $75
-        🎮 BioShock Infinite $140
-        🎮 BioShock 2 $120
-        🕹 Black $100
-        🎮 BCFx-Doug Williams Ed. $85
-        🕹 BLiNX: The Time Sweeper $95
-        🎮 Blood Knights $70
-        🎮 Bloodforge $70
-        🕹 BloodRayne 2 $85
-        🎮 Blue Dragon $85
-        🎮 Borderlands $100
-        🎮 Borderlands 2 $100
-        🎮 Bound by Flame $85
-        🎮 Binary Domain $95
-        🎮 Braid $70
-        🎮 Brave $90
-        🕹 Breakdown $80
-        🎮 Brothers in Arms: Hell's Highway $85
-        🎮 Brutal Legend $90
-        🎮 Bully: Scholarship Edition $125
-        🎮 Cars 2 $95
-        🎮 Cars: La Copa Int. de Mate $95
-        🎮 Call of Duty®: World at War $145
-        🎮 Call of Duty® 2 $145
-        🎮 Call of Duty® 3 $145
-        🎮 Call of Duty®: Modern Warfare® 2 $165
-        🎮 Call of Duty®: Modern Warfare® 3 $165
-        🎮 Call of Duty® 4: Modern Warfare® $165
-        🎮 Call of Juarez: Bound in Blood $85
-        🎮 Call of Juarez: The Cartel $100
-        🎮 Call of Juarez Gunslinger $85
-        🎮 CAPCOM ARCADE CABINET $35
-        🎮 Castle of Illusion Starring Mickey Mouse $95
-        🎮 CastleStorm $70
-        🎮 Castlevania: Lords of Shadow $95
-        🎮 Castlevania: Lords of Shadow - Mirror of Fate HD $95
-        🎮 Castlevania: Lords of Shadow 2 $100
-        🎮 Castlevania: Symphony of the Night $75
-        🎮 Cloning Clyde $35
-        🕹 Chicken Little $85
-        🎮 Child Of Eden $85
-        🎮 Command and Conquer 3 Tiberium Wars $165
-        🎮 Comic Jumper $85
-        🎮 Conan $95
-        🎮 Condemned Criminal Origins $95
-        🕹 Conker: Live and Reloaded $95
-        🎮 Costume Quest $85
-        🎮 Costume Quest 2 $90
-        🕹 Crimson Skies: High Road to Revenge $85
-        🎮 CRYSTAL DEFENDERS $75
-        🎮 Crysis $145
-        🎮 Crysis 2 $100
-        🎮 Darksiders $100
-        🎮 Dark Void $165
-        🎮 De Blob 2 $95
-        🎮 Deadfall Adventures $100
-        🎮 DEADLY PREMONITION $95
-        🎮 DEAD RISING 2: CASE WEST $75
-        🎮 Dead Space $95
-        🎮 Dead Space 2 $100
-        🎮 Dead Space 3 $100
-        🕹 DEAD OR ALIVE 1 Ultimate $95
-        🕹 DEAD OR ALIVE 2 Ultimate $95
-        🕹 DEAD OR ALIVE 3 $100
-        🎮 Deadliest Warrior $70
-        🎮 Deadliest Warrior Legends $70
-        🎮 Death By Cube $100
-        🎮 DEUS EX: HUMAN REVOLUTION $200
-        🕹 Destroy All Humans! $95
-        🎮 Disney Bolt $90
-        🎮 Disney Epic Mickey El Poder de Dos $95
-        🎮 Double Dragon Neon $70
-        🎮 Dragon Age: Origins + DLC $100
-        🎮 Dragon's Lair $70
-        🎮 DuckTales Remastered $135
-        🎮 Dungeons & Dragons: Chronicles Of Mystara $165
-        🎮 Dungeon Siege III $90
-        🎮 Eat Lead $90
-        🎮 Earth Defense Force 2017 $95
-        🎮 Earth Defense Force 2025 $165
-        🎮 Enslaved $95
-        🎮 Escape Dead Island $80
-        🎮 Fable Anniversary $120
-        🎮 Fable II $90
-        🎮 Fable III $90
-        🎮 Fable Heroes $80
-        🎮 Faery: Legends Of Avalon $80
-        🎮 Far Cry Classic $70
-        🎮 Far Cry® 2 $85
-        🎮 Far Cry 3 $90
-        🎮 Far Cry® 3 Blood Dragon $85
-        🎮 F.E.A.R. 2 $185
-        🎮 FIGHT NIGHT CHAMPION $170
-        🎮 Fighting Vipers $40
-        🎮 FINAL FANTASY XIII $100
-        🎮 FINAL FANTASY XIII-2 $100
-        🎮 FFXIII LIGHTNING RETURNS $100
-        🎮 Flashback $75
-        🎮 Foul Play $65
-        🎮 From Dust $75
-        🎮 Frontlines:Fuel of War $85
-        🕹 Full Spectrum Warrior $85
-        🕹 Fuzion Frenzy $80
-        🎮 Gears Of War $120
-        🎮 Gears Of War 2 $120
-        🎮 Gears Of War 3 $120
-        🎮 Gears Of War: Judgment $120
-        🎮 Grand Theft Auto IV $100
-        🎮 Geometry Wars Evolved² $70 
-        🎮 Geometry Wars 3: Dimensions Evolved $75
-        🎮 Girl Fight $70
-        🎮 Goat Simulator $75
-        🕹 Gladius $75
-        🕹 Gunvalkyrie $70
-        🎮 Gyromancer $75
-        🎮 Hard Corps: Uprising $95
-        🎮 Haunted House $45
-        🎮 Heavy Weapon $90
-        🎮 Hitman HD Pack $95
-        🎮 Hitman: Absolution $95
-        🎮 Hitman: Blood Money $95
-        🕹 Hunter: The Reckoning $95
-        🎮 Hydro Thunder $75
-        🎮 Hydrophobia $65
-        🎮 I Am Alive $75
-        🎮 ilomilo $45
-        🕹 Indiana Jones And The Emperor's Tomb $95
-        🎮 Infinite Undiscovery $95
-        🎮 Injustice: GODS AMONG US $100
-        🎮 Insanely Twisted Shadow Planet $80
-        🕹 Jade Empire $75
-        🎮 Joy Ride Turbo $75
-        🎮 JUJU $80
-        🎮 Just Cause $90
-        🎮 Just Cause 2 $95
-        🎮 Kameo: Elements of Power $80
-        🎮 Kane & Lynch 2 $100
-        🎮 Killer Is Dead $90
-        🎮 Lazy Raiders $65
-        🎮 LEGO Indiana Jones: La trilogía original $100
-        🎮 LEGO® Indiana Jones™ 2 $100
-        🎮 LEGO Piratas del Caribe El Videojuego $100
-        🎮 LEGO Star Wars II: The Original Trilogy $135
-        🎮 LEGO Star Wars III $95
-        🎮 LEGO Star Wars: TCS $115
-        🎮 Lost Odyssey $100
-        🎮 Lost Planet 2 $170
-        🎮 Lost Planet 3 $185
-        🎮 Mafia II $100
-        🕹 Manhunt $135
-        🎮 Mars: War Logs $75
-        🎮 Marlow Briggs and the Mask of the Death $75
-        🎮 Mass Effect $85
-        🎮 Mass Effect 2 $95
-        🎮 Mass Effect 3 $120
-        🕹 Max Payne $125
-        🕹 Max Payne 2: The Fall of Max Payne $125
-        🎮 Max Payne 3 $150
-        🎮 Medal of Honor Airborne $135
-        🎮 Meet The Robinsons $95
-        🎮 METAL GEAR RISING: REVENGEANCE $100
-        🎮 METAL SLUG 3 $70
-        🕹 Mercenaries: Playground Of Destruction $80
-        🎮 Midnight Club: Los Angeles Complete $100
-        🎮 Midway Arcade Origins $80
-        🎮 Might & Magic Clash of Heroes $85
-        🎮 Mini Ninjas $85
-        🎮 Mirror’s Edge $95
-        🎮 Monaco: What’s Yours is Mine $70
-        🎮 Monday Night Combat $70
-        🎮 Monkey Island Special Edition $60
-        🎮 Monkey Island 2 Special Edition $70
-        🎮 Ms. Splosion Man $75
-        🎮 MX vs. ATV Alive $90
-        🎮 MX vs. ATV Reflex $85
-        🕹 MX Unleashed $85
-        🎮 NEOGEO BATTLE COLISEUM $65
-        🎮 NINJA GAIDEN 3: RE $140
-        🎮 NIER $185
-        🕹 Oddworld: Munch's Oddysee $85
-        🎮 Orcs Must Die! $70
-        🕹 Otogi: Myth of Demons $90
-        🕹 Otogi 2: Immortal Warriors $90
-        🎮 Outpost Kaloki X $65
-        🎮 Outland $70
-        🎮 Pac-Man: Championship Edition DX+ $65
-        🕹 Panzer Dragoon Orta $55
-        🎮 Peggle $65
-        🎮 Perfect Dark $70
-        🎮 Perfect Dark Zero $85
-        🎮 Planets Under Attack $75
-        🎮 Plantas vs Zombis $90
-        🎮 Portal: Still Alive $80
-        🎮 Port Royale 3 $85
-        🕹 Psychonauts $85
-        🎮 Putty Squad $75
-        🎮 Quantum Conundrum $65
-        🎮 Radiant Silvergun $75
-        🎮 Raskulls $65
-        🎮 Rayman® Origins $60
-        🎮 Rayman 3 HD $60
-        🎮 Rayman® Legends $95
-        🎮 R.A.W. - Realms of Ancient War $100
-        🎮 Red Dead Redemption + DLC $140
-        🕹 Red Dead Revolver $130
-        🎮 Red Faction: Armageddon $70
-        🕹 Red faction II $65
-        🎮 RESIDENT EVIL CODE: Veronica X $145
-        🎮 Rock Of Ages $70
-        🎮 Rumble Roses XX $85
-        🎮 Sacred Citadel $65
-        🎮 Sacred 2: Fallen Angel $95
-        🎮 Sacred 3 $95
-        🎮 Saints Row $85
-        🎮 Saints Row 2 $95
-        🎮 Saints Row: Gat Out of Hell $95
-        🎮 Saints Row®: The Third™ $90
-        🎮 Saints Row IV $100
-        🎮 ScreamRide $90
-        🕹 Secret Weapons Over Normandy $70
-        🎮 Shadow Complex $80
-        🎮 Shadowrun $85
-        🕹 Sid Meier's Pirates! $80
-        🕹 Sid Meier's Civilization Revolution $100
-        🎮 Sine Mora $70
-        🎮 Skate 3 $100
-        🎮 Skydive $50
-        🎮 Slender: The Arrival (2014) $70
-        🎮 Sniper Elite V2 $100
-        🎮 Sonic Unleashed $95
-        🎮 Sonic All-Star Racing Transformed $95
-        🎮 Space Invaders Infinity Gene $65
-        🎮 SpongeBob: Truth-Sq. $95
-        🎮 Split/Second $95
-        🎮 Splosion Man $65
-        🎮 Stacking $75
-        🎮 Star Ocean: The Last Hope $90
-        🕹 STAR WARS Battlefront $85
-        🕹 Star Wars Battlefront II $85
-        🕹 Star Wars Jedi Knight II: Jedi Outcast $75
-        🕹 Star Wars Episode III: Revenge Of The Sith $75
-        🕹 Star Wars Jedi Starfighter $80
-        🕹 STAR WARS Starfighter Special Edition $95
-        🕹 Star Wars Jedi Knight: Jedi Academy $80
-        🕹 Star Wars KOTOR II $75
-        🕹 Star Wars Republic Commando $90
-        🕹 Star Wars: The Clone Wars $85
-        🎮 Star Wars: The Force Unleashed $100
-        🎮 Star Wars: The Force Unleashed II $100
-        🕹 STAR WARS™ - Knights of the Old Republic™ $85
-        🎮 Street Fighters IV $165
-        🎮 SUPER STREETFIGHTER IV ARCADE EDITION $165
-        🎮 Super Meat Boy $85
-        🎮 Supreme Commander 2 $90
-        🎮 SSX $95
-        🕹 SSX 3 $80
-        🎮 Rockstar Table Tennis $95
-        🎮 Tekken 6 $90
-        🎮 Texas Hold'em $40
-        🕹 TimeSplitters Future Perfect $75
-        🕹 TimeSplitters 2 $90
-        🎮 The Bureau $95
-        🎮 The King Of Fighters XIII $100
-        🕹 The Elder Scrolls III: Morrowind $85
-        🎮 The Maw $65
-        🎮 The Splatters $70
-        🎮 The Walking Dead: Michonne - Season Pass $65
-        🎮 The Walking Dead: Season Two - SEASON PASS $80
-        🎮 The Walking Dead: A Telltale Games Series (2,3,4,5) $80
-        🎮 Tom Clancy’s Splinter Cell® Blacklist™ $100
-        🎮 Tom Clancy's Ghost Recon Advanced Warfighter 2 $90
-        🎮 Tom Clancy's Rainbow Six Vegas $100
-        🎮 Tom Clancy's Rainbow Six Vegas 2 $95
-        🎮 Tom Clancy's Splinter Cell® Conviction™ $100
-        🕹 Tom Clancy's Splinter Cell® Chaos Theory $90
-        🎮 Tom Clancy's Splinter Cell® Double Agent™ $100
-        🎮 Torchlight $65
-        🎮 Toy Story 3 $100
-        🎮 Trials HD $70
-        🕹 Thrillville $80
-        🎮 Thrillville: FDC $85
-        🎮 Tropico 4 $75
-        🎮 Tron: Evolution $85
-        🎮 Unbound Saga $70
-        🎮 Unreal Tournament® 3 $85
-        🎮 VANQUISH $100
-        🎮 Virtua Fighter 5 Final Showdown $75
-        🎮 Viva Piñata: TIP $90
-        🎮 Viva Piñata Party Animals $90
-        🎮 Wolfenstein 3D $60
-        🎮 World Of Soccer $70
-        🎮 XCOM Enemy Within $100
-        🎮 XCOM Enemy Unknown $175`;
+        const retroGamesRaw = `        Assassin's Creed $95
+        Assassin's Creed II $95
+        Assassin's Creed Revelations $95
+        Assassin's Creed® Rogue $100
+        A Kingdom for Keflings $75
+        A World of Kefling $75
+        Advent Rising $70
+        Adventure Time: The Secret of the Nameless Kingdom $90
+        Alan Wake $100
+        Alan Wake's American Nightmare $70
+        Alien Hominid HD $70
+        Army Of Two $100
+        Armed and Dangerous $85
+        Band of Bugs + DLC $95
+        Banjo-Kazooie $95
+        Banjo-Kazooie: Nuts & Bolts $95
+        Banjo-Tooie $90
+        BattleBlock Theater $80
+        Battlefield 1943 $70
+        Battlestations: Midway $100
+        Battlestations Pacific $100
+        BAYONETTA $95
+        Bellator: MMA Onslaught $75
+        BioShock Infinite $140
+        BioShock 2 $120
+        Black $100
+        BCFx-Doug Williams Ed. $85
+        BLiNX: The Time Sweeper $95
+        Blood Knights $70
+        Bloodforge $70
+        BloodRayne 2 $85
+        Blue Dragon $85
+        Borderlands $100
+        Borderlands 2 $100
+        Bound by Flame $85
+        Binary Domain $95
+        Braid $70
+        Brave $90
+        Breakdown $80
+        Brothers in Arms: Hell's Highway $85
+        Brutal Legend $90
+        Bully: Scholarship Edition $125
+        Cars 2 $95
+        Cars: La Copa Int. de Mate $95
+        Call of Duty®: World at War $145
+        Call of Duty® 2 $145
+        Call of Duty® 3 $145
+        Call of Duty®: Modern Warfare® 2 $165
+        Call of Duty®: Modern Warfare® 3 $165
+        Call of Duty® 4: Modern Warfare® $165
+        Call of Juarez: Bound in Blood $85
+        Call of Juarez: The Cartel $100
+        Call of Juarez Gunslinger $85
+        CAPCOM ARCADE CABINET $35
+        Castle of Illusion Starring Mickey Mouse $95
+        CastleStorm $70
+        Castlevania: Lords of Shadow $95
+        Castlevania: Lords of Shadow - Mirror of Fate HD $95
+        Castlevania: Lords of Shadow 2 $100
+        Castlevania: Symphony of the Night $75
+        Cloning Clyde $35
+        Chicken Little $85
+        Child Of Eden $85
+        Command and Conquer 3 Tiberium Wars $165
+        Comic Jumper $85
+        Conan $95
+        Condemned Criminal Origins $95
+        Conker: Live and Reloaded $95
+        Costume Quest $85
+        Costume Quest 2 $90
+        Crimson Skies: High Road to Revenge $85
+        CRYSTAL DEFENDERS $75
+        Crysis $145
+        Crysis 2 $100
+        Darksiders $100
+        Dark Void $165
+        De Blob 2 $95
+        Deadfall Adventures $100
+        DEADLY PREMONITION $95
+        DEAD RISING 2: CASE WEST $75
+        Dead Space $95
+        Dead Space 2 $100
+        Dead Space 3 $100
+        DEAD OR ALIVE 1 Ultimate $95
+        DEAD OR ALIVE 2 Ultimate $95
+        DEAD OR ALIVE 3 $100
+        Deadliest Warrior $70
+        Deadliest Warrior Legends $70
+        Death By Cube $100
+        DEUS EX: HUMAN REVOLUTION $200
+        Destroy All Humans! $95
+        Disney Bolt $90
+        Disney Epic Mickey El Poder de Dos $95
+        Double Dragon Neon $70
+        Dragon Age: Origins + DLC $100
+        Dragon's Lair $70
+        DuckTales Remastered $135
+        Dungeons & Dragons: Chronicles Of Mystara $165
+        Dungeon Siege III $90
+        Eat Lead $90
+        Earth Defense Force 2017 $95
+        Earth Defense Force 2025 $165
+        Enslaved $95
+        Escape Dead Island $80
+        Fable Anniversary $120
+        Fable II $90
+        Fable III $90
+        Fable Heroes $80
+        Faery: Legends Of Avalon $80
+        Far Cry Classic $70
+        Far Cry® 2 $85
+        Far Cry 3 $90
+        Far Cry® 3 Blood Dragon $85
+        F.E.A.R. 2 $185
+        FIGHT NIGHT CHAMPION $170
+        Fighting Vipers $40
+        FINAL FANTASY XIII $100
+        FINAL FANTASY XIII-2 $100
+        FFXIII LIGHTNING RETURNS $100
+        Flashback $75
+        Foul Play $65
+        From Dust $75
+        Frontlines:Fuel of War $85
+        Full Spectrum Warrior $85
+        Fuzion Frenzy $80
+        Gears Of War $120
+        Gears Of War 2 $120
+        Gears Of War 3 $120
+        Gears Of War: Judgment $120
+        Grand Theft Auto IV $100
+        Geometry Wars Evolved² $70
+        Geometry Wars 3: Dimensions Evolved $75
+        Girl Fight $70
+        Goat Simulator $75
+        Gladius $75
+        Gunvalkyrie $70
+        Gyromancer $75
+        Hard Corps: Uprising $95
+        Haunted House $45
+        Heavy Weapon $90
+        Hitman HD Pack $95
+        Hitman: Absolution $95
+        Hitman: Blood Money $95
+        Hunter: The Reckoning $95
+        Hydro Thunder $75
+        Hydrophobia $65
+        I Am Alive $75
+        ilomilo $45
+        Indiana Jones And The Emperor's Tomb $95
+        Infinite Undiscovery $95
+        Injustice: GODS AMONG US $100
+        Insanely Twisted Shadow Planet $80
+        Jade Empire $75
+        Joy Ride Turbo $75
+        JUJU $80
+        Just Cause $90
+        Just Cause 2 $95
+        Kameo: Elements of Power $80
+        Kane & Lynch 2 $100
+        Killer Is Dead $90
+        Lazy Raiders $65
+        LEGO Indiana Jones: La trilogía original $100
+        LEGO® Indiana Jones™ 2 $100
+        LEGO Piratas del Caribe El Videojuego $100
+        LEGO Star Wars II: The Original Trilogy $135
+        LEGO Star Wars III $95
+        LEGO Star Wars: TCS $115
+        Lost Odyssey $100
+        Lost Planet 2 $170
+        Lost Planet 3 $185
+        Mafia II $100
+        Manhunt $135
+        Mars: War Logs $75
+        Marlow Briggs and the Mask of the Death $75
+        Mass Effect $85
+        Mass Effect 2 $95
+        Mass Effect 3 $120
+        Max Payne $125
+        Max Payne 2: The Fall of Max Payne $125
+        Max Payne 3 $150
+        Medal of Honor Airborne $135
+        Meet The Robinsons $95
+        METAL GEAR RISING: REVENGEANCE $100
+        METAL SLUG 3 $70
+        Mercenaries: Playground Of Destruction $80
+        Midnight Club: Los Angeles Complete $100
+        Midway Arcade Origins $80
+        Might & Magic Clash of Heroes $85
+        Mini Ninjas $85
+        Mirror’s Edge $95
+        Monaco: What’s Yours is Mine $70
+        Monday Night Combat $70
+        Monkey Island Special Edition $60
+        Monkey Island 2 Special Edition $70
+        Ms. Splosion Man $75
+        MX vs. ATV Alive $90
+        MX vs. ATV Reflex $85
+        MX Unleashed $85
+        NEOGEO BATTLE COLISEUM $65
+        NINJA GAIDEN 3: RE $140
+        NIER $185
+        Oddworld: Munch's Oddysee $85
+        Orcs Must Die! $70
+        Otogi: Myth of Demons $90
+        Otogi 2: Immortal Warriors $90
+        Outpost Kaloki X $65
+        Outland $70
+        Pac-Man: Championship Edition DX+ $65
+        Panzer Dragoon Orta $55
+        Peggle $65
+        Perfect Dark $70
+        Perfect Dark Zero $85
+        Planets Under Attack $75
+        Plantas vs Zombis $90
+        Portal: Still Alive $80
+        Port Royale 3 $85
+        Psychonauts $85
+        Putty Squad $75
+        Quantum Conundrum $65
+        Radiant Silvergun $75
+        Raskulls $65
+        Rayman® Origins $60
+        Rayman 3 HD $60
+        Rayman® Legends $95
+        R.A.W. - Realms of Ancient War $100
+        Red Dead Redemption + DLC $140
+        Red Dead Revolver $130
+        Red Faction: Armageddon $70
+        Red faction II $65
+        RESIDENT EVIL CODE: Veronica X $145
+        Rock Of Ages $70
+        Rumble Roses XX $85
+        Sacred Citadel $65
+        Sacred 2: Fallen Angel $95
+        Sacred 3 $95
+        Saints Row $85
+        Saints Row 2 $95
+        Saints Row: Gat Out of Hell $95
+        Saints Row®: The Third™ $90
+        Saints Row IV $100
+        ScreamRide $90
+        Secret Weapons Over Normandy $70
+        Shadow Complex $80
+        Shadowrun $85
+        Sid Meier's Pirates! $80
+        Sid Meier's Civilization Revolution $100
+        Sine Mora $70
+        Skate 3 $100
+        Skydive $50
+        Slender: The Arrival (2014) $70
+        Sniper Elite V2 $100
+        Sonic Unleashed $95
+        Sonic All-Star Racing Transformed $95
+        Space Invaders Infinity Gene $65
+        SpongeBob: Truth-Sq. $95
+        Split/Second $95
+        Splosion Man $65
+        Stacking $75
+        Star Ocean: The Last Hope $90
+        STAR WARS Battlefront $85
+        Star Wars Battlefront II $85
+        Star Wars Jedi Knight II: Jedi Outcast $75
+        Star Wars Episode III: Revenge Of The Sith $75
+        Star Wars Jedi Starfighter $80
+        STAR WARS Starfighter Special Edition $95
+        Star Wars Jedi Knight: Jedi Academy $80
+        Star Wars KOTOR II $75
+        Star Wars Republic Commando $90
+        Star Wars: The Clone Wars $85
+        Star Wars: The Force Unleashed $100
+        Star Wars: The Force Unleashed II $100
+        STAR WARS™ - Knights of the Old Republic™ $85
+        Street Fighters IV $165
+        SUPER STREETFIGHTER IV ARCADE EDITION $165
+        Super Meat Boy $85
+        Supreme Commander 2 $90
+        SSX $95
+        SSX 3 $80
+        Rockstar Table Tennis $95
+        Tekken 6 $90
+        Texas Hold'em $40
+        TimeSplitters Future Perfect $75
+        TimeSplitters 2 $90
+        The Bureau $95
+        The King Of Fighters XIII $100
+        The Elder Scrolls III: Morrowind $85
+        The Maw $65
+        The Splatters $70
+        The Walking Dead: Michonne - Season Pass $65
+        The Walking Dead: Season Two - SEASON PASS $80
+        The Walking Dead: A Telltale Games Series (2,3,4,5) $80
+        Tom Clancy’s Splinter Cell® Blacklist™ $100
+        Tom Clancy's Ghost Recon Advanced Warfighter 2 $90
+        Tom Clancy's Rainbow Six Vegas $100
+        Tom Clancy's Rainbow Six Vegas 2 $95
+        Tom Clancy's Splinter Cell® Conviction™ $100
+        Tom Clancy's Splinter Cell® Chaos Theory $90
+        Tom Clancy's Splinter Cell® Double Agent™ $100
+        Torchlight $65
+        Toy Story 3 $100
+        Trials HD $70
+        Thrillville $80
+        Thrillville: FDC $85
+        Tropico 4 $75
+        Tron: Evolution $85
+        Unbound Saga $70
+        Unreal Tournament® 3 $85
+        VANQUISH $100
+        Virtua Fighter 5 Final Showdown $75
+        Viva Piñata: TIP $90
+        Viva Piñata Party Animals $90
+        Wolfenstein 3D $60
+        World Of Soccer $70
+        XCOM Enemy Within $100
+        XCOM Enemy Unknown $175`;
 
         let parsedRetroGames = [];
         let selectedRetroGames = [];
 
+        const xboxClassicTitles = new Set([
+                "Armed and Dangerous",
+                "Black",
+                "BLiNX: The Time Sweeper",
+                "BloodRayne 2",
+                "Breakdown",
+                "Chicken Little",
+                "Conker: Live and Reloaded",
+                "Crimson Skies: High Road to Revenge",
+                "DEAD OR ALIVE 1 Ultimate",
+                "DEAD OR ALIVE 2 Ultimate",
+                "DEAD OR ALIVE 3",
+                "Destroy All Humans!",
+                "Full Spectrum Warrior",
+                "Fuzion Frenzy",
+                "Gladius",
+                "Gunvalkyrie",
+                "Hunter: The Reckoning",
+                "Indiana Jones And The Emperor's Tomb",
+                "Jade Empire",
+                "Manhunt",
+                "Max Payne",
+                "Max Payne 2: The Fall of Max Payne",
+                "Mercenaries: Playground Of Destruction",
+                "MX Unleashed",
+                "Oddworld: Munch's Oddysee",
+                "Otogi: Myth of Demons",
+                "Otogi 2: Immortal Warriors",
+                "Panzer Dragoon Orta",
+                "Psychonauts",
+                "Red Dead Revolver",
+                "Red faction II",
+                "Secret Weapons Over Normandy",
+                "Sid Meier's Pirates!",
+                "Sid Meier's Civilization Revolution",
+                "STAR WARS Battlefront",
+                "Star Wars Battlefront II",
+                "Star Wars Jedi Knight II: Jedi Outcast",
+                "Star Wars Episode III: Revenge Of The Sith",
+                "Star Wars Jedi Starfighter",
+                "STAR WARS Starfighter Special Edition",
+                "Star Wars Jedi Knight: Jedi Academy",
+                "Star Wars KOTOR II",
+                "Star Wars Republic Commando",
+                "Star Wars: The Clone Wars",
+                "STAR WARS™ - Knights of the Old Republic™",
+                "SSX 3",
+                "TimeSplitters Future Perfect",
+                "TimeSplitters 2",
+                "The Elder Scrolls III: Morrowind",
+                "Tom Clancy's Splinter Cell® Chaos Theory",
+                "Thrillville"
+        ]);
+
         function initRetroGames() {
             let lines = retroGamesRaw.split('\n');
             lines.forEach((line, index) => {
-                let match = line.trim().match(/([🎮🕹])\s+(.+?)\s+\$(\d+)/);
+                const cleanLine = line.trim().replace(/^[\s🎮🕹\uFFFD\uFE0F]+/gu, '');
+                let match = cleanLine.match(/(.+?)\s+\$(\d+)/);
                 if(match) {
+                    const gameName = match[1].trim();
+                    const isClassic = xboxClassicTitles.has(gameName);
                     parsedRetroGames.push({
                         id: 'rg-' + index,
-                        icon: match[1],
-                        name: match[2].trim(),
-                        price: parseInt(match[3])
+                        platform: isClassic ? 'Xbox Clásico' : 'Xbox 360',
+                        platformShort: isClassic ? 'CLÁSICO' : '360',
+                        platformClass: isClassic ? 'platform-classic' : 'platform-360',
+                        name: gameName,
+                        price: parseInt(match[2])
                     });
                 }
             });
@@ -2054,7 +2145,7 @@
                     card.className = `retro-card ${isSelected ? 'selected' : ''}`;
                     card.onclick = () => toggleRetroGame(game.id);
                     card.innerHTML = `
-                        <div class="r-title">${game.icon} ${game.name}</div>
+                        <div class="r-title"><span class="platform-badge ${game.platformClass}" title="${game.platform}">${game.platformShort}</span>${game.name}</div>
                         <div class="r-bot">
                             <span class="r-price">${formatPrice(game.price)}</span>
                             ${isSelected ? '<span style="color:var(--accent);">✓ Agregado</span>' : '<span style="color:var(--text-dim); font-size:0.8rem;">+ Seleccionar</span>'}
@@ -2115,7 +2206,7 @@
                 displayStr = `${formatPrice(total)} (10% OFF Aplicado)`;
             }
 
-            let gamesListStr = selectedRetroGames.map(g => `${g.icon} ${g.name}`).join(', ');
+            let gamesListStr = selectedRetroGames.map(g => `${g.platformShort} - ${g.name}`).join(', ');
 
             let cartItem = {
                 title: "Colección Xbox Retro",
