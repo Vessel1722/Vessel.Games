@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-K68XMDL6');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vessel Games | Catálogo Oficial Premium · Móvil Optimizada</title>
-    <link rel="preload" as="image" href="https://i.imgur.com/VjjdVsd.jpg" fetchpriority="high">
+    <link rel="preload" as="video" href="https://i.imgur.com/XAIN1nS.mp4" type="video/mp4" fetchpriority="high">
     <style>
         :root {
             --primary: #8a2be2; 
@@ -83,8 +90,9 @@
         .menu a:hover { color: var(--primary); }
 
         /* --- PORTADA HERO --- */
-        .hero { background-image: radial-gradient(circle at center, rgba(7,7,10,0.18) 0%, rgba(7,7,10,0.96) 82%), url('https://i.imgur.com/VjjdVsd.jpg'); background-size: cover; background-position: center top; background-attachment: scroll; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10%; position: relative; }
-        .hero::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(5,5,8,0.96) 0%, rgba(5,5,8,0.82) 34%, rgba(5,5,8,0.48) 58%, rgba(5,5,8,0.18) 100%); }
+        .hero { background-image: radial-gradient(circle at center, rgba(7,7,10,0.18) 0%, rgba(7,7,10,0.96) 82%), url('https://i.imgur.com/XAIN1nS.gif'); background-size: cover; background-position: center top; background-attachment: scroll; height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10%; position: relative; overflow: hidden; }
+        .hero-bg-video { position:absolute; inset:0; width:100%; height:100%; min-width:100%; min-height:100%; object-fit:cover; object-position:center center; z-index:0; opacity:0.98; pointer-events:none; filter: brightness(1.32) contrast(1.16) saturate(1.14); transform: translateZ(0) scale(1.01); backface-visibility:hidden; background:#07070a; }
+        .hero::before { content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(90deg, rgba(5,5,8,0.78) 0%, rgba(5,5,8,0.58) 34%, rgba(5,5,8,0.26) 58%, rgba(5,5,8,0.06) 100%); }
         .hero-content > * { position:relative; z-index:2; }
         .hero-content { max-width: 650px; z-index: 2; margin-top: 80px; }
         .badge { background: rgba(138, 43, 226, 0.2); color: #d4a5ff; padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 20px; border: 1px solid var(--primary); font-family: 'Orbitron', 'Montserrat', system-ui, sans-serif; letter-spacing: 1px; }
@@ -258,10 +266,10 @@
         .retro-card { background: #14101d; border: 1px solid #2d2440; border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; justify-content: space-between;}
         .retro-card:hover { border-color: rgba(138,43,226,0.5); transform: translateY(-2px);}
         .retro-card.selected { border-color: var(--accent); background: rgba(0, 255, 204, 0.05); box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);}
+        .retro-platform-badge { display:inline-flex; align-items:center; justify-content:center; min-width:56px; padding:6px 10px; border-radius:999px; background:var(--accent); color:#03110e; font-size:0.72rem; font-weight:900; letter-spacing:0.06em; margin-right:8px; box-shadow:0 0 15px rgba(0,255,204,0.35); }
+        .retro-platform-badge.classic { background:#d4a5ff; color:#160722; box-shadow:0 0 15px rgba(212,165,255,0.35); }
+
         .r-title { font-weight: 700; color: #fff; font-size: 0.9rem; margin-bottom: 8px; line-height: 1.3;}
-        .platform-badge { display:inline-flex; align-items:center; justify-content:center; min-width:52px; margin-right:7px; padding:3px 7px; border-radius:999px; font-size:.62rem; font-weight:900; letter-spacing:.04em; vertical-align:middle; }
-        .platform-360 { color:#04120f; background:var(--accent); box-shadow:0 0 12px rgba(0,255,204,.22); }
-        .platform-classic { color:#fff; background:var(--primary); box-shadow:0 0 12px rgba(138,43,226,.22); }
         .r-bot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px;}
         .r-price { color: var(--accent); font-weight: 900; font-size: 1.1rem;}
         .retro-footer { background: #07070a; border-top: 1px solid rgba(255,255,255,0.05); padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; flex-wrap: wrap; gap: 15px;}
@@ -509,7 +517,8 @@
             .mini-carousel-track { animation-duration: 42s !important; }
             .logo { animation-duration: 7s; }
             .viewer-dot { animation: none; }
-            .hero::before { background: linear-gradient(180deg, rgba(5,5,8,.90), rgba(5,5,8,.72)); }
+            .hero::before { background: linear-gradient(180deg, rgba(5,5,8,.48), rgba(5,5,8,.28)); }
+            .hero-bg-video { width:100%; height:100%; min-width:100%; min-height:100%; object-fit:cover; object-position:center center; opacity:1; filter: brightness(1.35) contrast(1.18) saturate(1.16); transform: translateZ(0) scale(1.015); }
         }
 
 
@@ -555,9 +564,21 @@
         }
         @media (max-width: 460px) { .trust-grid-v5 { grid-template-columns:1fr; } }
 
+
+        /* --- AJUSTE PORTADA: logo limpio y fondo más visible --- */
+        .brand-logo { overflow: visible !important; isolation: auto !important; background: transparent !important; }
+        .brand-logo::before, .brand-logo::after, .brand-name::after { content: none !important; display: none !important; animation: none !important; }
+        .brand-mark, .brand-mark::after { animation: none !important; }
+        .brand-name { text-shadow: 0 0 10px rgba(138,43,226,.45) !important; }
+        .brand-logo, .brand-word, .brand-name, .brand-tagline, .brand-mark { filter: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
     </style>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K68XMDL6"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 <!-- VESSELGAMES: portada, Telegram, categorías, Rewards, FAQ, modal de pago, buscador y optimización móvil. -->
 
     <div class="social-proof-popup" id="socialProof">
@@ -656,7 +677,7 @@
             <div class="retro-info-banner">
                 <strong>⚠️ Información Importante:</strong><br>
                 Estos juegos se entregan en una <strong>cuenta nueva con acceso completo</strong>. Podrás cambiar la contraseña y agregar tu propio número o correo de recuperación de inmediato.<br><br>
-                <span><strong style="color:var(--accent);">360</strong> = Xbox 360 | <strong style="color:var(--primary);">CLÁSICO</strong> = Xbox Clásico. ¡Todos son 100% compatibles con <strong>Xbox One</strong> y <strong>Xbox Series X/S</strong>!</span>
+                <span><strong>360</strong> = Xbox 360 | <strong>CLÁSICO</strong> = Xbox Clásico. ¡Todos son 100% compatibles con <strong>Xbox One</strong> y <strong>Xbox Series X/S</strong>!</span>
                 <span class="promo-text">🔥 ¡PROMOCIÓN! Selecciona 3 o más juegos y obtén 10% DE DESCUENTO automático.</span>
             </div>
 
@@ -735,8 +756,6 @@
         </div>
     </div>
 
-
-
     <nav>
         <a class="brand-logo" href="#" aria-label="VesselGames inicio"><div class="brand-mark"></div><div class="brand-word"><span class="brand-name">VESSEL<span>GAMES</span></span><span class="brand-tagline">Digital Store</span></div></a>
         <div class="menu-right">
@@ -761,6 +780,7 @@
     </div>
 
     <div class="hero">
+        <video class="hero-bg-video" autoplay muted loop playsinline preload="auto" poster="https://i.imgur.com/XAIN1nS.gif" aria-hidden="true"><source src="https://i.imgur.com/XAIN1nS.mp4" type="video/mp4"></video>
         <div class="hero-content">
             <div class="badge">CATÁLOGO DIGITAL · ENTREGA RÁPIDA</div>
             <h1>TU SIGUIENTE NIVEL <span>EMPIEZA</span> AQUÍ</h1>
@@ -846,7 +866,7 @@
                         </div>
                     </div>
                     <div class="service-card gaming-card" data-category="gaming" data-note="Entrega en código digital para Halo Infinite. Se envía el código para canjear los créditos." onclick="openModal(this, 'Créditos Halo Infinite', 'Hola, quiero comprar créditos para Halo Infinite en código', '500 créditos|70; 1,000 créditos|125; 2,200 créditos|195; 5,600 créditos|500; 11,500 créditos|1000')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/zeuFahH.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/zeuFahH.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/zeuFahH.webp';}" alt="Créditos Halo Infinite" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/zeuFahH.jpg" alt="Créditos Halo Infinite" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Créditos Halo Infinite</h3>
                             <ul class="options-list"><li><span>500 créditos</span> <span>$70</span></li><li><span>1,000 créditos</span> <span>$125</span></li><li><span>... hasta 11,500</span> <span>$1,000</span></li></ul>
@@ -855,7 +875,7 @@
                         </div>
                     </div>
                     <div class="service-card gaming-card" data-category="gaming" data-note="Servicio vía recarga. Se ocupa acceso a la cuenta. Tarda de 3 a 5 días en reflejarse porque es vía Game Pass." onclick="openModal(this, 'Robux para Roblox', 'Hola, quiero comprar Robux para Roblox vía recarga Game Pass', '1,000 Robux|195; 2,000 Robux|355; 3,000 Robux|545; 4,000 Robux|675; 5,000 Robux|865; 10,000 Robux|1645')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/ldBHY3o.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/ldBHY3o.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/ldBHY3o.webp';}" alt="Robux para Roblox" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/ldBHY3o.jpg" alt="Robux para Roblox" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Robux para Roblox</h3>
                             <ul class="options-list"><li><span>1,000 Robux</span> <span>$195</span></li><li><span>2,000 Robux</span> <span>$355</span></li><li><span>... hasta 10,000</span> <span>$1,645</span></li></ul>
@@ -865,7 +885,7 @@
                     </div>
                     <!-- TARJETA NUEVA: COLECCIÓN XBOX RETRO QUE ABRE EL BUSCADOR INTERACTIVO -->
                     <div class="service-card gaming-card" data-category="gaming" onclick="openRetroModal()">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/CwZeUfr.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/CwZeUfr.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/CwZeUfr.webp';}" alt="Xbox Retro" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/CwZeUfr.jpg" alt="Xbox Retro" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Juegos Retro (Xbox)</h3>
                             <ul class="options-list">
@@ -875,18 +895,18 @@
                             <div class="price-container"><span class="price-label">Desde</span><div class="price">$35 MXN</div></div>
                         </div>
                     </div>
-                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Game Pass Ultimate Código MX', 'Hola, quiero Game Pass Ultimate Código MX', 'Código MX|290')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/soHmMpn.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/soHmMpn.webp';}" alt="Game Pass Ultimate Código MX" class="service-img" referrerpolicy="no-referrer"></div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="openModal(this, 'Game Pass Ultimate', 'Hola, quiero Game Pass Ultimate código MX', 'Código MX|290')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" alt="Game Pass Ultimate" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Game Pass Ultimate</h3>
                             <ul class="options-list"><li><span>Código MX</span> <span>$290</span></li><li><span>Xbox One / Series</span> <span>Digital</span></li></ul>
                             <div class="price-container"><span class="price-label">Precio</span><div class="price">$290 MXN</div></div>
                         </div>
                     </div>
-                    <div class="service-card gaming-card" data-category="gaming" onclick="window.open('https://wa.me/526611078412?text=Hola,%20quiero%20cotizar%20un%20juego%20para%20Xbox%20One%20o%20Xbox%20Series.', '_blank')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/soHmMpn.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/soHmMpn.webp';}" alt="Cotizar juego Xbox" class="service-img" referrerpolicy="no-referrer"></div>
+                    <div class="service-card gaming-card" data-category="gaming" onclick="window.open('https://wa.me/526611078412?text=Hola,%20quiero%20cotizar%20un%20juego%20de%20Xbox%20One%20o%20Xbox%20Series.', '_blank')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/soHmMpn.jpg" alt="Cotizar Juego Xbox" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
-                            <h3>Cotizar juego Xbox</h3>
+                            <h3>Cotizar Juego Xbox</h3>
                             <ul class="options-list"><li><span>Xbox One / Series</span> <span>WhatsApp</span></li><li><span>Juego específico</span> <span>Cotizar</span></li></ul>
                             <div class="price-container"><span class="price-label">Acción</span><div class="price">Cotizar</div></div>
                         </div>
@@ -1068,7 +1088,7 @@
                         <div class="service-info"><h3>Google IA Pro</h3><ul class="options-list"><li><span>Membresía Completa</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="software" onclick="openModal(this, 'Office 365', 'Hola, quiero Office 365 12 meses cuenta nueva', '12 Meses Cuenta Nueva|235')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/T5x8MXS.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/T5x8MXS.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/T5x8MXS.webp';}" alt="Office 365" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/T5x8MXS.jpg" alt="Office 365" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Office 365</h3><ul class="options-list"><li><span>Cuenta nueva</span> <span>12 Meses</span></li></ul><div class="price-container"><span class="price-label">Precio</span><div class="price">$235 MXN</div></div></div>
                     </div>
                     <div class="service-card" data-category="software" onclick="openModal(this, 'ChatGPT Plus', 'Hola, quiero ChatGPT Plus', '1 Mes|145')">
@@ -1081,6 +1101,16 @@
                             <h3>Canva Pro</h3>
                             <ul class="options-list"><li><span>1 Mes</span> <span>Invitación - $65</span></li><li><span>1 Mes (Promo)</span> <span>Invitación - $60</span></li></ul>
                             <div class="price-container"><span class="price-label">Desde</span><div class="price">$60 MXN</div></div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" data-category="software" data-note="Servicio de recepción de SMS de verificación. El número es de un solo uso; debes estar pendiente para enviar y colocar el código a tiempo." onclick="openModal(this, 'Servicio de SMS', 'Hola, quiero un Servicio de SMS para recibir código de verificación', 'WhatsApp|45; Telegram|45; Facebook|45; Amazon|45; TikTok|45; Uber|45; Discord|45; Otra página o app|45')">
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/VRmAJB6.jpg" alt="Servicio de SMS" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="service-info">
+                            <h3>Servicio de SMS</h3>
+                            <ul class="options-list"><li><span>Códigos de verificación</span> <span>$45</span></li><li><span>WhatsApp, Telegram y más</span> <span>1 solo uso</span></li></ul>
+                            <div class="service-note">Recibe códigos de verificación para registros en apps o páginas sin exponer tu número personal. También sirve para crear cuentas nuevas de WhatsApp y Telegram de forma privada. Debes estar pendiente: si tardas en enviar o colocar el código, el número puede perderse y se requiere comprar otro.</div>
+                            <div class="price-container"><span class="price-label">Precio</span><div class="price">$45 MXN</div></div>
                         </div>
                     </div>
                     <div class="service-card" data-category="software" onclick="openModal(this, 'CapCut Pro', 'Hola, quiero CapCut Pro', '1 Mes|65')">
@@ -1106,19 +1136,6 @@
                     <div class="service-card" data-category="software" onclick="openModal(this, 'Elevenlabs Creator', 'Hola, quiero Elevenlabs Creator', '1 Mes|225')">
                         <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/zyhiIPY.png" alt="Elevenlabs" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info"><h3>Elevenlabs Creator</h3><div class="price-container"><span class="price-label">1 Mes</span><div class="price">$225 MXN</div></div></div>
-                    </div>
-                    <div class="service-card" data-category="software" data-note="Servicio para recibir códigos de verificación en apps o páginas compatibles. El número es de un solo uso y sirve solamente para recibir el código solicitado. Debes estar pendiente para recibir el número, mandar el código de verificación de inmediato y colocar el código cuando se te entregue. Si tardas demasiado en mandar o usar el código, el número puede perderse por ser de un solo uso; si necesitas otro código, se compra otro número. Garantía: se entrega un código funcional para activar tu registro en la app o página solicitada. Uso permitido solo para registros propios y legítimos." onclick="openModal(this, 'Servicio de SMS', 'Hola, quiero un Servicio de SMS para recibir un código de verificación', 'WhatsApp|45; Telegram|45; Facebook|45; Amazon|45; TikTok|45; Uber|45; Discord|45; Otra página o app|45')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/VRmAJB6.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/VRmAJB6.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/VRmAJB6.webp';}" alt="Servicio de SMS" class="service-img" referrerpolicy="no-referrer"></div>
-                        <div class="service-info">
-                            <h3>Servicio de SMS</h3>
-                            <ul class="options-list">
-                                <li><span>WhatsApp / Telegram</span> <span>$45</span></li>
-                                <li><span>Facebook, Amazon, TikTok</span> <span>$45</span></li>
-                                <li><span>Uber, Discord u otra app</span> <span>$45</span></li>
-                            </ul>
-                            <div class="service-note">Número de un solo uso para recibir códigos de verificación. Debes estar pendiente al momento de solicitarlo.</div>
-                            <div class="price-container"><span class="price-label">Cualquier número</span><div class="price">$45 MXN</div></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1163,7 +1180,7 @@
             <div class="services-section">
                 <div class="services-grid grid-social">
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Seguidores', 'Hola, quiero Seguidores en TikTok', '500 Seguidores|50; 1K Seguidores|72; 2K Seguidores|93; 3K Seguidores|148; 4K Seguidores|167; 5K Seguidores|185')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Seguidores</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$50</span></li><li><span>... hasta 5K Seg.</span> <span>$185</span></li></ul>
@@ -1171,7 +1188,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Likes', 'Hola, quiero Likes en TikTok', '500 Likes|15; 1K Likes|22; 2K Likes|29; 3K Likes|36; 4K Likes|43; 5K Likes|55; 10K Likes|74')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Likes</h3>
                             <ul class="options-list"><li><span>500 Likes</span> <span>$15</span></li><li><span>... hasta 10K Likes</span> <span>$74</span></li></ul>
@@ -1179,7 +1196,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Vistas', 'Hola, quiero Vistas en TikTok', '5K Vistas|17; 10K Vistas|24; 20K Vistas|29; 30K Vistas|34; 40K Vistas|39; 50K Vistas|44; 100K Vistas|65')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Vistas</h3>
                             <ul class="options-list"><li><span>5K Vistas</span> <span>$17</span></li><li><span>... hasta 100K Vistas</span> <span>$65</span></li></ul>
@@ -1187,7 +1204,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'TikTok Comentarios', 'Hola, quiero Comentarios en TikTok', '50 Comentarios|45; 100 Comentarios|75; 150 Comentarios|115; 200 Comentarios|145; 250 Comentarios|175')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/3zocDZJ.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/3zocDZJ.webp';}" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/3zocDZJ.jpg" alt="TikTok" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>TikTok Comentarios</h3>
                             <ul class="options-list"><li><span>50 Comentarios</span> <span>$45</span></li><li><span>... hasta 250 Com.</span> <span>$175</span></li></ul>
@@ -1196,7 +1213,7 @@
                     </div>
                     
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Globales', 'Hola, quiero Seguidores Globales en IG', '500 Seguidores|38; 1K Seguidores|65; 2K Seguidores|100; 3K Seguidores|145; 4K Seguidores|175; 5K Seguidores|185; 10K Seguidores|285')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Seg. Globales</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$38</span></li><li><span>... hasta 10K Seg.</span> <span>$285</span></li></ul>
@@ -1204,7 +1221,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Seguidores Latinos', 'Hola, quiero Seguidores Latinos en IG', '50 Seguidores|24; 100 Seguidores|42; 200 Seguidores|77; 300 Seguidores|98; 400 Seguidores|135; 500 Seguidores|170; 1K Seguidores|285')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Seg. Latinos</h3>
                             <ul class="options-list"><li><span>50 Latinos</span> <span>$24</span></li><li><span>... hasta 1K Latinos</span> <span>$285</span></li></ul>
@@ -1212,7 +1229,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'IG Likes', 'Hola, quiero Likes en IG', '1K Likes|25; 2K Likes|35; 3K Likes|45; 4K Likes|55; 5K Likes|65; 10K Likes|95; 20K Likes|155')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/g22IDnF.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/g22IDnF.webp';}" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/g22IDnF.jpg" alt="Instagram" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>IG Likes</h3>
                             <ul class="options-list"><li><span>1K Likes</span> <span>$25</span></li><li><span>... hasta 20K Likes</span> <span>$155</span></li></ul>
@@ -1221,7 +1238,7 @@
                     </div>
 
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Seguidores', 'Hola, quiero Seguidores en Facebook', '500 Seguidores|45; 1K Seguidores|60; 2K Seguidores|75; 3K Seguidores|95; 4K Seguidores|120; 5K Seguidores|150; 10K Seguidores|235')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Facebook Seg.</h3>
                             <ul class="options-list"><li><span>500 Seguidores</span> <span>$45</span></li><li><span>... hasta 10K Seg.</span> <span>$235</span></li></ul>
@@ -1229,7 +1246,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Reacciones', 'Hola, quiero Reacciones en Facebook', '100 Reacciones|15; 200 Reacciones|19; 300 Reacciones|23; 400 Reacciones|26; 500 Reacciones|29; 1K Reacciones|47; 2K Reacciones|74; 3K Reacciones|98; 4K Reacciones|130; 5K Reacciones|165; 10K Reacciones|215')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>FB Reacciones</h3>
                             <ul class="options-list"><li><span>100 Reacciones</span> <span>$15</span></li><li><span>... hasta 10K Reac.</span> <span>$215</span></li></ul>
@@ -1237,7 +1254,7 @@
                         </div>
                     </div>
                     <div class="service-card social-card" data-category="redes" onclick="openModal(this, 'Facebook Vistas', 'Hola, quiero Vistas en Facebook', '1K Vistas|18; 2K Vistas|23; 3K Vistas|29; 4K Vistas|36; 5K Vistas|47; 10K Vistas|76')">
-                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://i.imgur.com/Swc119l.png';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://i.imgur.com/Swc119l.webp';}" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
+                        <div class="img-container"><img loading="lazy" decoding="async" src="https://i.imgur.com/Swc119l.jpg" alt="Facebook" class="service-img" referrerpolicy="no-referrer"></div>
                         <div class="service-info">
                             <h3>Facebook Vistas</h3>
                             <ul class="options-list"><li><span>1K Vistas</span> <span>$18</span></li><li><span>... hasta 10K Vistas</span> <span>$76</span></li></ul>
@@ -1319,12 +1336,12 @@
         
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">¿En cuánto tiempo recibo mi pedido?</div>
-            <div class="faq-answer"><p>Por lo general, el tiempo de espera es de 20 minutos a 2 horas después de confirmar tu pago por WhatsApp. El tiempo exacto depende de los pedidos que haya antes del tuyo. Los servicios de redes sociales pueden tardar hasta 7 días en completarse dependiendo de la cantidad.</p></div>
+            <div class="faq-answer"><p>El tiempo de entrega promedio es de 20 minutos a 2 horas, dependiendo de cuántos pedidos haya antes del tuyo. Te recomendamos estar pendiente de WhatsApp después de mandar tu comprobante.</p></div>
         </div>
         
         <div class="faq-item">
             <div class="faq-question" onclick="toggleFaq(this)">¿Cómo funciona la garantía?</div>
-            <div class="faq-answer"><p>En streaming, los servicios de 1 mes cuentan con 25 días de garantía. Si tienes algún problema de acceso dentro del periodo de garantía, nos escribes y revisamos tu caso para solucionarlo o reemplazar el acceso. *Nota: La garantía no aplica para servicios de Redes Sociales hechos con bots si hay caída.*</p></div>
+            <div class="faq-answer"><p>Los perfiles premium tienen garantía según el servicio contratado. En streaming de 1 mes, la garantía es de 25 días. Si tienes algún problema de acceso, nos escribes y revisamos tu caso para solucionarlo o reemplazar el acceso cuando aplique. *Nota: La garantía no aplica para servicios de Redes Sociales hechos con bots si hay caída.*</p></div>
         </div>
 
         <div class="faq-item">
@@ -1405,393 +1422,340 @@
         ];
 
         // LISTA DE JUEGOS RETRO PARA EL MODAL INTERACTIVO
-        const retroGamesRaw = `        Assassin's Creed $95
-        Assassin's Creed II $95
-        Assassin's Creed Revelations $95
-        Assassin's Creed® Rogue $100
-        A Kingdom for Keflings $75
-        A World of Kefling $75
-        Advent Rising $70
-        Adventure Time: The Secret of the Nameless Kingdom $90
-        Alan Wake $100
-        Alan Wake's American Nightmare $70
-        Alien Hominid HD $70
-        Army Of Two $100
-        Armed and Dangerous $85
-        Band of Bugs + DLC $95
-        Banjo-Kazooie $95
-        Banjo-Kazooie: Nuts & Bolts $95
-        Banjo-Tooie $90
-        BattleBlock Theater $80
-        Battlefield 1943 $70
-        Battlestations: Midway $100
-        Battlestations Pacific $100
-        BAYONETTA $95
-        Bellator: MMA Onslaught $75
-        BioShock Infinite $140
-        BioShock 2 $120
-        Black $100
-        BCFx-Doug Williams Ed. $85
-        BLiNX: The Time Sweeper $95
-        Blood Knights $70
-        Bloodforge $70
-        BloodRayne 2 $85
-        Blue Dragon $85
-        Borderlands $100
-        Borderlands 2 $100
-        Bound by Flame $85
-        Binary Domain $95
-        Braid $70
-        Brave $90
-        Breakdown $80
-        Brothers in Arms: Hell's Highway $85
-        Brutal Legend $90
-        Bully: Scholarship Edition $125
-        Cars 2 $95
-        Cars: La Copa Int. de Mate $95
-        Call of Duty®: World at War $145
-        Call of Duty® 2 $145
-        Call of Duty® 3 $145
-        Call of Duty®: Modern Warfare® 2 $165
-        Call of Duty®: Modern Warfare® 3 $165
-        Call of Duty® 4: Modern Warfare® $165
-        Call of Juarez: Bound in Blood $85
-        Call of Juarez: The Cartel $100
-        Call of Juarez Gunslinger $85
-        CAPCOM ARCADE CABINET $35
-        Castle of Illusion Starring Mickey Mouse $95
-        CastleStorm $70
-        Castlevania: Lords of Shadow $95
-        Castlevania: Lords of Shadow - Mirror of Fate HD $95
-        Castlevania: Lords of Shadow 2 $100
-        Castlevania: Symphony of the Night $75
-        Cloning Clyde $35
-        Chicken Little $85
-        Child Of Eden $85
-        Command and Conquer 3 Tiberium Wars $165
-        Comic Jumper $85
-        Conan $95
-        Condemned Criminal Origins $95
-        Conker: Live and Reloaded $95
-        Costume Quest $85
-        Costume Quest 2 $90
-        Crimson Skies: High Road to Revenge $85
-        CRYSTAL DEFENDERS $75
-        Crysis $145
-        Crysis 2 $100
-        Darksiders $100
-        Dark Void $165
-        De Blob 2 $95
-        Deadfall Adventures $100
-        DEADLY PREMONITION $95
-        DEAD RISING 2: CASE WEST $75
-        Dead Space $95
-        Dead Space 2 $100
-        Dead Space 3 $100
-        DEAD OR ALIVE 1 Ultimate $95
-        DEAD OR ALIVE 2 Ultimate $95
-        DEAD OR ALIVE 3 $100
-        Deadliest Warrior $70
-        Deadliest Warrior Legends $70
-        Death By Cube $100
-        DEUS EX: HUMAN REVOLUTION $200
-        Destroy All Humans! $95
-        Disney Bolt $90
-        Disney Epic Mickey El Poder de Dos $95
-        Double Dragon Neon $70
-        Dragon Age: Origins + DLC $100
-        Dragon's Lair $70
-        DuckTales Remastered $135
-        Dungeons & Dragons: Chronicles Of Mystara $165
-        Dungeon Siege III $90
-        Eat Lead $90
-        Earth Defense Force 2017 $95
-        Earth Defense Force 2025 $165
-        Enslaved $95
-        Escape Dead Island $80
-        Fable Anniversary $120
-        Fable II $90
-        Fable III $90
-        Fable Heroes $80
-        Faery: Legends Of Avalon $80
-        Far Cry Classic $70
-        Far Cry® 2 $85
-        Far Cry 3 $90
-        Far Cry® 3 Blood Dragon $85
-        F.E.A.R. 2 $185
-        FIGHT NIGHT CHAMPION $170
-        Fighting Vipers $40
-        FINAL FANTASY XIII $100
-        FINAL FANTASY XIII-2 $100
-        FFXIII LIGHTNING RETURNS $100
-        Flashback $75
-        Foul Play $65
-        From Dust $75
-        Frontlines:Fuel of War $85
-        Full Spectrum Warrior $85
-        Fuzion Frenzy $80
-        Gears Of War $120
-        Gears Of War 2 $120
-        Gears Of War 3 $120
-        Gears Of War: Judgment $120
-        Grand Theft Auto IV $100
-        Geometry Wars Evolved² $70
-        Geometry Wars 3: Dimensions Evolved $75
-        Girl Fight $70
-        Goat Simulator $75
-        Gladius $75
-        Gunvalkyrie $70
-        Gyromancer $75
-        Hard Corps: Uprising $95
-        Haunted House $45
-        Heavy Weapon $90
-        Hitman HD Pack $95
-        Hitman: Absolution $95
-        Hitman: Blood Money $95
-        Hunter: The Reckoning $95
-        Hydro Thunder $75
-        Hydrophobia $65
-        I Am Alive $75
-        ilomilo $45
-        Indiana Jones And The Emperor's Tomb $95
-        Infinite Undiscovery $95
-        Injustice: GODS AMONG US $100
-        Insanely Twisted Shadow Planet $80
-        Jade Empire $75
-        Joy Ride Turbo $75
-        JUJU $80
-        Just Cause $90
-        Just Cause 2 $95
-        Kameo: Elements of Power $80
-        Kane & Lynch 2 $100
-        Killer Is Dead $90
-        Lazy Raiders $65
-        LEGO Indiana Jones: La trilogía original $100
-        LEGO® Indiana Jones™ 2 $100
-        LEGO Piratas del Caribe El Videojuego $100
-        LEGO Star Wars II: The Original Trilogy $135
-        LEGO Star Wars III $95
-        LEGO Star Wars: TCS $115
-        Lost Odyssey $100
-        Lost Planet 2 $170
-        Lost Planet 3 $185
-        Mafia II $100
-        Manhunt $135
-        Mars: War Logs $75
-        Marlow Briggs and the Mask of the Death $75
-        Mass Effect $85
-        Mass Effect 2 $95
-        Mass Effect 3 $120
-        Max Payne $125
-        Max Payne 2: The Fall of Max Payne $125
-        Max Payne 3 $150
-        Medal of Honor Airborne $135
-        Meet The Robinsons $95
-        METAL GEAR RISING: REVENGEANCE $100
-        METAL SLUG 3 $70
-        Mercenaries: Playground Of Destruction $80
-        Midnight Club: Los Angeles Complete $100
-        Midway Arcade Origins $80
-        Might & Magic Clash of Heroes $85
-        Mini Ninjas $85
-        Mirror’s Edge $95
-        Monaco: What’s Yours is Mine $70
-        Monday Night Combat $70
-        Monkey Island Special Edition $60
-        Monkey Island 2 Special Edition $70
-        Ms. Splosion Man $75
-        MX vs. ATV Alive $90
-        MX vs. ATV Reflex $85
-        MX Unleashed $85
-        NEOGEO BATTLE COLISEUM $65
-        NINJA GAIDEN 3: RE $140
-        NIER $185
-        Oddworld: Munch's Oddysee $85
-        Orcs Must Die! $70
-        Otogi: Myth of Demons $90
-        Otogi 2: Immortal Warriors $90
-        Outpost Kaloki X $65
-        Outland $70
-        Pac-Man: Championship Edition DX+ $65
-        Panzer Dragoon Orta $55
-        Peggle $65
-        Perfect Dark $70
-        Perfect Dark Zero $85
-        Planets Under Attack $75
-        Plantas vs Zombis $90
-        Portal: Still Alive $80
-        Port Royale 3 $85
-        Psychonauts $85
-        Putty Squad $75
-        Quantum Conundrum $65
-        Radiant Silvergun $75
-        Raskulls $65
-        Rayman® Origins $60
-        Rayman 3 HD $60
-        Rayman® Legends $95
-        R.A.W. - Realms of Ancient War $100
-        Red Dead Redemption + DLC $140
-        Red Dead Revolver $130
-        Red Faction: Armageddon $70
-        Red faction II $65
-        RESIDENT EVIL CODE: Veronica X $145
-        Rock Of Ages $70
-        Rumble Roses XX $85
-        Sacred Citadel $65
-        Sacred 2: Fallen Angel $95
-        Sacred 3 $95
-        Saints Row $85
-        Saints Row 2 $95
-        Saints Row: Gat Out of Hell $95
-        Saints Row®: The Third™ $90
-        Saints Row IV $100
-        ScreamRide $90
-        Secret Weapons Over Normandy $70
-        Shadow Complex $80
-        Shadowrun $85
-        Sid Meier's Pirates! $80
-        Sid Meier's Civilization Revolution $100
-        Sine Mora $70
-        Skate 3 $100
-        Skydive $50
-        Slender: The Arrival (2014) $70
-        Sniper Elite V2 $100
-        Sonic Unleashed $95
-        Sonic All-Star Racing Transformed $95
-        Space Invaders Infinity Gene $65
-        SpongeBob: Truth-Sq. $95
-        Split/Second $95
-        Splosion Man $65
-        Stacking $75
-        Star Ocean: The Last Hope $90
-        STAR WARS Battlefront $85
-        Star Wars Battlefront II $85
-        Star Wars Jedi Knight II: Jedi Outcast $75
-        Star Wars Episode III: Revenge Of The Sith $75
-        Star Wars Jedi Starfighter $80
-        STAR WARS Starfighter Special Edition $95
-        Star Wars Jedi Knight: Jedi Academy $80
-        Star Wars KOTOR II $75
-        Star Wars Republic Commando $90
-        Star Wars: The Clone Wars $85
-        Star Wars: The Force Unleashed $100
-        Star Wars: The Force Unleashed II $100
-        STAR WARS™ - Knights of the Old Republic™ $85
-        Street Fighters IV $165
-        SUPER STREETFIGHTER IV ARCADE EDITION $165
-        Super Meat Boy $85
-        Supreme Commander 2 $90
-        SSX $95
-        SSX 3 $80
-        Rockstar Table Tennis $95
-        Tekken 6 $90
-        Texas Hold'em $40
-        TimeSplitters Future Perfect $75
-        TimeSplitters 2 $90
-        The Bureau $95
-        The King Of Fighters XIII $100
-        The Elder Scrolls III: Morrowind $85
-        The Maw $65
-        The Splatters $70
-        The Walking Dead: Michonne - Season Pass $65
-        The Walking Dead: Season Two - SEASON PASS $80
-        The Walking Dead: A Telltale Games Series (2,3,4,5) $80
-        Tom Clancy’s Splinter Cell® Blacklist™ $100
-        Tom Clancy's Ghost Recon Advanced Warfighter 2 $90
-        Tom Clancy's Rainbow Six Vegas $100
-        Tom Clancy's Rainbow Six Vegas 2 $95
-        Tom Clancy's Splinter Cell® Conviction™ $100
-        Tom Clancy's Splinter Cell® Chaos Theory $90
-        Tom Clancy's Splinter Cell® Double Agent™ $100
-        Torchlight $65
-        Toy Story 3 $100
-        Trials HD $70
-        Thrillville $80
-        Thrillville: FDC $85
-        Tropico 4 $75
-        Tron: Evolution $85
-        Unbound Saga $70
-        Unreal Tournament® 3 $85
-        VANQUISH $100
-        Virtua Fighter 5 Final Showdown $75
-        Viva Piñata: TIP $90
-        Viva Piñata Party Animals $90
-        Wolfenstein 3D $60
-        World Of Soccer $70
-        XCOM Enemy Within $100
-        XCOM Enemy Unknown $175`;
+        const retroGamesRaw = `🎮 Assassin's Creed $95
+        🎮 Assassin's Creed II $95
+        🎮 Assassin's Creed Revelations $95
+        🎮 Assassin's Creed® Rogue $100
+        🎮 A Kingdom for Keflings $75
+        🎮 A World of Kefling $75
+        🕹 Advent Rising $70
+        🎮 Adventure Time: The Secret of the Nameless Kingdom $90
+        🎮 Alan Wake $100
+        🎮 Alan Wake's American Nightmare $70
+        🎮 Alien Hominid HD $70
+        🎮 Army Of Two $100
+        🕹 Armed and Dangerous $85
+        🎮 Band of Bugs + DLC $95
+        🎮 Banjo-Kazooie $95
+        🎮 Banjo-Kazooie: Nuts & Bolts $95
+        🎮 Banjo-Tooie $90
+        🎮 BattleBlock Theater $80
+        🎮 Battlefield 1943 $70
+        🎮 Battlestations: Midway $100
+        🎮 Battlestations Pacific $100
+        🎮 BAYONETTA $95
+        🎮 Bellator: MMA Onslaught $75
+        🎮 BioShock Infinite $140
+        🎮 BioShock 2 $120
+        🕹 Black $100
+        🎮 BCFx-Doug Williams Ed. $85
+        🕹 BLiNX: The Time Sweeper $95
+        🎮 Blood Knights $70
+        🎮 Bloodforge $70
+        🕹 BloodRayne 2 $85
+        🎮 Blue Dragon $85
+        🎮 Borderlands $100
+        🎮 Borderlands 2 $100
+        🎮 Bound by Flame $85
+        🎮 Binary Domain $95
+        🎮 Braid $70
+        🎮 Brave $90
+        🕹 Breakdown $80
+        🎮 Brothers in Arms: Hell's Highway $85
+        🎮 Brutal Legend $90
+        🎮 Bully: Scholarship Edition $125
+        🎮 Cars 2 $95
+        🎮 Cars: La Copa Int. de Mate $95
+        🎮 Call of Duty®: World at War $145
+        🎮 Call of Duty® 2 $145
+        🎮 Call of Duty® 3 $145
+        🎮 Call of Duty®: Modern Warfare® 2 $165
+        🎮 Call of Duty®: Modern Warfare® 3 $165
+        🎮 Call of Duty® 4: Modern Warfare® $165
+        🎮 Call of Juarez: Bound in Blood $85
+        🎮 Call of Juarez: The Cartel $100
+        🎮 Call of Juarez Gunslinger $85
+        🎮 CAPCOM ARCADE CABINET $35
+        🎮 Castle of Illusion Starring Mickey Mouse $95
+        🎮 CastleStorm $70
+        🎮 Castlevania: Lords of Shadow $95
+        🎮 Castlevania: Lords of Shadow - Mirror of Fate HD $95
+        🎮 Castlevania: Lords of Shadow 2 $100
+        🎮 Castlevania: Symphony of the Night $75
+        🎮 Cloning Clyde $35
+        🕹 Chicken Little $85
+        🎮 Child Of Eden $85
+        🎮 Command and Conquer 3 Tiberium Wars $165
+        🎮 Comic Jumper $85
+        🎮 Conan $95
+        🎮 Condemned Criminal Origins $95
+        🕹 Conker: Live and Reloaded $95
+        🎮 Costume Quest $85
+        🎮 Costume Quest 2 $90
+        🕹 Crimson Skies: High Road to Revenge $85
+        🎮 CRYSTAL DEFENDERS $75
+        🎮 Crysis $145
+        🎮 Crysis 2 $100
+        🎮 Darksiders $100
+        🎮 Dark Void $165
+        🎮 De Blob 2 $95
+        🎮 Deadfall Adventures $100
+        🎮 DEADLY PREMONITION $95
+        🎮 DEAD RISING 2: CASE WEST $75
+        🎮 Dead Space $95
+        🎮 Dead Space 2 $100
+        🎮 Dead Space 3 $100
+        🕹 DEAD OR ALIVE 1 Ultimate $95
+        🕹 DEAD OR ALIVE 2 Ultimate $95
+        🕹 DEAD OR ALIVE 3 $100
+        🎮 Deadliest Warrior $70
+        🎮 Deadliest Warrior Legends $70
+        🎮 Death By Cube $100
+        🎮 DEUS EX: HUMAN REVOLUTION $200
+        🕹 Destroy All Humans! $95
+        🎮 Disney Bolt $90
+        🎮 Disney Epic Mickey El Poder de Dos $95
+        🎮 Double Dragon Neon $70
+        🎮 Dragon Age: Origins + DLC $100
+        🎮 Dragon's Lair $70
+        🎮 DuckTales Remastered $135
+        🎮 Dungeons & Dragons: Chronicles Of Mystara $165
+        🎮 Dungeon Siege III $90
+        🎮 Eat Lead $90
+        🎮 Earth Defense Force 2017 $95
+        🎮 Earth Defense Force 2025 $165
+        🎮 Enslaved $95
+        🎮 Escape Dead Island $80
+        🎮 Fable Anniversary $120
+        🎮 Fable II $90
+        🎮 Fable III $90
+        🎮 Fable Heroes $80
+        🎮 Faery: Legends Of Avalon $80
+        🎮 Far Cry Classic $70
+        🎮 Far Cry® 2 $85
+        🎮 Far Cry 3 $90
+        🎮 Far Cry® 3 Blood Dragon $85
+        🎮 F.E.A.R. 2 $185
+        🎮 FIGHT NIGHT CHAMPION $170
+        🎮 Fighting Vipers $40
+        🎮 FINAL FANTASY XIII $100
+        🎮 FINAL FANTASY XIII-2 $100
+        🎮 FFXIII LIGHTNING RETURNS $100
+        🎮 Flashback $75
+        🎮 Foul Play $65
+        🎮 From Dust $75
+        🎮 Frontlines:Fuel of War $85
+        🕹 Full Spectrum Warrior $85
+        🕹 Fuzion Frenzy $80
+        🎮 Gears Of War $120
+        🎮 Gears Of War 2 $120
+        🎮 Gears Of War 3 $120
+        🎮 Gears Of War: Judgment $120
+        🎮 Grand Theft Auto IV $100
+        🎮 Geometry Wars Evolved² $70 
+        🎮 Geometry Wars 3: Dimensions Evolved $75
+        🎮 Girl Fight $70
+        🎮 Goat Simulator $75
+        🕹 Gladius $75
+        🕹 Gunvalkyrie $70
+        🎮 Gyromancer $75
+        🎮 Hard Corps: Uprising $95
+        🎮 Haunted House $45
+        🎮 Heavy Weapon $90
+        🎮 Hitman HD Pack $95
+        🎮 Hitman: Absolution $95
+        🎮 Hitman: Blood Money $95
+        🕹 Hunter: The Reckoning $95
+        🎮 Hydro Thunder $75
+        🎮 Hydrophobia $65
+        🎮 I Am Alive $75
+        🎮 ilomilo $45
+        🕹 Indiana Jones And The Emperor's Tomb $95
+        🎮 Infinite Undiscovery $95
+        🎮 Injustice: GODS AMONG US $100
+        🎮 Insanely Twisted Shadow Planet $80
+        🕹 Jade Empire $75
+        🎮 Joy Ride Turbo $75
+        🎮 JUJU $80
+        🎮 Just Cause $90
+        🎮 Just Cause 2 $95
+        🎮 Kameo: Elements of Power $80
+        🎮 Kane & Lynch 2 $100
+        🎮 Killer Is Dead $90
+        🎮 Lazy Raiders $65
+        🎮 LEGO Indiana Jones: La trilogía original $100
+        🎮 LEGO® Indiana Jones™ 2 $100
+        🎮 LEGO Piratas del Caribe El Videojuego $100
+        🎮 LEGO Star Wars II: The Original Trilogy $135
+        🎮 LEGO Star Wars III $95
+        🎮 LEGO Star Wars: TCS $115
+        🎮 Lost Odyssey $100
+        🎮 Lost Planet 2 $170
+        🎮 Lost Planet 3 $185
+        🎮 Mafia II $100
+        🕹 Manhunt $135
+        🎮 Mars: War Logs $75
+        🎮 Marlow Briggs and the Mask of the Death $75
+        🎮 Mass Effect $85
+        🎮 Mass Effect 2 $95
+        🎮 Mass Effect 3 $120
+        🕹 Max Payne $125
+        🕹 Max Payne 2: The Fall of Max Payne $125
+        🎮 Max Payne 3 $150
+        🎮 Medal of Honor Airborne $135
+        🎮 Meet The Robinsons $95
+        🎮 METAL GEAR RISING: REVENGEANCE $100
+        🎮 METAL SLUG 3 $70
+        🕹 Mercenaries: Playground Of Destruction $80
+        🎮 Midnight Club: Los Angeles Complete $100
+        🎮 Midway Arcade Origins $80
+        🎮 Might & Magic Clash of Heroes $85
+        🎮 Mini Ninjas $85
+        🎮 Mirror’s Edge $95
+        🎮 Monaco: What’s Yours is Mine $70
+        🎮 Monday Night Combat $70
+        🎮 Monkey Island Special Edition $60
+        🎮 Monkey Island 2 Special Edition $70
+        🎮 Ms. Splosion Man $75
+        🎮 MX vs. ATV Alive $90
+        🎮 MX vs. ATV Reflex $85
+        🕹 MX Unleashed $85
+        🎮 NEOGEO BATTLE COLISEUM $65
+        🎮 NINJA GAIDEN 3: RE $140
+        🎮 NIER $185
+        🕹 Oddworld: Munch's Oddysee $85
+        🎮 Orcs Must Die! $70
+        🕹 Otogi: Myth of Demons $90
+        🕹 Otogi 2: Immortal Warriors $90
+        🎮 Outpost Kaloki X $65
+        🎮 Outland $70
+        🎮 Pac-Man: Championship Edition DX+ $65
+        🕹 Panzer Dragoon Orta $55
+        🎮 Peggle $65
+        🎮 Perfect Dark $70
+        🎮 Perfect Dark Zero $85
+        🎮 Planets Under Attack $75
+        🎮 Plantas vs Zombis $90
+        🎮 Portal: Still Alive $80
+        🎮 Port Royale 3 $85
+        🕹 Psychonauts $85
+        🎮 Putty Squad $75
+        🎮 Quantum Conundrum $65
+        🎮 Radiant Silvergun $75
+        🎮 Raskulls $65
+        🎮 Rayman® Origins $60
+        🎮 Rayman 3 HD $60
+        🎮 Rayman® Legends $95
+        🎮 R.A.W. - Realms of Ancient War $100
+        🎮 Red Dead Redemption + DLC $140
+        🕹 Red Dead Revolver $130
+        🎮 Red Faction: Armageddon $70
+        🕹 Red faction II $65
+        🎮 RESIDENT EVIL CODE: Veronica X $145
+        🎮 Rock Of Ages $70
+        🎮 Rumble Roses XX $85
+        🎮 Sacred Citadel $65
+        🎮 Sacred 2: Fallen Angel $95
+        🎮 Sacred 3 $95
+        🎮 Saints Row $85
+        🎮 Saints Row 2 $95
+        🎮 Saints Row: Gat Out of Hell $95
+        🎮 Saints Row®: The Third™ $90
+        🎮 Saints Row IV $100
+        🎮 ScreamRide $90
+        🕹 Secret Weapons Over Normandy $70
+        🎮 Shadow Complex $80
+        🎮 Shadowrun $85
+        🕹 Sid Meier's Pirates! $80
+        🕹 Sid Meier's Civilization Revolution $100
+        🎮 Sine Mora $70
+        🎮 Skate 3 $100
+        🎮 Skydive $50
+        🎮 Slender: The Arrival (2014) $70
+        🎮 Sniper Elite V2 $100
+        🎮 Sonic Unleashed $95
+        🎮 Sonic All-Star Racing Transformed $95
+        🎮 Space Invaders Infinity Gene $65
+        🎮 SpongeBob: Truth-Sq. $95
+        🎮 Split/Second $95
+        🎮 Splosion Man $65
+        🎮 Stacking $75
+        🎮 Star Ocean: The Last Hope $90
+        🕹 STAR WARS Battlefront $85
+        🕹 Star Wars Battlefront II $85
+        🕹 Star Wars Jedi Knight II: Jedi Outcast $75
+        🕹 Star Wars Episode III: Revenge Of The Sith $75
+        🕹 Star Wars Jedi Starfighter $80
+        🕹 STAR WARS Starfighter Special Edition $95
+        🕹 Star Wars Jedi Knight: Jedi Academy $80
+        🕹 Star Wars KOTOR II $75
+        🕹 Star Wars Republic Commando $90
+        🕹 Star Wars: The Clone Wars $85
+        🎮 Star Wars: The Force Unleashed $100
+        🎮 Star Wars: The Force Unleashed II $100
+        🕹 STAR WARS™ - Knights of the Old Republic™ $85
+        🎮 Street Fighters IV $165
+        🎮 SUPER STREETFIGHTER IV ARCADE EDITION $165
+        🎮 Super Meat Boy $85
+        🎮 Supreme Commander 2 $90
+        🎮 SSX $95
+        🕹 SSX 3 $80
+        🎮 Rockstar Table Tennis $95
+        🎮 Tekken 6 $90
+        🎮 Texas Hold'em $40
+        🕹 TimeSplitters Future Perfect $75
+        🕹 TimeSplitters 2 $90
+        🎮 The Bureau $95
+        🎮 The King Of Fighters XIII $100
+        🕹 The Elder Scrolls III: Morrowind $85
+        🎮 The Maw $65
+        🎮 The Splatters $70
+        🎮 The Walking Dead: Michonne - Season Pass $65
+        🎮 The Walking Dead: Season Two - SEASON PASS $80
+        🎮 The Walking Dead: A Telltale Games Series (2,3,4,5) $80
+        🎮 Tom Clancy’s Splinter Cell® Blacklist™ $100
+        🎮 Tom Clancy's Ghost Recon Advanced Warfighter 2 $90
+        🎮 Tom Clancy's Rainbow Six Vegas $100
+        🎮 Tom Clancy's Rainbow Six Vegas 2 $95
+        🎮 Tom Clancy's Splinter Cell® Conviction™ $100
+        🕹 Tom Clancy's Splinter Cell® Chaos Theory $90
+        🎮 Tom Clancy's Splinter Cell® Double Agent™ $100
+        🎮 Torchlight $65
+        🎮 Toy Story 3 $100
+        🎮 Trials HD $70
+        🕹 Thrillville $80
+        🎮 Thrillville: FDC $85
+        🎮 Tropico 4 $75
+        🎮 Tron: Evolution $85
+        🎮 Unbound Saga $70
+        🎮 Unreal Tournament® 3 $85
+        🎮 VANQUISH $100
+        🎮 Virtua Fighter 5 Final Showdown $75
+        🎮 Viva Piñata: TIP $90
+        🎮 Viva Piñata Party Animals $90
+        🎮 Wolfenstein 3D $60
+        🎮 World Of Soccer $70
+        🎮 XCOM Enemy Within $100
+        🎮 XCOM Enemy Unknown $175`;
 
         let parsedRetroGames = [];
         let selectedRetroGames = [];
+        const classicRetroGames = new Set(["Armed and Dangerous", "Black", "BLiNX: The Time Sweeper", "BloodRayne 2", "Breakdown", "Chicken Little", "Conker: Live and Reloaded", "Crimson Skies: High Road to Revenge", "DEAD OR ALIVE 1 Ultimate", "DEAD OR ALIVE 2 Ultimate", "DEAD OR ALIVE 3", "Destroy All Humans!", "Full Spectrum Warrior", "Fuzion Frenzy", "Gladius", "Gunvalkyrie", "Hunter: The Reckoning", "Indiana Jones And The Emperor's Tomb", "Jade Empire", "Manhunt", "Max Payne", "Max Payne 2: The Fall of Max Payne", "Mercenaries: Playground Of Destruction", "MX Unleashed", "Oddworld: Munch's Oddysee", "Otogi: Myth of Demons", "Otogi 2: Immortal Warriors", "Panzer Dragoon Orta", "Psychonauts", "Red Dead Revolver", "Red faction II", "Secret Weapons Over Normandy", "Sid Meier's Pirates!", "Sid Meier's Civilization Revolution", "STAR WARS Battlefront", "Star Wars Battlefront II", "Star Wars Jedi Knight II: Jedi Outcast", "Star Wars Episode III: Revenge Of The Sith", "Star Wars Jedi Starfighter", "STAR WARS Starfighter Special Edition", "Star Wars Jedi Knight: Jedi Academy", "Star Wars KOTOR II", "Star Wars Republic Commando", "Star Wars: The Clone Wars", "STAR WARS™ - Knights of the Old Republic™", "SSX 3", "TimeSplitters Future Perfect", "TimeSplitters 2", "The Elder Scrolls III: Morrowind", "Tom Clancy's Splinter Cell® Chaos Theory", "Thrillville"]);
+        function cleanRetroName(name) { return String(name).replace(/[🎮🕹�]/g, '').replace(/\s+/g, ' ').trim(); }
 
-        const xboxClassicTitles = new Set([
-                "Armed and Dangerous",
-                "Black",
-                "BLiNX: The Time Sweeper",
-                "BloodRayne 2",
-                "Breakdown",
-                "Chicken Little",
-                "Conker: Live and Reloaded",
-                "Crimson Skies: High Road to Revenge",
-                "DEAD OR ALIVE 1 Ultimate",
-                "DEAD OR ALIVE 2 Ultimate",
-                "DEAD OR ALIVE 3",
-                "Destroy All Humans!",
-                "Full Spectrum Warrior",
-                "Fuzion Frenzy",
-                "Gladius",
-                "Gunvalkyrie",
-                "Hunter: The Reckoning",
-                "Indiana Jones And The Emperor's Tomb",
-                "Jade Empire",
-                "Manhunt",
-                "Max Payne",
-                "Max Payne 2: The Fall of Max Payne",
-                "Mercenaries: Playground Of Destruction",
-                "MX Unleashed",
-                "Oddworld: Munch's Oddysee",
-                "Otogi: Myth of Demons",
-                "Otogi 2: Immortal Warriors",
-                "Panzer Dragoon Orta",
-                "Psychonauts",
-                "Red Dead Revolver",
-                "Red faction II",
-                "Secret Weapons Over Normandy",
-                "Sid Meier's Pirates!",
-                "Sid Meier's Civilization Revolution",
-                "STAR WARS Battlefront",
-                "Star Wars Battlefront II",
-                "Star Wars Jedi Knight II: Jedi Outcast",
-                "Star Wars Episode III: Revenge Of The Sith",
-                "Star Wars Jedi Starfighter",
-                "STAR WARS Starfighter Special Edition",
-                "Star Wars Jedi Knight: Jedi Academy",
-                "Star Wars KOTOR II",
-                "Star Wars Republic Commando",
-                "Star Wars: The Clone Wars",
-                "STAR WARS™ - Knights of the Old Republic™",
-                "SSX 3",
-                "TimeSplitters Future Perfect",
-                "TimeSplitters 2",
-                "The Elder Scrolls III: Morrowind",
-                "Tom Clancy's Splinter Cell® Chaos Theory",
-                "Thrillville"
-        ]);
 
         function initRetroGames() {
             let lines = retroGamesRaw.split('\n');
             lines.forEach((line, index) => {
-                const cleanLine = line.trim().replace(/^[\s🎮🕹\uFFFD\uFE0F]+/gu, '');
-                let match = cleanLine.match(/(.+?)\s+\$(\d+)/);
+                let match = line.trim().match(/(?:[🎮🕹�]\s*)?(.+?)\s+\$(\d+)/);
                 if(match) {
-                    const gameName = match[1].trim();
-                    const isClassic = xboxClassicTitles.has(gameName);
+                    const cleanName = cleanRetroName(match[1]);
+                    const isClassic = classicRetroGames.has(cleanName);
                     parsedRetroGames.push({
                         id: 'rg-' + index,
-                        platform: isClassic ? 'Xbox Clásico' : 'Xbox 360',
-                        platformShort: isClassic ? 'CLÁSICO' : '360',
-                        platformClass: isClassic ? 'platform-classic' : 'platform-360',
-                        name: gameName,
+                        platform: isClassic ? 'CLÁSICO' : '360',
+                        platformClass: isClassic ? 'classic' : 'x360',
+                        name: cleanName,
                         price: parseInt(match[2])
                     });
                 }
@@ -1948,6 +1912,30 @@
             const btn = document.querySelector('.cart-float-btn');
             btn.classList.add('pulse-glow');
             setTimeout(() => btn.classList.remove('pulse-glow'), 1400);
+        }
+
+        function openLoginModal() {
+            const account = JSON.parse(localStorage.getItem('vesselAccount') || '{}');
+            document.getElementById('loginName').value = account.name || '';
+            document.getElementById('loginPhone').value = account.phone || '';
+            document.getElementById('loginModal').classList.add('active');
+        }
+        function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
+        function saveLocalAccount() {
+            const name = document.getElementById('loginName').value.trim();
+            const phone = document.getElementById('loginPhone').value.trim();
+            if(!name || !phone) return alert('Agrega tu nombre y WhatsApp.');
+            localStorage.setItem('vesselAccount', JSON.stringify({ name, phone }));
+            document.getElementById('buyerName').value = name;
+            document.getElementById('cartNameInput').value = name;
+            closeLoginModal();
+            alert('Cuenta guardada en este dispositivo.');
+        }
+        function logoutLocalAccount() {
+            localStorage.removeItem('vesselAccount');
+            document.getElementById('loginName').value = '';
+            document.getElementById('loginPhone').value = '';
+            alert('Sesión local cerrada.');
         }
 
         /* --- MODAL PRINCIPAL DE PRODUCTO --- */
@@ -2145,7 +2133,7 @@
                     card.className = `retro-card ${isSelected ? 'selected' : ''}`;
                     card.onclick = () => toggleRetroGame(game.id);
                     card.innerHTML = `
-                        <div class="r-title"><span class="platform-badge ${game.platformClass}" title="${game.platform}">${game.platformShort}</span>${game.name}</div>
+                        <div class="r-title"><span class="retro-platform-badge ${game.platformClass}">${game.platform}</span>${game.name}</div>
                         <div class="r-bot">
                             <span class="r-price">${formatPrice(game.price)}</span>
                             ${isSelected ? '<span style="color:var(--accent);">✓ Agregado</span>' : '<span style="color:var(--text-dim); font-size:0.8rem;">+ Seleccionar</span>'}
@@ -2206,7 +2194,7 @@
                 displayStr = `${formatPrice(total)} (10% OFF Aplicado)`;
             }
 
-            let gamesListStr = selectedRetroGames.map(g => `${g.platformShort} - ${g.name}`).join(', ');
+            let gamesListStr = selectedRetroGames.map(g => `${g.platform} - ${g.name}`).join(', ');
 
             let cartItem = {
                 title: "Colección Xbox Retro",
