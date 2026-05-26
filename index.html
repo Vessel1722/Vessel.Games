@@ -577,6 +577,128 @@
         .brand-name { text-shadow: 0 0 10px rgba(138,43,226,.45) !important; }
         .brand-logo, .brand-word, .brand-name, .brand-tagline, .brand-mark { filter: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 
+
+
+
+        /* --- FIX DEFINITIVO MÓVIL: fondo visible + navegación alineada --- */
+        .hero-bg-fallback { display: none; }
+
+        @media (max-width: 768px) {
+            nav {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                align-items: stretch !important;
+                padding: 10px 12px !important;
+                gap: 10px !important;
+                overflow: hidden !important;
+            }
+
+            .brand-logo {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .menu-right {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+                overflow: hidden !important;
+            }
+
+            .menu {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: grid !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 7px !important;
+            }
+
+            .menu a,
+            .menu .btn-login {
+                min-width: 0 !important;
+                width: 100% !important;
+                padding: 10px 4px !important;
+                font-size: 0.62rem !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+
+            .currency-switcher {
+                width: 100% !important;
+                max-width: 100% !important;
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 6px !important;
+                padding: 6px !important;
+                overflow: hidden !important;
+            }
+
+            .currency-btn {
+                width: 100% !important;
+                min-width: 0 !important;
+                padding: 12px 8px !important;
+                text-align: center !important;
+            }
+
+            .hero {
+                min-height: 100svh !important;
+                height: auto !important;
+                padding: 190px 5% 34px !important;
+                background-color: #07070a !important;
+                background-image: radial-gradient(circle at center, rgba(7,7,10,0.08) 0%, rgba(7,7,10,0.50) 76%), url('https://i.imgur.com/XAIN1nS.gif') !important;
+                background-size: cover !important;
+                background-position: center center !important;
+                background-repeat: no-repeat !important;
+                overflow: hidden !important;
+            }
+
+            .hero-bg-video {
+                display: block !important;
+                position: absolute !important;
+                inset: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                object-position: center center !important;
+                opacity: 0.72 !important;
+                z-index: 0 !important;
+                filter: brightness(1.25) contrast(1.12) saturate(1.12) !important;
+            }
+
+            .hero-bg-fallback {
+                display: block !important;
+                position: absolute !important;
+                inset: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover !important;
+                object-position: center center !important;
+                z-index: 1 !important;
+                opacity: 0.92 !important;
+                pointer-events: none !important;
+            }
+
+            .hero::before {
+                z-index: 2 !important;
+                background: linear-gradient(180deg, rgba(5,5,8,0.24) 0%, rgba(5,5,8,0.38) 48%, rgba(5,5,8,0.68) 100%) !important;
+            }
+
+            .hero-content,
+            .hero-content > * {
+                position: relative !important;
+                z-index: 3 !important;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .hero { padding-top: 200px !important; }
+            .brand-name { font-size: 0.9rem !important; }
+            .brand-tagline { font-size: 0.56rem !important; }
+        }
+
     </style>
 </head>
 <body>
@@ -782,6 +904,7 @@
 
     <div class="hero">
         <video class="hero-bg-video" autoplay muted loop playsinline preload="auto" poster="https://i.imgur.com/XAIN1nS.gif" aria-hidden="true"><source src="https://i.imgur.com/XAIN1nS.mp4" type="video/mp4"></video>
+        <img class="hero-bg-fallback" src="https://i.imgur.com/XAIN1nS.gif" alt="" aria-hidden="true" referrerpolicy="no-referrer">
         <div class="hero-content">
             <div class="badge">CATÁLOGO DIGITAL · ENTREGA RÁPIDA</div>
             <h1>TU SIGUIENTE NIVEL <span>EMPIEZA</span> AQUÍ</h1>
