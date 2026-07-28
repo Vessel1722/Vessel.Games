@@ -13864,7 +13864,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 <div class="nav">
 <a class="brand" href="javascript:void(0)" onclick="showHome()"><img alt="Vessel Games logo" decoding="async" id="brandLogo" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop stop-color='%2319e6c1'/%3E%3Cstop offset='.55' stop-color='%238b5cf6'/%3E%3Cstop offset='1' stop-color='%23ff5da8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23080a12'/%3E%3Cpath d='M14 18h10l8 24 8-24h10L38 50H26L14 18z' fill='url(%23g)'/%3E%3Ccircle cx='48' cy='16' r='5' fill='%2319e6c1'/%3E%3C/svg%3E'"/><span>Vessel Games<small>Catálogo digital premium</small></span></a>
 <label class="searchbar">🔎 <input id="globalSearch" oninput="renderProducts()" placeholder="Buscar juegos, cuentas, software, monedas..."/></label>
-<div class="nav-actions"><button class="pill" onclick="openWhatsAppGeneral()">WhatsApp</button><button class="pill" onclick="showSection('all')">Catálogo</button>
+<div class="nav-actions"><button class="pill" onclick="vgOpenCotizar()">Cotizar</button><button class="pill" onclick="showSection('all')">Catálogo</button>
 <div aria-label="Cambiar moneda" class="vg-currency-toggle" id="vgCurrencyToggle">
 <button class="vg-currency-option active" data-currency="MXN" type="button">MXN</button>
 <button class="vg-currency-option" data-currency="USD" type="button">USD</button>
@@ -13888,7 +13888,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 <span class="badge">Entrega rápida · Catálogo digital</span>
 <h1>Tu siguiente nivel <span>empieza aquí</span></h1>
 <p class="lead">Marketplace digital con juegos, monedas, streaming, cuentas, software y servicios para redes. Elige una sección y entra a una interfaz dedicada para ver productos con foto, nombre, opciones y precio.</p>
-<div class="hero-actions"><button class="primary" onclick="showSection('all')">Ver catálogo completo</button><button class="secondary" onclick="openWhatsAppGeneral()">Pedir por WhatsApp</button></div>
+<div class="hero-actions"><button class="primary" onclick="showSection('all')">Ver catálogo completo</button><button class="secondary" onclick="vgOpenCotizar()">Cotizar un servicio</button></div>
 </div>
 </div>
 </div>
@@ -13957,7 +13957,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 </div>
 <div class="vg-faq-item">
 <button class="vg-faq-q" onclick="vgToggleFaq(this)"><span>¿Es seguro comprar aquí?</span><span class="vg-faq-icon">+</span></button>
-<div class="vg-faq-a">Sí. Todo el proceso de pago y entrega se confirma por WhatsApp directamente contigo. Puedes seguir el estado de tu pedido en el mismo chat.</div>
+<div class="vg-faq-a">Sí. Todo el proceso de pago y entrega se confirma en el chat de tu cuenta. Puedes seguir el estado de tu pedido ahí mismo.</div>
 </div>
 <div class="vg-faq-item">
 <button class="vg-faq-q" onclick="vgToggleFaq(this)"><span>¿Qué hago si ya pagué y no recibo nada?</span><span class="vg-faq-icon">+</span></button>
@@ -14232,11 +14232,11 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 </article>
 <article class="condition-service-card">
 <b>Pedidos especiales</b>
-<p>Si buscas algo que no aparece en el catálogo, puedes cotizarlo directamente por WhatsApp antes de pagar.</p>
+<p>Si buscas algo que no aparece en el catálogo, pide tu cotización desde el chat de tu cuenta y te respondemos ahí mismo.</p>
 </article>
 </div>
 <div class="conditions-service-note">
-<b>Nota:</b> Todo pedido se confirma por WhatsApp antes de procesarse para evitar errores en producto, opción, precio o método de pago.
+<b>Nota:</b> Todo pedido se confirma en el chat de tu cuenta antes de procesarse para evitar errores en producto, opción, precio o método de pago.
           </div>
 </section>
 <div id="vgToast"><div class="vg-toast-icon">✓</div><div class="vg-toast-text"><b>Agregado al carrito</b><span>Puedes seguir comprando sin abrir el carrito.</span></div></div>
@@ -14244,7 +14244,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 <div class="vg-clean-footer">
 <div>
 <b>Vessel Games</b>
-<p>Catálogo digital premium · Atención por WhatsApp · Entrega estimada de 20 minutos a 2 horas según flujo de pedidos.</p>
+<p>Catálogo digital premium · Atención por chat en el sitio · Entrega estimada de 20 minutos a 2 horas según flujo de pedidos.</p>
 <div class="vg-footer-payments">
 <span class="vg-footer-payments-label">Métodos de pago aceptados</span>
 <div class="vg-footer-payment-badges">
@@ -14256,7 +14256,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 </div>
 </div>
 <div class="vg-clean-footer-links">
-<a href="javascript:void(0)" onclick="openWhatsAppGeneral()">WhatsApp</a>
+<a href="javascript:void(0)" onclick="vgOpenCotizar()">Cotizar</a>
 <a href="#condiciones-servicio">Condiciones</a>
 <a href="javascript:void(0)" onclick="showSection('all')">Catálogo</a>
 </div>
@@ -15456,16 +15456,34 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
   }
 
   function registerPriceNodes(){
+    /* Esta lista se quedaba corta: la oferta principal (#ffOfferPrice,
+       #ffOnlyPrice), el modal de pago y varias vistas de producto no
+       estaban, así que al cambiar a USD esos precios seguían en pesos. */
     const selectors = [
       '.price',
       '.service-carousel-price',
       '.vg-retro-price',
-      '#retroSubtotal',
-      '#retroDiscount',
-      '#retroTotal',
+      '.retro-price',
+      '.vg-xbox-price',
+      '.vgqv-price',
+      '.cart-price-box',
+      /* Los totales del retro NO van aquí: se escriben solos en la
+         moneda elegida (ver updateRetroDOMTotals). Si además los
+         convirtiera este módulo, los dos se pisarían y volvería el
+         parpadeo entre MXN y USD. */
       '#cartSubtotal',
       '#cartTotal',
       '#modalPrice',
+      /* Oferta principal del inicio: el total y CADA paquete */
+      '#ffOfferPrice',
+      '#ffOnlyPrice',
+      '#fPrice',
+      '.ff-package em',
+      '.ff-only-package em',
+      '.vgoffer-pkg-row .price',
+      /* Modal de pago */
+      '#payModalTotal',
+      '#payOriginalTotal',
       '.option strong',
       '.option-price'
     ];
@@ -15473,7 +15491,14 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
     document.querySelectorAll(selectors.join(',')).forEach(node => {
       const text = node.textContent || '';
       if(!text.includes('$')) return;
-      if(!node.dataset.vgMxn){
+      /* Se vuelve a leer si el texto sigue en pesos. Antes solo se
+         guardaba la primera vez, y en totales que cambian solos (los
+         del modal retro, el carrito) el valor del caché se quedaba
+         viejo: al convertir se escribía un importe equivocado y el
+         código de la tienda lo reescribía en pesos, entrando los dos
+         en un ciclo de ida y vuelta. */
+      const enPesos = /MXN/i.test(text) || !/USD/i.test(text);
+      if(!node.dataset.vgMxn || enPesos){
         const parsed = parseMoney(text);
         if(parsed !== null && !Number.isNaN(parsed)){
           node.dataset.vgMxn = String(parsed);
@@ -15482,14 +15507,30 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
     });
   }
 
+  /* Expresión del importe con su moneda, para poder sustituir SOLO esa
+     parte y no borrar el texto que la rodea. */
+  const RE_IMPORTE = /-?\$\s*[\d,]+(?:\.\d+)?(?:\s*(?:MXN|USD))?/i;
+
   function updatePrices(){
     registerPriceNodes();
 
-    document.querySelectorAll('[data-vg-mxn], [data-vgMxn]').forEach(node => {
-      const raw = node.dataset.vgMxn || node.dataset.vgMxn;
-      const value = Number(raw);
+    document.querySelectorAll('[data-vg-mxn]').forEach(node => {
+      const value = Number(node.dataset.vgMxn);
       if(Number.isNaN(value)) return;
-      node.textContent = currentCurrency === 'USD' ? usd(value) : mxn(value);
+      const nuevo = currentCurrency === 'USD' ? usd(value) : mxn(value);
+      const actual = node.textContent || '';
+
+      /* Si el nodo lleva más texto que el precio (por ejemplo el botón
+         "Comprar 3 juegos · $15 MXN"), se reemplaza únicamente el
+         importe. Antes se sobrescribía todo el contenido y el botón
+         se quedaba solo con la cifra. */
+      const soloPrecio = actual.trim().replace(RE_IMPORTE, '').trim() === '';
+      if(soloPrecio){
+        if(actual !== nuevo) node.textContent = nuevo;
+      }else if(RE_IMPORTE.test(actual)){
+        const reemplazado = actual.replace(RE_IMPORTE, nuevo);
+        if(actual !== reemplazado) node.textContent = reemplazado;
+      }
     });
   }
 
@@ -15505,6 +15546,45 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
     try{ localStorage.setItem('vg_currency', currentCurrency); }catch(e){}
   }
 
+  /* Se expone el formateador para que el resto del sitio pueda escribir
+     los importes ya en la moneda elegida, en vez de escribirlos en pesos
+     y que este módulo los reconvierta después. Eso último provocaba
+     parpadeo en los totales que se refrescan solos (el modal retro los
+     reescribe cada 800 ms). */
+  window.vgFormatPrecio = function(valorMXN){
+    var n = Number(valorMXN||0);
+    return currentCurrency === 'USD' ? usd(n) : mxn(n);
+  };
+  window.vgMonedaActual = function(){ return currentCurrency; };
+
+  /* El catálogo se repinta al filtrar, buscar o abrir un modal, y esos
+     precios nuevos nacían siempre en pesos aunque el cliente hubiera
+     elegido USD. Este vigilante los convierte en cuanto aparecen.
+     La bandera "aplicando" evita que el propio cambio de texto vuelva
+     a disparar el observador en bucle. */
+  let aplicandoMoneda = false;
+  function vigilarPreciosNuevos(){
+    if(!document.body) return;
+    let pendiente = false;
+    new MutationObserver(() => {
+      if(aplicandoMoneda || pendiente) return;
+      pendiente = true;
+      /* Se usa setTimeout y NO requestAnimationFrame: rAF no se ejecuta
+         cuando la pestaña está en segundo plano o no visible, y ahí los
+         precios nuevos se quedaban en pesos hasta volver a la pestaña. */
+      setTimeout(() => {
+        pendiente = false;
+        if(currentCurrency === 'MXN') return;   /* en pesos no hay nada que convertir */
+        aplicandoMoneda = true;
+        try{ updatePrices(); }
+        finally{ setTimeout(() => { aplicandoMoneda = false; }, 30); }
+      }, 60);
+    }).observe(document.body, {childList:true, subtree:true});
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', vigilarPreciosNuevos);
+  else vigilarPreciosNuevos();
+
   function addTrustStrip(){
     const hero = document.querySelector('.hero .lead, .hero p');
     if(hero && !document.querySelector('.vg-trust-strip')){
@@ -15512,7 +15592,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
       strip.className = 'vg-trust-strip';
       strip.innerHTML = `
         <span class="vg-trust-chip">⏱ Entrega 20 min - 2 hrs</span>
-        <span class="vg-trust-chip purple">💬 Confirmación por WhatsApp</span>
+        <span class="vg-trust-chip purple">💬 Chat de entrega en el sitio</span>
         <span class="vg-trust-chip green">✓ Catálogo digital</span>
       `;
       hero.insertAdjacentElement('afterend', strip);
@@ -15880,7 +15960,19 @@ function readRetroSelectedFromDOM(){
   const cards=$$('#retroGridContainer .vg-retro-game.active,#retroGridContainer .retro-game.active');
   return cards.map(card=>{
     const name=(card.querySelector('h4')?.textContent||'Juego Xbox Retro').trim();
-    const price=parseMoney(card.querySelector('.vg-retro-price,.retro-price')?.textContent||'0');
+    const nodo=card.querySelector('.vg-retro-price,.retro-price');
+    /* SIEMPRE se suma en pesos. El módulo de moneda guarda el importe
+       original en data-vg-mxn; si en su lugar se leyera el texto que se
+       ve en pantalla, estando en USD se sumarían dólares como si fueran
+       pesos y el total se volvería a convertir: 4.12+4.12+5.88 acababa
+       mostrando $0.83 USD en vez de $14.12 USD. */
+    let price=0;
+    if(nodo){
+      const guardado=nodo.dataset ? nodo.dataset.vgMxn : null;
+      price = (guardado!=null && guardado!=='' && !isNaN(Number(guardado)))
+        ? Number(guardado)
+        : parseMoney(nodo.textContent||'0');
+    }
     return {name,price};
   }).filter(g=>g.name);
 }
@@ -15892,13 +15984,21 @@ function retroCalcDOM(){
 }
 function updateRetroDOMTotals(){
   const t=retroCalcDOM();
+  /* Se escribe directamente en la moneda elegida. Antes se escribía
+     siempre en pesos y el módulo de moneda lo reconvertía a dólares;
+     como esta función corre cada 800 ms, los dos se pisaban y el total
+     parpadeaba entre MXN y USD sin parar. */
+  const f = (typeof window.vgFormatPrecio === 'function') ? window.vgFormatPrecio : money;
   const c=$('#retroCount'), s=$('#retroSubtotal'), d=$('#retroDiscount'), total=$('#retroTotal');
   if(c) c.textContent=t.games.length;
-  if(s) s.textContent=money(t.subtotal);
-  if(d) d.textContent='-'+money(t.discount);
-  if(total) total.textContent=money(t.total);
+  if(s && s.textContent!==f(t.subtotal)) s.textContent=f(t.subtotal);
+  if(d && d.textContent!=='-'+f(t.discount)) d.textContent='-'+f(t.discount);
+  if(total && total.textContent!==f(t.total)) total.textContent=f(t.total);
   const btn=$('#retroModal .retro-footer .modal-actions .primary.whatsapp');
-  if(btn) btn.textContent=t.games.length?`Comprar ${t.games.length} juego${t.games.length===1?'':'s'} · ${money(t.total)}`:'Selecciona juegos para comprar';
+  if(btn){
+    const txt=t.games.length?`Comprar ${t.games.length} juego${t.games.length===1?'':'s'} · ${f(t.total)}`:'Selecciona juegos para comprar';
+    if(btn.textContent!==txt) btn.textContent=txt;
+  }
   return t;
 }
 const oldToggle=window.toggleRetroGame;
@@ -24160,6 +24260,21 @@ async function loadProfileAndSaveSession(user){
 }
 
 /* ── UI del modal (login / registro con email) ── */
+/* Ladas de los países de habla hispana con más compradores, más los
+   de mayor volumen en la región. México va primero por ser el mercado
+   principal. Para agregar otro, basta con añadirlo a esta lista. */
+var LADAS = [
+  ['+52','🇲🇽 +52'],  ['+54','🇦🇷 +54'],  ['+57','🇨🇴 +57'],  ['+56','🇨🇱 +56'],
+  ['+51','🇵🇪 +51'],  ['+58','🇻🇪 +58'],  ['+593','🇪🇨 +593'],['+591','🇧🇴 +591'],
+  ['+595','🇵🇾 +595'],['+598','🇺🇾 +598'],['+502','🇬🇹 +502'],['+503','🇸🇻 +503'],
+  ['+504','🇭🇳 +504'],['+505','🇳🇮 +505'],['+506','🇨🇷 +506'],['+507','🇵🇦 +507'],
+  ['+509','🇭🇹 +509'],['+53','🇨🇺 +53'],  ['+1','🇺🇸 +1'],   ['+34','🇪🇸 +34'],
+  ['+55','🇧🇷 +55'],  ['+351','🇵🇹 +351']
+];
+var LADAS_HTML = LADAS.map(function(l){
+  return '<option value="'+l[0]+'">'+l[1]+'</option>';
+}).join('');
+
 function buildAuthModal(){
   var modal = qs('#vg10Auth');
   if(!modal) return;
@@ -24180,15 +24295,39 @@ function buildAuthModal(){
        '<input id="vgAuthLEmail" type="email" placeholder="Correo electrónico" autocomplete="email">' +
        '<input id="vgAuthLPass" type="password" placeholder="Contraseña" autocomplete="current-password">' +
        '<button class="vg10-btn primary" type="button" id="vg10LoginBtn" style="width:100%;margin-top:6px">Entrar a mi cuenta</button>' +
+       '<button type="button" id="vgAuthOlvide" style="width:100%;margin-top:10px;background:none;border:0;color:#19e6c1;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:underline">Olvidé mi contraseña</button>' +
      '</div>' +
      /* REGISTRO */
      '<div id="vgAuthReg" style="display:none">' +
        '<input id="vgAuthRName" placeholder="Tu nombre" autocomplete="name">' +
        '<input id="vgAuthREmail" type="email" placeholder="Correo electrónico" autocomplete="email">' +
-       '<input id="vgAuthRPhone" type="tel" placeholder="WhatsApp (ej: 6611234567)" autocomplete="tel">' +
+       /* Lada aparte del número: así el teléfono queda bien guardado
+          para clientes de cualquier país, no solo de México. */
+       /* align-items:flex-start + el mismo margen abajo en los dos:
+          sin esto, el input hereda margin-bottom del modal y el select
+          no, y quedaban desalineados verticalmente. */
+       /* Se fija el margen COMPLETO en los dos: el modal aplica un
+          margin-top a los <input> que el <select> no hereda, y eso los
+          dejaba desalineados 8px en vertical. */
+       '<div style="display:flex;gap:8px;align-items:stretch">' +
+         '<select id="vgAuthRCC" style="width:118px;flex:none;margin:8px 0;height:48px">' + LADAS_HTML + '</select>' +
+         '<input id="vgAuthRPhone" type="tel" placeholder="Tu WhatsApp" autocomplete="tel" style="flex:1;min-width:0;margin:8px 0;height:48px">' +
+       '</div>' +
        '<input id="vgAuthRPass" type="password" placeholder="Contraseña (mínimo 6)" autocomplete="new-password">' +
        '<button class="vg10-btn primary" type="button" id="vg10RegBtn" style="width:100%;margin-top:6px">Crear cuenta gratis</button>' +
        '<p style="font-size:12px;color:#6b7590;text-align:center;margin:10px 0 0">Tu WhatsApp se usa solo para tus pedidos y entregas.</p>' +
+     '</div>' +
+     /* RECUPERAR CONTRASEÑA */
+     '<div id="vgAuthRecuperar" style="display:none">' +
+       '<p style="color:#9fb0ca;font-size:13px;margin:0 0 12px;line-height:1.5">Escribe el correo con el que te registraste. Verificaremos tu cuenta y te enviaremos una contraseña nueva por WhatsApp.</p>' +
+       '<input id="vgAuthRecEmail" type="email" placeholder="Correo electrónico" autocomplete="email">' +
+       '<div id="vgAuthRecInfo" style="display:none;margin:10px 0;padding:12px 14px;border-radius:12px;border:1px solid rgba(25,230,193,.30);background:rgba(25,230,193,.07)">' +
+         '<span style="display:block;color:#8ff5e3;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Cuenta encontrada</span>' +
+         '<b id="vgAuthRecNombre" style="display:block;color:#fff;font-size:14px"></b>' +
+         '<span id="vgAuthRecTel" style="display:block;color:#c4cee6;font-size:13px;margin-top:3px"></span>' +
+       '</div>' +
+       '<button class="vg10-btn primary" type="button" id="vgAuthRecBtn" style="width:100%;margin-top:6px">Solicitar cambio de contraseña</button>' +
+       '<button type="button" id="vgAuthRecVolver" style="width:100%;margin-top:10px;background:none;border:0;color:#9fb0ca;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit">Volver a iniciar sesión</button>' +
      '</div>' +
    '</div>';
 
@@ -24197,18 +24336,43 @@ function buildAuthModal(){
   qs('[data-vgauth-close]').onclick = closeAuth;
   qs('#vg10LoginBtn').onclick = doLogin;
   qs('#vg10RegBtn').onclick  = doRegister;
+
+  /* ── Recuperar contraseña ── */
+  qs('#vgAuthOlvide').onclick = function(){
+    switchTab('recuperar');
+    var e=qs('#vgAuthLEmail').value.trim();
+    if(e){ qs('#vgAuthRecEmail').value=e; buscarCuenta(); }
+  };
+  qs('#vgAuthRecVolver').onclick = function(){ switchTab('login'); };
+
+  /* Al escribir el correo se carga solo su teléfono, para que el
+     cliente confirme que es su cuenta antes de pedir el cambio. */
+  var tBusca=null;
+  qs('#vgAuthRecEmail').oninput = function(){
+    clearTimeout(tBusca);
+    qs('#vgAuthRecInfo').style.display='none';
+    tBusca=setTimeout(buscarCuenta, 550);
+  };
+  qs('#vgAuthRecBtn').onclick = solicitarCambio;
   modal.addEventListener('click', function(e){ if(e.target === modal) closeAuth(); });
   ['vgAuthLPass','vgAuthRPass'].forEach(function(id){
     var el = qs('#'+id); if(el) el.addEventListener('keydown', function(e){ if(e.key==='Enter'){ id==='vgAuthLPass'?doLogin():doRegister(); } });
   });
 }
 function switchTab(tab){
-  var isLogin = tab==='login';
-  qs('#vgAuthLogin').style.display = isLogin ? '' : 'none';
-  qs('#vgAuthReg').style.display   = isLogin ? 'none' : '';
-  qs('#vgAuthTabL').className = 'vg10-btn' + (isLogin?' primary':'');
-  qs('#vgAuthTabR').className = 'vg10-btn' + (isLogin?'':' primary');
-  qs('#vgAuthTabL').style.flex = '1'; qs('#vgAuthTabR').style.flex = '1';
+  var isLogin = tab==='login', esRec = tab==='recuperar';
+  qs('#vgAuthLogin').style.display = (isLogin && !esRec) ? '' : 'none';
+  qs('#vgAuthReg').style.display   = (tab==='register') ? '' : 'none';
+  var rec=qs('#vgAuthRecuperar'); if(rec) rec.style.display = esRec ? '' : 'none';
+  /* En la vista de recuperación se ocultan las pestañas: es un paso
+     aparte y tenerlas ahí solo confunde. */
+  var tabs=qs('#vgAuthTabL') ? qs('#vgAuthTabL').parentNode : null;
+  if(tabs) tabs.style.display = esRec ? 'none' : 'flex';
+  if(!esRec){
+    qs('#vgAuthTabL').className = 'vg10-btn' + (isLogin?' primary':'');
+    qs('#vgAuthTabR').className = 'vg10-btn' + (isLogin?'':' primary');
+    qs('#vgAuthTabL').style.flex = '1'; qs('#vgAuthTabR').style.flex = '1';
+  }
   msg('');
 }
 function msg(text, ok){
@@ -24216,6 +24380,52 @@ function msg(text, ok){
   el.textContent = text || '';
   el.style.color = ok ? '#34d399' : '#fb7185';
 }
+
+/* ── Recuperación de contraseña ─────────────────────────────── */
+async function buscarCuenta(){
+  var email=(qs('#vgAuthRecEmail')||{}).value||'';
+  var caja=qs('#vgAuthRecInfo');
+  if(!caja) return;
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())){ caja.style.display='none'; return; }
+  var c=SB(); if(!c) return;
+  try{
+    var r=await c.rpc('vg_buscar_cuenta',{p_email:email.trim()});
+    if(r.error || !r.data || !r.data.existe){ caja.style.display='none'; return; }
+    var d=r.data;
+    qs('#vgAuthRecNombre').textContent = d.nombre || 'Cliente';
+    qs('#vgAuthRecTel').textContent = d.tiene_telefono
+      ? 'WhatsApp: '+(d.phone_cc||'')+' '+(d.phone_oculto||'')
+      : 'Sin teléfono registrado';
+    caja.style.display='';
+  }catch(e){ caja.style.display='none'; }
+}
+
+async function solicitarCambio(){
+  var btn=qs('#vgAuthRecBtn');
+  var email=(qs('#vgAuthRecEmail').value||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg('Escribe un correo válido.'); return; }
+  var c=SB(); if(!c){ msg('No hay conexión con el servidor.'); return; }
+  btn.disabled=true; btn.textContent='Enviando...';
+
+  /* Proceso MANUAL a propósito: la solicitud llega a tu panel de
+     Soporte y tú generas la contraseña y se la mandas. Se descartó el
+     envío automático por correo porque depende de tener SMTP propio
+     configurado; sin él, Supabase limita los envíos a unos pocos por
+     hora y muchos caen en spam, dejando al cliente sin poder entrar. */
+  try{
+    await c.rpc('vg_solicitar_password',{p_email:email});
+    /* Se responde igual exista o no la cuenta: decir "ese correo no
+       está registrado" permitiría averiguar quién tiene cuenta. */
+    msg('Recibimos tu solicitud. Te contactaremos para darte tu contraseña nueva.', true);
+    btn.style.display='none';
+    qs('#vgAuthRecInfo').style.display='none';
+  }catch(e){
+    msg('No se pudo enviar: '+(e.message||e));
+  }finally{
+    btn.disabled=false; btn.textContent='Solicitar cambio de contraseña';
+  }
+}
+
 function openAuth(){ buildAuthModal(); var m=qs('#vg10Auth'); if(m) m.classList.add('active'); }
 function closeAuth(){ var m=qs('#vg10Auth'); if(m) m.classList.remove('active'); window.__vgAuthIntent = null; }
 
@@ -24245,6 +24455,7 @@ async function doRegister(){
   var name  = (qs('#vgAuthRName')||{}).value || '';
   var email = ((qs('#vgAuthREmail')||{}).value || '').trim().toLowerCase();
   var phone = onlyDigits((qs('#vgAuthRPhone')||{}).value || '');
+  var cc    = ((qs('#vgAuthRCC')||{}).value || '+52');
   var pass  = (qs('#vgAuthRPass')||{}).value || '';
   if(!name.trim()){ msg('Escribe tu nombre.'); return; }
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg('Correo inválido.'); return; }
@@ -24255,7 +24466,7 @@ async function doRegister(){
   try{
     var r = await c.auth.signUp({
       email: email, password: pass,
-      options: { data: { name: name.trim(), phone: phone } }
+      options: { data: { name: name.trim(), phone: phone, phone_cc: cc } }
     });
     if(r.error){
       var m0 = r.error.message || '';
@@ -26103,6 +26314,49 @@ else init();
   color:#ffd68a;font-size:.82rem;line-height:1.5;
 }
 .vgtk-pend b{color:#fff}
+
+/* ── Tarjeta de canje con el mensaje del admin ──
+   Aquí es donde el cliente reclama su premio: el mensaje que le
+   escribes al entregar (código, correo y contraseña, instrucciones)
+   se muestra destacado y con botón de copiar. */
+.vgtk-canje{
+  padding:12px 13px;border-radius:14px;margin-bottom:9px;
+  border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);
+}
+.vgtk-canje.con-premio{
+  border-color:rgba(25,230,193,.38);
+  background:linear-gradient(160deg,rgba(25,230,193,.10),rgba(255,255,255,.02));
+}
+.vgtk-canje-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.vgtk-canje-top b{display:block;color:#fff;font-size:.88rem}
+.vgtk-canje-top small{display:block;color:#8e9cba;font-size:.68rem;margin-top:2px}
+.vgtk-canje-top .vg17-chip{flex:none;margin-top:0}
+
+.vgtk-premio-msg{margin-top:10px}
+.vgtk-premio-msg > span{
+  display:block;color:#8ff5e3;font-size:.63rem;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;
+}
+.vgtk-premio-msg .dato{
+  padding:11px 13px;border-radius:11px;white-space:pre-line;word-break:break-word;
+  background:rgba(0,0,0,.32);border:1px solid rgba(25,230,193,.30);
+  color:#e8f7f3;font-size:.85rem;line-height:1.5;
+  /* Monoespaciada: distingue la l de la 1 y la O del 0, que es donde
+     la gente se equivoca al teclear una contraseña o un código. */
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.vgtk-premio-msg .vg17-copy{margin-top:9px}
+
+.vgtk-nota-msg{margin-top:9px}
+.vgtk-nota-msg > span{
+  display:block;color:#8e9cba;font-size:.62rem;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;
+}
+.vgtk-nota-msg > div{
+  padding:10px 12px;border-radius:11px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);
+  color:#c4cee6;font-size:.81rem;line-height:1.5;white-space:pre-line;
+}
 @media(max-width:640px){
   .vgtk-prem-grid{grid-template-columns:1fr}
 }
@@ -26526,6 +26780,7 @@ function clientShell(){
     '<div class="vg17-tabs">'+
       '<button class="vg17-tab" data-v="purchases">Mis compras</button>'+
       '<button class="vg17-tab" data-v="tickets">Reportar falla</button>'+
+      '<button class="vg17-tab" data-v="cotizar">Cotizar</button>'+
       '<button class="vg17-tab" data-v="tokens">Mis tokens</button>'+
       '<button class="vg17-tab" data-v="mytickets">Mis reportes</button>'+
     '</div><div id="vg17CBody"></div></div>';
@@ -26579,6 +26834,7 @@ async function loadClient(){
   qsa('#vg17Client .vg17-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.v===C.view); });
   body.innerHTML='<div class="vg17-empty">Cargando...</div>';
   if(C.view==='tickets')   return renderTicketForm(body);
+  if(C.view==='cotizar')   return renderCotizar(body);
   if(C.view==='tokens')    return renderTokens(body);
   if(C.view==='mytickets') return renderMyTickets(body);
   try{ C.orders = await myOrders(); }
@@ -26844,6 +27100,67 @@ async function renderTicketForm(body){
 }
 
 /* ── Mis tokens: saldo, link de referido e historial ──────────── */
+/* ── Cotizar un servicio desde el chat interno ─────────────────
+   Sustituye lo que antes mandaba a WhatsApp. La cotización entra como
+   un pedido en estado "pendiente" sin monto, así te llega a la bandeja
+   igual que una compra y le puedes responder por el mismo chat. */
+async function renderCotizar(body){
+  var c=SB(); if(!c){ body.innerHTML='<div class="vg17-empty">Sin conexión.</div>'; return; }
+  body.innerHTML=
+    '<div class="vg17-box vg17-form">'+
+      '<h3 style="margin:0 0 4px;color:#fff">¿No encuentras lo que buscas?</h3>'+
+      '<p style="margin:0 0 16px;color:#93a0bd;font-size:.82rem;line-height:1.5">'+
+        'Dinos qué necesitas y te cotizamos aquí mismo, en el chat de tu cuenta. '+
+        'Te respondemos con el precio y la disponibilidad.</p>'+
+      '<label><span>¿Qué servicio o juego buscas? *</span>'+
+        '<input id="cz_que" placeholder="Ej. Xbox Game Pass 3 meses, monedas de FIFA, licencia Office..."></label>'+
+      '<label><span>Plataforma o región <i style="color:#8e9cba;font-style:normal">(si aplica)</i></span>'+
+        '<input id="cz_plat" placeholder="Ej. Xbox Series, PC, cuenta de México..."></label>'+
+      '<label><span>Detalles adicionales</span>'+
+        '<textarea id="cz_detalle" placeholder="Cantidad, fechas, o cualquier dato que nos ayude a cotizarte mejor."></textarea></label>'+
+      '<div class="vg17-err" id="cz_err"></div><div class="vg17-ok" id="cz_ok"></div>'+
+      '<button class="vg17-btn primary" id="cz_send" style="width:100%">Enviar cotización</button>'+
+    '</div>';
+
+  qs('#cz_send').onclick=async function(){
+    var err=qs('#cz_err'), ok=qs('#cz_ok'), btn=this;
+    err.textContent=''; ok.textContent='';
+    var que=(qs('#cz_que').value||'').trim();
+    var plat=(qs('#cz_plat').value||'').trim();
+    var det=(qs('#cz_detalle').value||'').trim();
+    if(que.length<3){ err.textContent='Escribe qué servicio o juego buscas.'; return; }
+    btn.disabled=true; btn.textContent='Enviando...';
+    try{
+      var titulo='Cotización: '+que;
+      var r=await c.rpc('vg_create_order_v17',{
+        p_items:[{title:titulo, option:plat||'Sin especificar', price:0}],
+        p_total:0,
+        p_product_title:titulo,
+        p_product_option:plat||'',
+        p_delivery_data:det||'',
+        p_source:'cotizacion'
+      });
+      if(r.error) throw r.error;
+      ok.textContent='✅ Cotización enviada. Te respondemos en el chat de este pedido.';
+      var id=r.data && (r.data.id || (r.data[0]&&r.data[0].id));
+      setTimeout(function(){ C.view='purchases'; C.ref=id?String(id):null; loadClient(); }, 1300);
+    }catch(e){ err.textContent='No se pudo enviar: '+(e.message||e); }
+    finally{ btn.disabled=false; btn.textContent='Enviar cotización'; }
+  };
+}
+
+/* Abre el panel directo en la cotización. Si no hay sesión, primero
+   se pide entrar: la cotización necesita una cuenta para poder
+   responderle al cliente por su chat. */
+window.vgOpenCotizar=function(){
+  var c=SB();
+  if(!c){ alert('No hay conexión con el servidor.'); return; }
+  c.auth.getSession().then(function(s){
+    if(s && s.data && s.data.session) window.vgOpenClientPanel('cotizar');
+    else if(window.vgOpenAuth) window.vgOpenAuth();
+  });
+};
+
 async function renderTokens(body){
   var c=SB();
   if(!c){ body.innerHTML='<div class="vg17-empty">Sin conexión.</div>'; return; }
@@ -26954,13 +27271,33 @@ async function pintarRecompensas(){
       }).join('')+
     '</div>'+
     (hist.length
-      ? '<div style="margin-top:14px"><span style="display:block;color:#8e9cba;font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Tus canjes</span>'+
+      ? '<div style="margin-top:16px"><span style="display:block;color:#8e9cba;font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px">Tus canjes</span>'+
         hist.map(function(h){
-          var col = h.estado==='entregada'?'entregado':h.estado==='rechazada'?'cancelado':'pendiente';
-          var txt = h.estado==='entregada'?'Entregada':h.estado==='rechazada'?'Rechazada':'En proceso';
-          return '<div class="vgtk-mov"><div><b>'+esc(h.reward_nombre)+'</b>'+
-            '<small>'+esc(hace(h.created_at))+'</small></div>'+
-            '<span class="vg17-chip '+col+'">'+txt+'</span></div>';
+          var entregada = h.estado==='entregada';
+          var rechazada = h.estado==='rechazada';
+          var col = entregada?'entregado':rechazada?'cancelado':'pendiente';
+          var txt = entregada?'Entregada':rechazada?'Rechazada':'En proceso';
+          var nota = (h.nota_admin||'').trim();
+          return '<div class="vgtk-canje'+(entregada&&nota?' con-premio':'')+'">'+
+            '<div class="vgtk-canje-top">'+
+              '<div style="min-width:0"><b>'+esc(h.reward_nombre)+'</b>'+
+              '<small>Solicitada '+esc(hace(h.created_at))+
+                (entregada&&h.entregada_at?' · entregada '+esc(hace(h.entregada_at)):'')+'</small></div>'+
+              '<span class="vg17-chip '+col+'">'+txt+'</span>'+
+            '</div>'+
+            /* El mensaje del admin es lo que el cliente necesita para
+               reclamar su premio: va destacado y con botón de copiar. */
+            (nota
+              ? (entregada
+                  ? '<div class="vgtk-premio-msg"><span>🎁 Tu recompensa</span>'+
+                    '<div class="dato">'+esc(nota)+'</div>'+
+                    '<button class="vg17-copy" data-copy="'+esc(nota)+'">📋 Copiar datos</button></div>'
+                  : '<div class="vgtk-nota-msg"><span>Mensaje de Vessel Games</span>'+
+                    '<div>'+esc(nota)+'</div></div>')
+              : (entregada
+                  ? '<div class="vgtk-nota-msg"><div>Ya te la entregamos. Si no la recibiste, escríbenos por el chat de tu pedido.</div></div>'
+                  : ''))+
+          '</div>';
         }).join('')+'</div>'
       : '');
 
@@ -27576,12 +27913,112 @@ async function refreshAdminChat(ref){
   box.scrollTop=box.scrollHeight;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   SOLICITUDES DE CONTRASEÑA
+   Aquí NO se muestra la contraseña actual del cliente: Supabase la
+   guarda como hash irreversible y nadie puede leerla (es lo que
+   protege a tus clientes si la base se filtrara). En su lugar,
+   generas una temporal y se la mandas por WhatsApp.
+   ═══════════════════════════════════════════════════════════════ */
+async function renderPasswordRequests(cont){
+  var c=SB(); if(!c||!cont) return;
+  var r=await c.from('vg_password_requests').select('*')
+        .order('created_at',{ascending:false}).limit(50);
+  if(r.error){
+    cont.innerHTML='<span>🔑 Cambios de contraseña</span><div class="vg17-empty">Error: '+esc(r.error.message)+'</div>';
+    return;
+  }
+  var todos=r.data||[];
+  var pend=todos.filter(function(x){return x.estado==='pendiente';});
+  var otros=todos.filter(function(x){return x.estado!=='pendiente';}).slice(0,8);
+
+  cont.innerHTML='<span>🔑 Cambios de contraseña'+
+    (pend.length?' · <b style="color:#ffd68a">'+pend.length+' pendiente(s)</b>':'')+'</span>'+
+    (pend.length ? pend.map(fila).join('')
+                 : '<div class="vg17-empty" style="padding:20px">Ninguna solicitud pendiente.</div>')+
+    (otros.length
+      ? '<div style="margin-top:12px"><span style="display:block;color:#8593b5;font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Atendidas</span>'+
+        otros.map(function(x){
+          return '<div class="vgtk-mov"><div><b>'+esc(x.email)+'</b>'+
+            '<small>'+esc(dateMX(x.created_at))+'</small></div>'+
+            '<span class="vg17-chip '+(x.estado==='atendida'?'entregado':'cancelado')+'">'+esc(x.estado)+'</span></div>';
+        }).join('')+'</div>'
+      : '');
+
+  function fila(x){
+    var tel=(x.phone_cc||'')+(x.phone||'');
+    return '<div class="vg17-box" data-pw="'+esc(x.id)+'" style="margin-bottom:9px;border-color:rgba(139,92,246,.34);background:rgba(139,92,246,.07)">'+
+      '<div class="vg17-row"><div style="min-width:0">'+
+        '<b style="color:#fff;font-size:.94rem">'+esc(x.nombre||'Cliente')+'</b>'+
+        '<p style="margin:3px 0 0;color:#c4cee6;font-size:.8rem">📧 '+esc(x.email)+'</p>'+
+        (tel?'<p style="margin:2px 0 0;color:#c4cee6;font-size:.8rem">📱 '+esc(tel)+'</p>':'')+
+        '<p style="margin:3px 0 0;color:#8593b5;font-size:.72rem">Solicitado '+esc(dateMX(x.created_at))+'</p>'+
+      '</div>'+
+      (tel?'<a class="vg17-btn" target="_blank" rel="noopener" href="https://wa.me/'+esc(tel.replace(/[^0-9]/g,''))+'" style="flex:none;text-decoration:none">Abrir WhatsApp</a>':'')+
+      '</div>'+
+      '<div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">'+
+        '<input class="pw-nueva" placeholder="Contraseña nueva (o déjalo vacío para generarla)" style="flex:1;min-width:190px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);color:#fff;border-radius:10px;padding:9px 11px;font-family:inherit;font-size:.82rem">'+
+        '<button class="vg17-btn primary pw-gen">Generar y aplicar</button>'+
+        '<button class="vg17-btn pw-no">Rechazar</button>'+
+      '</div>'+
+      '<div class="pw-res" style="display:none;margin-top:10px;padding:12px;border-radius:12px;border:1px solid rgba(25,230,193,.40);background:rgba(25,230,193,.08)">'+
+        '<span style="display:block;color:#8ff5e3;font-size:.63rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Mándale estos datos</span>'+
+        '<div class="pw-datos" style="padding:10px 12px;border-radius:10px;background:rgba(0,0,0,.32);color:#e8f7f3;font-size:.84rem;white-space:pre-line;font-family:ui-monospace,Menlo,Consolas,monospace"></div>'+
+        '<button class="vg17-copy pw-copiar" style="margin-top:9px">📋 Copiar datos</button>'+
+      '</div>'+
+      '<div class="vg17-ok pw-msg"></div>'+
+    '</div>';
+  }
+
+  qsa('[data-pw]',cont).forEach(function(card){
+    var id=card.getAttribute('data-pw');
+    var msg=qs('.pw-msg',card), res=qs('.pw-res',card);
+    qs('.pw-gen',card).onclick=async function(){
+      var nueva=(qs('.pw-nueva',card).value||'').trim();
+      if(nueva && nueva.length<6){ msg.textContent='La contraseña debe tener al menos 6 caracteres.'; return; }
+      if(!confirm('Se cambiará la contraseña de esta cuenta.\n\nEl cliente ya no podrá entrar con la anterior.\n\n¿Continuar?')) return;
+      this.disabled=true; msg.textContent='';
+      try{
+        var r2=await SB().rpc('vg_admin_generar_password',{p_request:id, p_password:nueva||null});
+        if(r2.error) throw r2.error;
+        var d=r2.data;
+        var texto='Tu nueva contraseña de Vessel Games:\n\n'+
+                  'Correo: '+d.email+'\n'+
+                  'Contraseña: '+d.password+'\n\n'+
+                  'Entra y cámbiala desde tu cuenta.';
+        qs('.pw-datos',card).textContent=texto;
+        qs('.pw-copiar',card).setAttribute('data-copy',texto);
+        res.style.display='';
+        msg.textContent='Contraseña aplicada. Cópiala y mándasela ahora: no se vuelve a mostrar.';
+      }catch(e){ msg.textContent='Error: '+(e.message||e); this.disabled=false; }
+    };
+    qs('.pw-no',card).onclick=async function(){
+      if(!confirm('¿Rechazar esta solicitud?')) return;
+      this.disabled=true;
+      try{
+        var r3=await SB().rpc('vg_admin_rechazar_password',{p_request:id,p_nota:null});
+        if(r3.error) throw r3.error;
+        renderPasswordRequests(cont);
+      }catch(e){ msg.textContent='Error: '+(e.message||e); this.disabled=false; }
+    };
+  });
+}
+window.__vgCargarPasswords = renderPasswordRequests;
+
 async function renderAdminTickets(body){
   var c=SB();
+  /* Las solicitudes de contraseña van arriba de los reportes de falla:
+     son las que dejan al cliente sin poder entrar. */
+  body.innerHTML='<div class="vg17-box" id="vgPwReqs"><span>🔑 Cambios de contraseña</span>'+
+    '<div class="vg17-empty">Cargando...</div></div><div id="vgTicketsLista"></div>';
+  renderPasswordRequests(qs('#vgPwReqs'));
+  var lista=qs('#vgTicketsLista');
+
   var r=await c.from('vg_support_tickets').select('*').order('created_at',{ascending:false}).limit(200);
-  if(r.error){ body.innerHTML='<div class="vg17-empty">Error: '+esc(r.error.message)+'</div>'; return; }
+  if(r.error){ lista.innerHTML='<div class="vg17-empty">Error: '+esc(r.error.message)+'</div>'; return; }
   A.tickets=r.data||[];
-  if(!A.tickets.length){ body.innerHTML='<div class="vg17-empty">Sin reportes de falla.</div>'; return; }
+  if(!A.tickets.length){ lista.innerHTML='<div class="vg17-empty">Sin reportes de falla.</div>'; return; }
+  body=lista;
   body.innerHTML=A.tickets.map(function(t){
     return '<div class="vg17-box" data-t="'+esc(t.id)+'">'+
       '<div class="vg17-row"><b style="color:#fff">'+esc(t.product_name||'(reporte sin producto)')+'</b>'+
@@ -27695,6 +28132,16 @@ function startAdminRealtime(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'vg_support_tickets'}, function(){
       beep();
       alertNew('🛠 Nuevo reporte de falla', function(){ A.view='tickets'; loadAdmin(); });
+    })
+    /* Alguien olvidó su contraseña y pide cambio */
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'vg_password_requests'}, function(p){
+      var x=p.new||{};
+      beep();
+      alertNew('🔑 '+(x.nombre||'Un cliente')+' pidió cambio de contraseña',
+        function(){ showMineTab('soporte'); });
+      if(typeof window.__vgCargarPasswords==='function'){
+        var caja=qs('#vgPwReqs'); if(caja) window.__vgCargarPasswords(caja);
+      }
     })
     /* Alguien pidió su recompensa por tokens acumulados */
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'vg_token_redemptions'}, function(p){
@@ -27866,6 +28313,20 @@ async function startGlobalNotifications(){
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'}, function(p){
       var o=p.new||{};
       if(o.id && N.orderIds.indexOf(String(o.id))===-1) N.orderIds.push(String(o.id));
+    })
+    /* Su recompensa fue resuelta: se le avisa al momento. Sin esto
+       tendría que entrar a "Mis tokens" a ver si ya le respondiste. */
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'vg_token_redemptions'}, function(p){
+      var x=p.new||{}, antes=p.old||{};
+      if(antes.estado===x.estado) return;           /* no cambió el estado */
+      if(x.estado!=='entregada' && x.estado!=='rechazada') return;
+      beep();
+      var msg = x.estado==='entregada'
+        ? '🎁 ¡Tu recompensa está lista! — '+(x.reward_nombre||'')
+        : 'Tu canje de '+(x.reward_nombre||'')+' no procedió. Te devolvimos tus tokens.';
+      alertNew(msg, function(){ window.vgOpenClientPanel('tokens'); });
+      /* Si ya está viendo sus tokens, se refresca sola */
+      if(qs('#vg17Client').classList.contains('active') && C.view==='tokens') loadClient();
     })
     .subscribe();
 }
@@ -29315,6 +29776,284 @@ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded'
 else init();
 })();
 </script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 28 — Tema nuevo del panel del cliente
+     Pasa del gris plano a un tema con profundidad: superficies de
+     cristal sobre un fondo con aurora suave, acentos de marca y
+     jerarquía más marcada. Va al final para ganar la cascada.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-tema-cliente-v28">
+#vg17Client{
+  --cl-borde:rgba(255,255,255,.10);
+  --cl-borde-vivo:rgba(139,92,246,.38);
+  --cl-texto:#e9eefb;
+  --cl-suave:#93a2c4;
+  --cl-morado:#8b5cf6;
+  --cl-turquesa:#19e6c1;
+  /* Aurora de fondo: tres focos suaves en vez de negro plano */
+  background:
+    radial-gradient(115% 58% at 6% -10%, rgba(139,92,246,.20), transparent 62%),
+    radial-gradient(95% 48% at 98% 2%, rgba(25,230,193,.13), transparent 58%),
+    radial-gradient(90% 60% at 50% 108%, rgba(139,92,246,.10), transparent 60%),
+    #06070f !important;
+}
+/* Textura muy sutil para que el fondo no se vea "muerto" */
+#vg17Client::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:26px 26px;opacity:.5;
+}
+#vg17Client .vg17-wrap{position:relative;z-index:1}
+
+/* ── Cabecera de cristal ── */
+#vg17Client .vg17-top{
+  background:linear-gradient(180deg,rgba(10,12,22,.92),rgba(10,12,22,.62)) !important;
+  backdrop-filter:blur(18px) saturate(1.3);
+  border-bottom:1px solid var(--cl-borde) !important;
+  border-radius:0 0 20px 20px;
+  padding:16px 14px !important;
+  margin:0 -2px;
+}
+#vg17Client .vg17-avatar{
+  border-radius:16px;
+  box-shadow:0 10px 28px rgba(139,92,246,.45), inset 0 1px 0 rgba(255,255,255,.40);
+}
+
+/* ── Pestañas tipo píldora con relieve ── */
+#vg17Client .vg17-tabs{gap:8px !important;padding:16px 0 18px !important}
+#vg17Client .vg17-tab:not(.active){
+  background:rgba(255,255,255,.05) !important;
+  border-color:var(--cl-borde) !important;
+  backdrop-filter:blur(8px);
+}
+#vg17Client .vg17-tab.active{
+  box-shadow:0 10px 26px rgba(139,92,246,.38), inset 0 1px 0 rgba(255,255,255,.30) !important;
+}
+
+/* ── Tarjetas de cristal ── */
+#vg17Client .vg17-stat,
+#vg17Client .vg17-box,
+#vg17Client .vg17-card{
+  background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.022)) !important;
+  border:1px solid var(--cl-borde) !important;
+  backdrop-filter:blur(12px);
+  box-shadow:0 10px 30px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.07);
+}
+#vg17Client .vg17-stat{border-radius:20px !important;overflow:hidden}
+#vg17Client .vg17-stat::before{width:4px !important}
+#vg17Client .vg17-stat b{
+  background:linear-gradient(135deg,#fff,#c3d0f0);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+#vg17Client .vg17-box{border-radius:20px !important}
+#vg17Client .vg17-box > span{
+  color:var(--cl-suave) !important;
+  font-size:.64rem !important;letter-spacing:.13em !important;
+}
+#vg17Client .vg17-card{border-radius:19px !important}
+#vg17Client .vg17-card:hover{
+  transform:translateY(-3px);
+  border-color:var(--cl-borde-vivo) !important;
+  box-shadow:0 16px 38px rgba(139,92,246,.20), inset 0 1px 0 rgba(255,255,255,.09) !important;
+}
+#vg17Client .vg17-card.active{
+  background:linear-gradient(150deg,rgba(139,92,246,.20),rgba(25,230,193,.07)) !important;
+  border-color:var(--cl-borde-vivo) !important;
+}
+#vg17Client .vg17-thumb{
+  box-shadow:0 6px 18px rgba(139,92,246,.30), inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+/* ── Encabezado del pedido ── */
+#vg17Client .vg17-hero{
+  border-radius:22px !important;
+  border-color:var(--cl-borde-vivo) !important;
+  box-shadow:0 14px 40px rgba(139,92,246,.18);
+}
+#vg17Client .vg17-hero-price{
+  background:linear-gradient(135deg,#8ff5e3,#19e6c1);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ── Chat ── */
+#vg17Client .vg17-msgs{
+  border-radius:20px !important;
+  border-color:var(--cl-borde) !important;
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.35);
+}
+#vg17Client .vg17-inputbar{
+  border-radius:20px !important;
+  backdrop-filter:blur(10px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+#vg17Client .vg17-btn.primary{
+  box-shadow:0 10px 26px rgba(139,92,246,.36), inset 0 1px 0 rgba(255,255,255,.30) !important;
+}
+#vg17Client .vg17-btn:not(.primary):not(.ok){
+  background:rgba(255,255,255,.055) !important;
+  border-color:var(--cl-borde) !important;
+  backdrop-filter:blur(8px);
+}
+
+/* ── Formularios ── */
+#vg17Client .vg17-form input,
+#vg17Client .vg17-form select,
+#vg17Client .vg17-form textarea{
+  background:rgba(255,255,255,.055) !important;
+  border-color:var(--cl-borde) !important;
+  border-radius:15px !important;
+  backdrop-filter:blur(8px);
+}
+
+/* ── Recompensas ── */
+#vg17Client .vgtk-prem{border-radius:18px !important;backdrop-filter:blur(10px)}
+#vg17Client .vgtk-prem.listo{box-shadow:0 10px 28px rgba(232,191,109,.20)}
+
+/* ── Estado vacío ── */
+#vg17Client .vg17-empty{color:var(--cl-suave) !important}
+
+@media(max-width:900px){
+  #vg17Client .vg17-top{border-radius:0 0 16px 16px;padding:12px !important}
+  #vg17Client .vg17-stat,#vg17Client .vg17-box{border-radius:17px !important}
+  #vg17Client .vg17-card{border-radius:16px !important}
+  /* El desenfoque en muchas superficies pesa en móvil: se aligera */
+  #vg17Client .vg17-card,#vg17Client .vg17-stat{backdrop-filter:none}
+}
+</style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 27 — Encimamientos en móvil (Xbox Retro y Actas Gob)
+     Medido en el modal real a 390px de ancho:
+       · La nota de arriba tenía overflow:hidden con 17.6px de alto
+         fijo, así que el texto se cortaba a media palabra.
+       · El botón verde recibía 118px para 30 caracteres, por eso
+         se leía "...iona juegos para co".
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-movil-encimados-v27">
+@media(max-width:760px){
+  /* ── Cabecera del modal Xbox Retro ── */
+  html body #retroModal .retro-top-shell{
+    display:block !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:12px 12px 10px !important;
+  }
+  html body #retroModal .retro-head{
+    display:block !important;
+    height:auto !important;
+    padding-right:52px !important;   /* espacio para la ✕ */
+  }
+  html body #retroModal .retro-head h2{
+    font-size:1.15rem !important;
+    line-height:1.2 !important;
+    margin:0 0 6px !important;
+  }
+  /* La nota se deja respirar: alto automático y hasta dos líneas */
+  html body #retroModal .retro-sales-note{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:visible !important;
+    white-space:normal !important;
+    display:block !important;
+    margin:0 0 10px !important;
+    padding:8px 10px !important;
+    font-size:.72rem !important;
+    line-height:1.4 !important;
+    border-radius:10px !important;
+  }
+  html body #retroModal .retro-sales-note p{
+    margin:0 !important;
+    white-space:normal !important;
+    overflow:visible !important;
+  }
+  html body #retroModal .retro-controls{
+    display:block !important;
+    height:auto !important;
+    margin:0 !important;
+  }
+  html body #retroModal .retro-controls input,
+  html body #retroModal .retro-controls select{
+    width:100% !important;
+    margin:0 0 8px !important;
+  }
+
+  /* ── Barra inferior: el botón necesita su propia línea ── */
+  /* Se apila todo: los contadores arriba y el botón abajo. Repartirlo
+     en dos columnas dejaba 57px por contador y 118px al botón, y los
+     tres textos salían cortados. */
+  html body #retroModal .retro-footer{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:9px !important;
+    padding:10px !important;
+    height:auto !important;
+  }
+  html body #retroModal .retro-footer .retro-totals{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    width:100% !important;
+    flex-wrap:wrap !important;
+  }
+  html body #retroModal .retro-footer .retro-totals span,
+  html body #retroModal .retro-footer .retro-totals strong{
+    width:auto !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    font-size:.76rem !important;
+  }
+  html body #retroModal .retro-footer .modal-actions{
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+  }
+  /* El botón a ancho completo: así el texto cabe entero */
+  html body #retroModal .retro-footer .modal-actions button{
+    width:100% !important;
+    white-space:normal !important;
+    overflow:visible !important;
+    text-overflow:clip !important;
+    font-size:.85rem !important;
+    padding:12px 10px !important;
+    line-height:1.25 !important;
+    min-height:46px !important;
+    height:auto !important;
+  }
+
+  /* ── Actas Gob: mismo problema de cabecera encimada ── */
+  html body .modal .modal-card .modal-info > .badge,
+  html body #productModal .modal-info > .badge{
+    position:static !important;
+    display:inline-block !important;
+    margin-bottom:8px !important;
+  }
+  html body #productModal .modal-info h2,
+  html body .modal-card h2{
+    line-height:1.2 !important;
+    margin:0 0 8px !important;
+    padding-right:48px !important;
+  }
+  /* El texto de entrega estimada dejaba de verse detrás de la lista */
+  html body #productModal .modal-info > p,
+  html body .modal-card .modal-info > p{
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    white-space:normal !important;
+    margin:0 0 10px !important;
+    line-height:1.45 !important;
+  }
+}
+</style>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 22 — Proporción de las fotos de producto
