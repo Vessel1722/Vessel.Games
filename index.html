@@ -13851,6 +13851,50 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
 </style>
 </link></link></meta></head>
 <body>
+<script id="vg-base-url">
+/* Dirección real del sitio, para armar los enlaces que se comparten.
+
+   Los enlaces de referido iban escritos a mano como
+   "https://vesselgames.xyz", y ese dominio NO resuelve: solo existe el
+   registro de www.vesselgames.xyz. Por eso cada cliente que abría su
+   enlace se topaba con DNS_PROBE_FINISHED_NXDOMAIN.
+
+   Tomándola de la dirección donde está abierta la página, el enlace
+   siempre apunta a donde el sitio de verdad funciona, sin depender de
+   cómo esté configurado el dominio hoy. */
+window.vgBaseUrl = function(){
+  try{
+    var o = location.origin;
+    if(o && o.indexOf('http') === 0){
+      /* El dominio pelado no tiene registro A; el de www sí. */
+      if(o === 'https://vesselgames.xyz') return 'https://www.vesselgames.xyz';
+      return o;
+    }
+  }catch(e){}
+  return 'https://www.vesselgames.xyz';   /* al abrir el archivo suelto */
+};
+
+/* Tamaño de las portadas retro que sirve Bing.
+
+   Se pedían a 800x1200 con calidad 95 y se muestran a unos 150 px de
+   ancho en el móvil: 147 KB por imagen para pintar una miniatura. Con
+   catorce de ellas en la primera pantalla eran más de 2 MB.
+
+   Ahora se pide lo que de verdad cabe, contando la densidad de la
+   pantalla del teléfono. Medido con la misma portada:
+     800x1200 qlt95 -> 147 KB     (antes)
+     400x600  qlt80 ->  61 KB
+     300x450  qlt75 ->  33 KB     (móvil)                          */
+window.vgBingSize = function(){
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var visible = (window.innerWidth <= 640) ? 160 : 300;
+  var w = Math.round(visible * dpr);
+  if(w < 240) w = 240;
+  if(w > 480) w = 480;
+  return '&w=' + w + '&h=' + Math.round(w * 1.5) +
+         '&c=7&rs=1&qlt=' + (w <= 340 ? 75 : 80) + '&p=0&o=5&pid=1.7&mkt=en-US';
+};
+</script>
 <style>
 #vgPageLoader{position:fixed;inset:0;z-index:999999;background:#05070d;display:flex;align-items:center;justify-content:center;transition:opacity .35s ease, visibility .35s ease}
 #vgPageLoader.vgpl-hide{opacity:0;visibility:hidden;pointer-events:none}
@@ -14853,7 +14897,7 @@ body.vg-light .review-card,.vg-light .home-compact-card,.vg-light .how-step,.vg-
     const isClassic = String(game.platform || '').toLowerCase().includes('cl');
     const platformQuery = isClassic ? 'original xbox front cover box art' : 'xbox 360 front cover box art';
     const q = `"${cleanName}" ${platformQuery} -youtube -thumbnail -disc -disk -manual`;
-    return 'https://tse4.mm.bing.net/th?q=' + encodeURIComponent(q) + '&w=800&h=1200&c=7&rs=1&qlt=95&p=0&o=5&pid=1.7&mkt=en-US';
+    return 'https://tse4.mm.bing.net/th?q=' + encodeURIComponent(q) + ''+window.vgBingSize();
   }
   window.adjustRetroImage = function adjustRetroImage(img){
     if(!img) return;
@@ -19506,7 +19550,7 @@ setTimeout(()=>{ensureSections();bindTabs();renderSettings();},600);
   function setLocal(rows){try{localStorage.setItem(LOCAL,JSON.stringify(rows||[]))}catch(e){}}
   function mergedGames(){var map=new Map(); baseGames().forEach(function(g){map.set(String(g.id),g)}); (overrideRows&&overrideRows.length?overrideRows:getLocal()).forEach(function(row){var g=rowToGame(row); if(g.id)map.set(String(g.id),Object.assign({},map.get(String(g.id))||{},g))}); return Array.from(map.values())}
   function loadOverridesAsync(){overrideRows=getLocal(); var client=sb(); if(!client)return Promise.resolve(false); return client.from('products_admin').select('*').like('product_id',PREFIX+'%').then(function(res){if(res&&!res.error&&Array.isArray(res.data)){overrideRows=res.data;setLocal(overrideRows);return true} return false}).catch(function(){return false})}
-  function imgFor(g){if(g.image)return normalizeImage(g.image); if(window.RETRO_GAME_IMAGES&&window.RETRO_GAME_IMAGES[g.name])return normalizeImage(window.RETRO_GAME_IMAGES[g.name]); var clean=String(g.name||'').replace(/[®™]/g,'').replace(/\+/g,' plus ').replace(/[:]+/g,' ').replace(/\s+/g,' ').trim(); if(clean)return 'https://tse4.mm.bing.net/th?q='+encodeURIComponent('"'+clean+'" '+(String(g.platform||'').toLowerCase().includes('cl')?'original xbox':'xbox 360')+' front cover box art')+'&w=800&h=1200&c=7&rs=1&qlt=95&p=0&o=5&pid=1.7&mkt=en-US'; return fallbackCover(g.name,g.platform)}
+  function imgFor(g){if(g.image)return normalizeImage(g.image); if(window.RETRO_GAME_IMAGES&&window.RETRO_GAME_IMAGES[g.name])return normalizeImage(window.RETRO_GAME_IMAGES[g.name]); var clean=String(g.name||'').replace(/[®™]/g,'').replace(/\+/g,' plus ').replace(/[:]+/g,' ').replace(/\s+/g,' ').trim(); if(clean)return 'https://tse4.mm.bing.net/th?q='+encodeURIComponent('"'+clean+'" '+(String(g.platform||'').toLowerCase().includes('cl')?'original xbox':'xbox 360')+' front cover box art')+''+window.vgBingSize(); return fallbackCover(g.name,g.platform)}
   function platformWanted(){var v=String((qs('#retroPlatform')&&qs('#retroPlatform').value)||'all').toLowerCase(); if(v==='360'||v.indexOf('360')>=0)return 'xbox 360'; if(v.indexOf('cl')>=0)return 'clásico'; return 'all'}
   function filteredGames(){var q=String((qs('#retroSearch')&&qs('#retroSearch').value)||'').trim().toLowerCase();var p=platformWanted();return mergedGames().filter(function(g){var gp=String(g.platform||'').toLowerCase(); return g.status!=='hidden'&&(p==='all'||gp===p)&&(!q||String(g.name||'').toLowerCase().indexOf(q)>=0)})}
   function calc(){var subtotal=selected.reduce(function(s,g){return s+Number(g.price||0)},0);var discount=selected.length>=3?Math.round(subtotal*.10):0;return {subtotal:subtotal,discount:discount,total:subtotal-discount}}
@@ -21410,7 +21454,7 @@ window.addEventListener('load', function() {
    Token Wallet · Referidos · Dashboard · Admin Usuarios
    ============================================================ */
 
-var BASE_URL = 'https://vesselgames.xyz';
+var BASE_URL = window.vgBaseUrl();
 var REDEEM_CATALOG = [
   {id:'vix',       name:'VIX',         cost:5,  icon:'V'},
   {id:'paramount', name:'PARAMOUNT',   cost:7,  icon:'P'},
@@ -22534,7 +22578,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var box = qs('#vgRefUserLinkBox');
     var lnk = qs('#vgRefUserLink');
     if(box) box.style.display = 'block';
-    if(lnk) lnk.textContent = 'https://vesselgames.xyz/?ref='+(session.referral_code||session.phone||'');
+    if(lnk) lnk.textContent = window.vgBaseUrl()+'/?ref='+(session.referral_code||session.phone||'');
   }
 });
 
@@ -22581,7 +22625,7 @@ window.addEventListener('DOMContentLoaded', function(){
       );
     }catch(e){}
     if(!session || !session.name) return;
-    var refLink = 'https://vesselgames.xyz/?ref=' + (session.referral_code || session.phone || '');
+    var refLink = window.vgBaseUrl()+'/?ref=' + (session.referral_code || session.phone || '');
     // Update footer box
     var box = document.getElementById('vgRefUserLinkBox');
     var lnk = document.getElementById('vgRefUserLink');
@@ -22625,7 +22669,7 @@ window.addEventListener('DOMContentLoaded', function(){
     }catch(e){}
     if(!session || !session.name) return;
 
-    var refLink = 'https://vesselgames.xyz/?ref=' + (session.referral_code || session.phone || '');
+    var refLink = window.vgBaseUrl()+'/?ref=' + (session.referral_code || session.phone || '');
 
     // Keep only the FIRST .vg-ref-user-link-box (canonical footer one)
     var boxes = document.querySelectorAll('.vg-ref-user-link-box');
@@ -27181,7 +27225,7 @@ async function renderTokens(body){
   }
   var w=r.data;
   var n=function(x){ return (Math.round(Number(x||0)*100)/100).toString(); };
-  var link='https://vesselgames.xyz/?ref='+(w.referral_code||'');
+  var link=window.vgBaseUrl()+'/?ref='+(w.referral_code||'');
   var movs=Array.isArray(w.movimientos)?w.movimientos:[];
 
   var etiqueta={compra:'Compra propia', referido:'Amigo invitado', ajuste_admin:'Ajuste de Vessel Games', canje:'Canje'};
@@ -29672,7 +29716,7 @@ window.vgGetWallet=function(){ return wallet; };
 window.vgReloadWallet=async function(){ await cargarWallet(); pintarSeccion(); };
 
 function linkDe(codigo){
-  return 'https://vesselgames.xyz/?ref='+codigo;
+  return window.vgBaseUrl()+'/?ref='+codigo;
 }
 
 /* ── La sección pública ───────────────────────────────────────── */
@@ -30644,6 +30688,246 @@ else init();
   #vg17Client::after{animation:none;display:none}
 }
 </style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 36 — Fluidez en el móvil
+
+     Medido en el sitio en vivo a 390px de ancho:
+       · 93 elementos con backdrop-filter, y 65 de ellos eran el botón
+         de vista rápida de cada tarjeta. Un desenfoque por tarjeta que
+         el teléfono tiene que recalcular en cada cuadro del scroll,
+         encima de imágenes que se mueven. Su fondo ya era casi opaco
+         (0.82), así que el desenfoque no aportaba nada a la vista.
+       · 133 imágenes de producto con un filtro de color decorativo
+         (saturate/contrast). Cada imagen filtrada se compone aparte.
+       · Las portadas retro se pedían a 800x1200 con calidad 95 para
+         enseñarlas a 150px. Eso se arregla arriba, en vgBingSize.
+
+     En el escritorio se deja todo como estaba: ahí sobra potencia y el
+     acabado con desenfoque se ve mejor.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-fluidez-movil-v36">
+@media(max-width:900px){
+
+  /* ── El desenfoque más caro: uno por tarjeta ── */
+  html body .vg-quickview-btn{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    background:rgba(10,13,22,.93) !important;
+  }
+
+  /* ── Barra superior: es fija, así que se redesenfoca en cada cuadro
+        mientras se hace scroll. Opaca queda igual de bien. ── */
+  html body header.topbar{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+    background:rgba(7,8,15,.97) !important;
+  }
+
+  /* ── Fondos de ventanas: ya son opacos al 72-92%, el desenfoque
+        detrás no se aprecia y cuesta una capa entera ── */
+  html body .modal,
+  html body .cart,
+  html body .vg10-overlay,
+  html body .vg-pro-overlay,
+  html body .vg-wish-modal,
+  html body .vg-admin-head,
+  html body .vg-admin-tabs,
+  html body .retro-footer,
+  html body .ff-media-caption,
+  html body .vg-gallery-arrow{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  html body .modal, html body .cart{ background:rgba(0,0,0,.88) !important; }
+  html body .vg-wish-modal{ background:rgba(0,0,0,.86) !important; }
+  html body .ff-media-caption{ background:rgba(8,12,25,.86) !important; }
+  html body .vg-gallery-arrow{ background:rgba(7,8,15,.92) !important; }
+
+  /* ── Filtro de color de las fotos de producto ──
+        Se conserva en la portada, donde oscurecer la imagen es lo que
+        hace legible el texto de encima. */
+  html body img:not(.hero-bg):not(.vgtk-prem-foto .fondo){
+    filter:none !important;
+  }
+
+  /* ── Que el navegador no pinte lo que está fuera de pantalla ──
+        content-visibility le deja saltarse el diseño y el pintado de
+        las secciones que aún no se ven. La altura estimada evita que
+        la barra de scroll dé saltos. */
+  html body .home-sections > section,
+  html body .vg-faq,
+  html body .vg-reviews-section,
+  html body footer{
+    content-visibility:auto;
+    contain-intrinsic-size:auto 600px;
+  }
+}
+</style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 35 — Enlace propio para cada sección
+
+     Los productos ya cambiaban la barra de direcciones
+     (?producto=54&slug=...) y ese enlace ya abría el producto al
+     pegarlo. Las secciones no: un parche anterior las dejaba en "/"
+     a propósito, así que no había manera de compartir "el catálogo de
+     Gaming".
+
+     Ahora cada sección tiene su dirección y se puede copiar de la barra
+     como en cualquier tienda. También se añade un botón, porque en el
+     móvil copiar de la barra es incómodo.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-links-seccion-v35">
+#vgCopiarSeccion{
+  display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+  padding:9px 15px;cursor:pointer;
+  border:1px solid rgba(34,245,211,.35);
+  background:rgba(34,245,211,.09);color:#8ff5e3;
+  font-family:ui-monospace,Consolas,monospace;
+  font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  border-radius:0;
+  clip-path:polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+  transition:.15s;
+}
+#vgCopiarSeccion:hover{border-color:rgba(34,245,211,.7);background:rgba(34,245,211,.16)}
+#vgCopiarSeccion:active{transform:scale(.97)}
+#vgCopiarSeccion.ok{border-color:rgba(34,245,211,.9);color:#c7fff4}
+@media(max-width:640px){ #vgCopiarSeccion{width:100%;justify-content:center} }
+</style>
+
+<script id="vg-links-seccion-js-v35">
+(function(){
+  'use strict';
+  if(window.__VG35__) return; window.__VG35__ = true;
+
+  var seccionActual = null;
+
+  function qs(s,r){return (r||document).querySelector(s)}
+
+  function hayVentanaAbierta(){
+    return !!(qs('#productModal.active') || qs('#retroModal.active') ||
+              qs('#vg17Client.active') || qs('#vgAdminModal.active'));
+  }
+
+  function enlaceDeSeccion(cat){
+    return window.vgBaseUrl() + '/?seccion=' + encodeURIComponent(cat || 'all');
+  }
+
+  /* El parche que limpia la barra de direcciones borra la sección a los
+     90 y 260 ms de abrirla. En vez de pelearse con él desde fuera, se
+     vuelve a poner después; la última escritura es la que queda. */
+  function ponerUrl(cat){
+    if(!cat || String(cat).toLowerCase() === 'all') return;
+    [0, 120, 320, 700].forEach(function(ms){
+      setTimeout(function(){
+        /* Un producto abierto manda sobre la sección: su enlace es más
+           concreto y es el que la gente quiere compartir. */
+        if(seccionActual !== cat) return;
+        if(qs('#productModal.active') || qs('#retroModal.active')) return;
+        var destino = location.pathname + '?seccion=' + encodeURIComponent(cat);
+        if((location.pathname + location.search) === destino) return;
+        try{ history.replaceState({vgSeccion:cat}, '', destino); }catch(e){}
+      }, ms);
+    });
+  }
+
+  function botonCopiar(cat){
+    var caja = qs('.section-hero-content');
+    if(!caja) return;
+    var b = qs('#vgCopiarSeccion');
+    if(!b){
+      b = document.createElement('button');
+      b.id = 'vgCopiarSeccion';
+      b.type = 'button';
+      b.onclick = function(){
+        var url = enlaceDeSeccion(seccionActual);
+        var listo = function(){
+          b.classList.add('ok');
+          b.textContent = '✓ Enlace copiado';
+          setTimeout(function(){ b.classList.remove('ok'); b.textContent = '🔗 Copiar enlace de esta sección'; }, 2200);
+        };
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(url).then(listo).catch(function(){ prompt('Copia este enlace:', url); });
+        }else prompt('Copia este enlace:', url);
+      };
+    }
+    b.textContent = '🔗 Copiar enlace de esta sección';
+    if(b.parentNode !== caja) caja.appendChild(b);
+  }
+
+  function quitarBoton(){
+    var b = qs('#vgCopiarSeccion');
+    if(b) b.remove();
+  }
+
+  function envolver(){
+    if(typeof window.showSection !== 'function' || window.showSection.__vg35) return false;
+    var anterior = window.showSection;
+    var envuelto = function(cat){
+      seccionActual = cat || 'all';
+      var r = anterior.apply(this, arguments);
+      ponerUrl(seccionActual);
+      if(String(seccionActual).toLowerCase() === 'all') setTimeout(quitarBoton, 60);
+      else [80, 350, 800].forEach(function(ms){ setTimeout(function(){ botonCopiar(seccionActual); }, ms); });
+      return r;
+    };
+    envuelto.__vg35 = true;
+    window.showSection = envuelto;
+
+    if(typeof window.showHome === 'function' && !window.showHome.__vg35){
+      var inicio = window.showHome;
+      var envInicio = function(){
+        seccionActual = null;
+        quitarBoton();
+        return inicio.apply(this, arguments);
+      };
+      envInicio.__vg35 = true;
+      window.showHome = envInicio;
+    }
+    return true;
+  }
+
+  /* Al entrar con ?seccion=gaming se abre esa sección.
+     xbox-retro ya lo atiende el router de antes, así que se deja pasar. */
+  function abrirDesdeUrl(){
+    var cat = new URLSearchParams(location.search || '').get('seccion');
+    if(!cat) return;
+    cat = String(cat).toLowerCase();
+    if(cat === 'xbox-retro' || cat === 'retro') return;
+    if(new URLSearchParams(location.search || '').get('producto')) return;
+    var intentos = 0;
+    (function esperar(){
+      if(typeof window.showSection === 'function' && !hayVentanaAbierta()){
+        window.showSection(cat);
+        return;
+      }
+      if(++intentos < 40) setTimeout(esperar, 200);
+    })();
+  }
+
+  function arrancar(){
+    if(!envolver()){
+      var n = 0;
+      var t = setInterval(function(){ if(envolver() || ++n > 60) clearInterval(t); }, 250);
+    }
+    setTimeout(abrirDesdeUrl, 700);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+
+  /* Con el botón atrás del navegador se reabre lo que toque */
+  window.addEventListener('popstate', function(){
+    var cat = new URLSearchParams(location.search || '').get('seccion');
+    if(cat && typeof window.showSection === 'function' && !hayVentanaAbierta()){
+      cat = String(cat).toLowerCase();
+      if(cat !== 'xbox-retro' && cat !== 'retro') window.showSection(cat);
+    }
+  });
+})();
+</script>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 34 — Acceso rápido al panel de administración
@@ -31760,6 +32044,21 @@ html body .nav a.brand > span > small{
     font-size:9.5px;letter-spacing:1.3px;
   }
 }
+/* En pantallas de 390px y menos "VESSEL GAMES" pedía 124px y solo tenía
+   112, así que salía cortado como "VESSEL GA…". Se ajusta el cuerpo y
+   el espaciado para que quepa entero. */
+@media(max-width:420px){
+  html body .nav a.brand > span{
+    font-size:17px !important;
+    letter-spacing:1px !important;
+  }
+  html body .nav a.brand > span > small::after{
+    font-size:9px;letter-spacing:1.1px;
+  }
+  html body .nav a.brand .vg-brand-ring{width:38px;height:38px;border-radius:11px}
+  html body .nav a.brand .vg-brand-ring > img{border-radius:9px !important}
+}
+
 @media(prefers-reduced-motion:reduce){
   html body .nav a.brand:hover .vg-brand-ring{transform:none}
 }
