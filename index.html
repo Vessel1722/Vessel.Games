@@ -28643,28 +28643,24 @@ html body .floating-whatsapp.vg-wa-hidden{
 'use strict';
 if(window.__VG_LEGAL__) return; window.__VG_LEGAL__ = true;
 
-/* DATOS QUE DEBES COMPLETAR
-   Sustituye los valores por los reales de tu negocio. Mientras digan
-   [PENDIENTE], el documento se muestra con un aviso indicándolo. */
+/* Datos del negocio que aparecen en el documento.
+   El contacto va por el chat de la cuenta y por WhatsApp, que es como
+   de verdad se atiende aquí. Si algún día das de alta el negocio y
+   quieres poner razón social y domicilio, se agregan aquí y salen solos
+   en el apartado "Responsable y contacto". */
 var EMPRESA = {
   nombre:    'Vessel Games',
-  titular:   '[PENDIENTE: tu nombre completo o razón social]',
-  domicilio: '[PENDIENTE: domicilio fiscal completo]',
-  correo:    '[PENDIENTE: correo de contacto para temas de privacidad]',
+  titular:   'Vessel Games',
+  domicilio: '',                       /* vacío = no se menciona */
+  correo:    '',                       /* vacío = solo se ofrece el chat y WhatsApp */
   whatsapp:  '+52 661 107 8412',
   sitio:     'vesselgames.xyz'
 };
 var ACTUALIZADO = '25 de julio de 2026';
 
-function faltanDatos(){
-  return Object.keys(EMPRESA).some(function(k){ return String(EMPRESA[k]).indexOf('[PENDIENTE')===0; });
-}
-function aviso(){
-  return faltanDatos()
-    ? '<div class="vg-legal-note">Documento incompleto: faltan por definir los datos de identificación '+
-      'del responsable. Complétalos en el bloque <b>vg-legal-js</b> antes de considerarlo vigente.</div>'
-    : '';
-}
+/* El aviso de "documento incompleto" se quitó: los datos de contacto ya
+   son los definitivos (chat de la cuenta y WhatsApp). */
+function aviso(){ return ''; }
 
 var PRIVACIDAD =
   aviso()+
@@ -28717,11 +28713,13 @@ var PRIVACIDAD =
   '</ul>'+
 
   '<h3>4. Responsable y contacto</h3>'+
-  '<p><strong>'+EMPRESA.titular+'</strong>, quien opera comercialmente como <strong>'+EMPRESA.nombre+'</strong>'+
-  (String(EMPRESA.domicilio).indexOf('[PENDIENTE')===0 ? '' : ', con domicilio en '+EMPRESA.domicilio)+'.</p>'+
-  '<p>Para cualquier duda sobre el tratamiento de tus datos, o para ejercer tus derechos de acceso, '+
-  'rectificación, cancelación u oposición (ARCO), escríbenos a <strong>'+EMPRESA.correo+'</strong> '+
-  'o por WhatsApp al <strong>'+EMPRESA.whatsapp+'</strong>.</p>'+
+  '<p>El responsable del tratamiento de tus datos es <strong>'+EMPRESA.nombre+'</strong>'+
+  (String(EMPRESA.domicilio).trim() ? ', con domicilio en '+EMPRESA.domicilio : '')+'.</p>'+
+  '<p>Para cualquier duda sobre tus datos, o si quieres consultarlos, corregirlos o pedir que los '+
+  'borremos, escríbenos por el <strong>chat de tu cuenta</strong> en el sitio'+
+  (String(EMPRESA.correo).trim() ? ' o al correo <strong>'+EMPRESA.correo+'</strong>' : '')+
+  ', o por WhatsApp al <strong>'+EMPRESA.whatsapp+'</strong>. '+
+  'Te respondemos por la misma vía.</p>'+
 
   '<p style="margin-top:16px">Al continuar navegando y realizar una compra en '+
   '<a href="https://www.vesselgames.xyz" target="_blank" rel="noopener">www.vesselgames.xyz</a>, '+
@@ -30718,6 +30716,254 @@ else init();
   #vg17Client::after{animation:none;display:none}
 }
 </style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 42 — Tres arreglos de la tienda en móvil
+
+     1. EL BORDE DENTRO DE LA FOTO
+        .imgbox llevaba un borde de 1px por dentro de la tarjeta. Como
+        la tarjeta recorta con esquinas redondeadas, ese borde solo se
+        alcanzaba a ver por la derecha y por abajo, y daba la impresión
+        de que la foto estaba descentrada. Medido: la caja mide 190x119
+        y la imagen 188x118, o sea 1px de hueco por lado.
+
+     2. LA OFERTA PRINCIPAL, DEMASIADO LARGA
+        Medido a 410px: la oferta ocupa 2267px (2.6 pantallas) y el
+        catálogo no empieza hasta los 3737px. Quien no busca diamantes
+        tiene que recorrer cuatro pantallas para llegar a los productos.
+        Ahora se muestra recortada con un botón para desplegarla: sigue
+        siendo lo primero después de la portada, pero no estorba.
+
+     3. EL BOTÓN DE CUENTA DECÍA "?"
+        Un signo de interrogación no le dice a nadie que ahí se entra o
+        se registra. Se cambia por el icono de persona de toda la vida y,
+        sin sesión, el botón dice "Entrar".
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-tienda-movil-v42">
+/* ── 1. Fuera el borde interior de las fotos ── */
+html body .card .imgbox,
+html body .service-carousel-card .imgbox{
+  border:0 !important;
+}
+html body .card .imgbox > img,
+html body .service-carousel-card .imgbox > img{
+  width:100% !important;height:100% !important;
+  object-fit:cover !important;object-position:center !important;
+  display:block !important;
+}
+
+/* ── 2. Oferta principal recogida en móvil ── */
+@media(max-width:900px){
+  html body .ff-only-body{
+    max-height:430px;
+    overflow:hidden;
+    position:relative;
+    transition:max-height .35s ease;
+  }
+  html body .ff-only-body.vg-oferta-abierta{
+    max-height:none;
+  }
+  /* Difuminado al final, para que se note que hay más */
+  html body .vg-oferta-velo{
+    position:absolute;left:0;right:0;bottom:0;height:110px;pointer-events:none;
+    background:linear-gradient(180deg, rgba(11,14,24,0), rgba(11,14,24,.92) 70%, rgba(11,14,24,1));
+  }
+  html body .ff-only-body.vg-oferta-abierta .vg-oferta-velo{display:none}
+
+  html body .vg-oferta-boton{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    width:calc(100% - 28px);margin:-6px 14px 18px;padding:14px;
+    border:1px solid rgba(34,245,211,.34);
+    background:linear-gradient(100deg,rgba(34,245,211,.13),rgba(168,85,247,.10));
+    color:#8ff5e3;cursor:pointer;
+    font-family:ui-monospace,Consolas,monospace;
+    font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    border-radius:0;
+    clip-path:polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px);
+  }
+  html body .vg-oferta-boton:active{transform:scale(.985)}
+  html body .vg-oferta-boton .flecha{transition:transform .3s ease}
+  html body .vg-oferta-boton.abierto .flecha{transform:rotate(180deg)}
+}
+
+/* ── 3. Icono de cuenta ── */
+#vgAbAvatar.vg-ab-anon{
+  display:flex !important;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#22f5d3,#a855f7) !important;
+  color:#04211b !important;font-size:0 !important;
+}
+#vgAbAvatar.vg-ab-anon svg{width:60%;height:60%;display:block}
+#vg-account-btn.vg-sin-sesion{
+  border-color:rgba(34,245,211,.45) !important;
+  box-shadow:0 0 18px rgba(34,245,211,.16);
+}
+@media(max-width:900px){
+  /* Sin sesión sí se enseña el texto: es lo que hace que la gente entre.
+     El botón estaba clavado a 46px de ancho, así que la palabra no cabía
+     aunque se pintara; aquí se le deja crecer con su contenido. */
+  html body #vg-account-btn.vg-sin-sesion{
+    width:auto !important;
+    min-width:46px;
+    padding:0 12px 0 5px !important;
+  }
+  html body #vg-account-btn.vg-sin-sesion #vgAbLabel{
+    display:inline-block !important;
+    font-size:.72rem;font-weight:900;letter-spacing:.02em;white-space:nowrap;
+  }
+}
+/* El botón "Entrar" ocupa unos 40px más que el icono solo, y eso deja
+   sin sitio al nombre de la marca, que volvía a cortarse en "VESSEL GA…".
+   Se le baja el cuerpo y se acorta el subtítulo para que quepan los dos. */
+/* El .brand.brand repetido es a propósito: sube el peso de la regla por
+   encima de la de la fase 30, que va después en el archivo y si no
+   ganaría ella con sus 17px. */
+@media(max-width:430px){
+  html body .nav a.brand.brand > span{
+    font-size:15px !important;
+    letter-spacing:.8px !important;
+  }
+  html body .nav a.brand.brand > span > small::after{
+    content:"Catálogo" !important;
+    font-size:8.5px !important;letter-spacing:1px !important;
+  }
+}
+
+/* En pantallas muy angostas manda el espacio: solo el icono */
+@media(max-width:370px){
+  html body #vg-account-btn.vg-sin-sesion{width:46px !important;padding:0 !important}
+  html body #vg-account-btn.vg-sin-sesion #vgAbLabel{display:none !important}
+}
+</style>
+
+<script id="vg-tienda-movil-js-v42">
+(function(){
+  'use strict';
+  if(window.__VG42__) return; window.__VG42__ = true;
+
+  var ICONO_CUENTA =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" '+
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>'+
+    '<circle cx="12" cy="7" r="4"/></svg>';
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+
+  /* ── 2. Recoger la oferta ── */
+  function montarOferta(){
+    if(window.innerWidth > 900) return;
+    var cuerpo = document.querySelector('.ff-only-body');
+    if(!cuerpo || cuerpo.dataset.vg42) return;
+    /* Si mide poco no hace falta recogerla */
+    if(cuerpo.scrollHeight < 620) return;
+    cuerpo.dataset.vg42 = '1';
+
+    var velo = document.createElement('div');
+    velo.className = 'vg-oferta-velo';
+    cuerpo.appendChild(velo);
+
+    var n = document.querySelectorAll('.ff-only-package').length;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'vg-oferta-boton';
+    function etiqueta(abierta){
+      btn.innerHTML = (abierta ? 'Ocultar la oferta' : 'Ver la oferta completa' + (n ? ' · ' + n + ' paquetes' : '')) +
+                      '<span class="flecha">▾</span>';
+      btn.classList.toggle('abierto', abierta);
+    }
+    etiqueta(false);
+    btn.onclick = function(){
+      var abierta = cuerpo.classList.toggle('vg-oferta-abierta');
+      etiqueta(abierta);
+      if(!abierta){
+        /* Al cerrarla se vuelve al principio de la oferta, si no el
+           cliente se queda mirando el catálogo sin saber qué pasó. */
+        var caja = cuerpo.closest('.offer-card') || cuerpo;
+        var y = caja.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({top:y, behavior:'smooth'});
+      }
+    };
+    if(cuerpo.parentNode) cuerpo.parentNode.insertBefore(btn, cuerpo.nextSibling);
+  }
+
+  function desmontarOferta(){
+    var cuerpo = document.querySelector('.ff-only-body');
+    if(!cuerpo || !cuerpo.dataset.vg42) return;
+    delete cuerpo.dataset.vg42;
+    cuerpo.classList.remove('vg-oferta-abierta');
+    var v = cuerpo.querySelector('.vg-oferta-velo'); if(v) v.remove();
+    var b = document.querySelector('.vg-oferta-boton'); if(b) b.remove();
+  }
+
+  /* ── 3. Botón de cuenta ── */
+  var conSesion = null;
+
+  function pintarCuenta(){
+    var av  = document.getElementById('vgAbAvatar');
+    var btn = document.getElementById('vg-account-btn');
+    var lbl = document.getElementById('vgAbLabel');
+    if(!av || !btn) return;
+
+    if(conSesion === false){
+      if(!av.querySelector('svg')) av.innerHTML = ICONO_CUENTA;
+      av.classList.add('vg-ab-anon');
+      btn.classList.add('vg-sin-sesion');
+      btn.title = 'Iniciar sesión o crear tu cuenta';
+      if(lbl && lbl.textContent !== 'Entrar') lbl.textContent = 'Entrar';
+    }else if(conSesion === true){
+      av.classList.remove('vg-ab-anon');
+      btn.classList.remove('vg-sin-sesion');
+      /* Con sesión, el resto del sitio ya pone la inicial y el nombre */
+      if(av.querySelector('svg')) av.innerHTML = '';
+    }
+  }
+
+  async function revisarSesion(){
+    var c = cli();
+    if(!c){ return; }
+    try{
+      var s = await c.auth.getSession();
+      conSesion = !!(s && s.data && s.data.session);
+    }catch(e){ return; }
+    pintarCuenta();
+  }
+
+  function arrancar(){
+    montarOferta();
+    revisarSesion();
+
+    var c = cli();
+    if(c && c.auth && c.auth.onAuthStateChange){
+      c.auth.onAuthStateChange(function(){ revisarSesion(); });
+    }
+
+    /* El catálogo y el encabezado se repintan solos varias veces durante
+       el arranque; hay que reafirmar en vez de hacerlo una sola vez. */
+    var obs = new MutationObserver(function(){
+      montarOferta();
+      pintarCuenta();
+    });
+    obs.observe(document.body, {childList:true, subtree:true});
+
+    [400, 1200, 2500].forEach(function(ms){
+      setTimeout(function(){ montarOferta(); pintarCuenta(); }, ms);
+    });
+
+    var t;
+    window.addEventListener('resize', function(){
+      clearTimeout(t);
+      t = setTimeout(function(){
+        if(window.innerWidth > 900) desmontarOferta();
+        else montarOferta();
+        pintarCuenta();
+      }, 180);
+    });
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 40 — Los datos de pago solo para quien tiene cuenta
