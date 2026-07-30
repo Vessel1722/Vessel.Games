@@ -24518,14 +24518,44 @@ async function doRegister(){
   var c = SB(); if(!c){ msg('No hay conexión con el servidor. Intenta más tarde.'); return; }
   if(btn){ btn.disabled = true; btn.textContent = 'Creando cuenta...'; }
   try{
+    /* El WhatsApp es único por cuenta. Si ya está tomado hay que decirlo
+       ANTES de intentar el alta: si se deja pasar, el disparador que
+       crea la ficha del cliente choca contra esa restricción, y lo que
+       llega al navegador es un error 500 con el cuerpo vacío. El
+       cliente veía literalmente "No se pudo registrar: {}", que no le
+       dice nada y parecía un fallo del enlace de referido. */
+    try{
+      var ocupado = null;
+      var rpcTel = await c.rpc('vg_telefono_ocupado', { p_phone: phone });
+      if(!rpcTel.error) ocupado = rpcTel.data === true;
+      else{
+        var q = await c.from('vg_users').select('id').eq('phone', phone).maybeSingle();
+        if(!q.error) ocupado = !!q.data;
+      }
+      if(ocupado){
+        msg('Ese WhatsApp ya tiene una cuenta. Inicia sesión, o registra otro número.');
+        return;
+      }
+    }catch(e){ /* si no se puede comprobar, se deja continuar */ }
+
     var r = await c.auth.signUp({
       email: email, password: pass,
       options: { data: { name: name.trim(), phone: phone, phone_cc: cc } }
     });
     if(r.error){
       var m0 = r.error.message || '';
-      if(/already registered|already exists|User already/i.test(m0)) msg('Ese correo ya tiene cuenta. Inicia sesión.');
-      else msg('No se pudo registrar: ' + m0);
+      if(/already registered|already exists|User already/i.test(m0)){
+        msg('Ese correo ya tiene cuenta. Inicia sesión.');
+      }else if(!m0 || m0 === '{}' || r.error.status === 500){
+        /* El servidor no manda detalle en este caso. Casi siempre es un
+           dato repetido, y el teléfono es el único campo único además
+           del correo. */
+        msg('No se pudo crear la cuenta. Revisa que el WhatsApp y el correo no estén ya registrados.');
+      }else if(/rate limit|too many/i.test(m0)){
+        msg('Demasiados intentos seguidos. Espera un minuto y vuelve a probar.');
+      }else{
+        msg('No se pudo registrar: ' + m0);
+      }
       return;
     }
     /* referido pendiente (si vino por un link ?ref=) */
@@ -30688,6 +30718,453 @@ else init();
   #vg17Client::after{animation:none;display:none}
 }
 </style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 40 — Los datos de pago solo para quien tiene cuenta
+
+     Hasta ahora el número de tarjeta y el nombre del titular se veían
+     nada más abrir el carrito, sin cuenta ni nada. Los veía cualquiera
+     que pasara por la página, no solo quien iba a comprar.
+
+     Ahora, sin sesión iniciada, en su lugar sale un aviso con los dos
+     botones para entrar o registrarse. El total del pedido sí se sigue
+     viendo: eso es lo que el cliente necesita para decidir.
+
+     En cuanto inicia sesión, los datos aparecen solos, sin tener que
+     volver a empezar el pedido.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-pago-privado-v40">
+#paymentModal.vg-pago-bloqueado .vg-pay-methods,
+#paymentModal.vg-pago-bloqueado .vg-pay-copy-all,
+#paymentModal.vg-pago-bloqueado .vg-pay-coupon-row,
+#paymentModal.vg-pago-bloqueado .vg-coupon-msg,
+#paymentModal.vg-pago-bloqueado .vg-payment-contact-grid,
+#paymentModal.vg-pago-bloqueado .vg-pay-proof,
+#paymentModal.vg-pago-bloqueado .vg-pay-actions{
+  display:none !important;
+}
+#vgPagoCandado{
+  margin:18px 0 6px;padding:26px 22px;text-align:center;
+  border:1px solid rgba(34,245,211,.28);
+  background:
+    radial-gradient(80% 70% at 50% 0%, rgba(34,245,211,.10), transparent 70%),
+    linear-gradient(160deg,#101527,#0a0d18);
+  clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+#vgPagoCandado .ico{font-size:2.4rem;line-height:1;display:block;margin-bottom:12px}
+#vgPagoCandado h4{
+  margin:0 0 8px;color:#fff;font-size:1.08rem;font-weight:900;
+  font-family:ui-monospace,Consolas,monospace;letter-spacing:.04em;
+}
+#vgPagoCandado p{margin:0 auto 18px;color:#9aa8c4;font-size:.86rem;line-height:1.55;max-width:34ch}
+#vgPagoCandado .botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#vgPagoCandado button{
+  padding:13px 22px;cursor:pointer;font-family:inherit;
+  font-size:.86rem;font-weight:900;border-radius:0;
+  clip-path:polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition:.15s;
+}
+#vgPagoCandado .entrar{
+  border:0;background:linear-gradient(120deg,#22f5d3,#a855f7);color:#04211b;
+  box-shadow:0 0 26px rgba(34,245,211,.30);
+}
+#vgPagoCandado .crear{
+  border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.05);color:#e8edf9;
+}
+#vgPagoCandado button:hover{filter:brightness(1.08)}
+#vgPagoCandado button:active{transform:scale(.97)}
+#vgPagoCandado .nota{
+  margin:16px 0 0;color:#6d7d95;font-size:.74rem;line-height:1.5;
+}
+@media(max-width:640px){
+  #vgPagoCandado{padding:22px 16px}
+  #vgPagoCandado .botones{flex-direction:column}
+  #vgPagoCandado button{width:100%}
+}
+</style>
+
+<script id="vg-pago-privado-js-v40">
+(function(){
+  'use strict';
+  if(window.__VG40__) return; window.__VG40__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function modal(){ return document.getElementById('paymentModal'); }
+
+  function candado(){
+    var m = modal(); if(!m) return null;
+    var c = document.getElementById('vgPagoCandado');
+    if(c) return c;
+    c = document.createElement('div');
+    c.id = 'vgPagoCandado';
+    c.innerHTML =
+      '<span class="ico">🔒</span>'+
+      '<h4>Datos de pago protegidos</h4>'+
+      '<p>Entra a tu cuenta para ver dónde depositar. Así podemos darle seguimiento a tu pedido y avisarte cuando esté entregado.</p>'+
+      '<div class="botones">'+
+        '<button type="button" class="entrar">Iniciar sesión</button>'+
+        '<button type="button" class="crear">Crear cuenta gratis</button>'+
+      '</div>'+
+      '<p class="nota">Crear la cuenta toma menos de un minuto y te deja el chat de entrega abierto.</p>';
+
+    function abrirAuth(){
+      try{ if(typeof window.vgOpenAuth === 'function') window.vgOpenAuth(); }catch(e){}
+    }
+    c.querySelector('.entrar').onclick = abrirAuth;
+    c.querySelector('.crear').onclick  = function(){
+      abrirAuth();
+      /* Se salta a la pestaña de registro, que es a lo que vino */
+      setTimeout(function(){
+        var b = Array.prototype.filter.call(
+          document.querySelectorAll('#vg10Auth button'),
+          function(x){ return x.textContent.trim() === 'Crear cuenta'; })[0];
+        if(b) b.click();
+      }, 350);
+    };
+
+    /* Justo debajo del encabezado con el total, para que el importe se
+       siga viendo y el aviso quede donde estaban los datos. */
+    var head = m.querySelector('.vg-pay-header');
+    var cont = m.querySelector('.vg-pay-modal-new') || m.firstElementChild || m;
+    if(head && head.parentNode) head.parentNode.insertBefore(c, head.nextSibling);
+    else cont.appendChild(c);
+    return c;
+  }
+
+  var conSesion = null;
+
+  function pintar(){
+    var m = modal(); if(!m) return;
+    var c = candado(); if(!c) return;
+    var bloquear = (conSesion === false);
+    m.classList.toggle('vg-pago-bloqueado', bloquear);
+    c.style.display = bloquear ? '' : 'none';
+  }
+
+  async function revisar(){
+    var c = cli();
+    if(!c){ conSesion = true; pintar(); return; }   /* sin servidor no se estorba */
+    try{
+      var s = await c.auth.getSession();
+      conSesion = !!(s && s.data && s.data.session);
+    }catch(e){ conSesion = true; }
+    pintar();
+  }
+
+  function envolver(){
+    if(typeof window.openPaymentModal !== 'function' || window.openPaymentModal.__vg40) return false;
+    var anterior = window.openPaymentModal;
+    var envuelto = function(){
+      var r = anterior.apply(this, arguments);
+      revisar();
+      /* Otros parches repintan el modal después de abrirlo */
+      [120, 400, 900].forEach(function(ms){ setTimeout(pintar, ms); });
+      return r;
+    };
+    envuelto.__vg40 = true;
+    window.openPaymentModal = envuelto;
+    return true;
+  }
+
+  function arrancar(){
+    if(!envolver()){
+      var n = 0;
+      var t = setInterval(function(){ if(envolver() || ++n > 60) clearInterval(t); }, 250);
+    }
+    /* Al entrar o salir de la cuenta se revisa otra vez, así el cliente
+       ve los datos sin reiniciar el pedido. */
+    var c = cli();
+    if(c && c.auth && c.auth.onAuthStateChange){
+      c.auth.onAuthStateChange(function(){ revisar(); });
+    }
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 39 — Zona táctil de los favoritos
+
+     El corazón de cada tarjeta mide 34x34 en el móvil, por debajo de
+     los 44px que recomiendan tanto Apple como Google. Con el dedo se
+     falla y se acaba abriendo el producto en vez de guardarlo.
+
+     Se agranda solo la zona que responde al dedo, con un área invisible
+     alrededor. El corazón se sigue viendo del mismo tamaño: el diseño
+     no cambia en nada.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-tactil-v39">
+@media(max-width:900px){
+  html body .vg-fav-btn{position:relative}
+  html body .vg-fav-btn::before{
+    content:"";position:absolute;
+    top:-6px;right:-6px;bottom:-6px;left:-6px;   /* 34 + 12 = 46px */
+    border-radius:inherit;
+  }
+}
+</style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 38 — Los comprobantes dejan de servirse en abierto
+
+     El almacén de comprobantes era público: se podían listar las
+     carpetas y descargar el comprobante de pago de cualquier cliente
+     con solo pedir la URL. Al cerrarlo (fase 38 del SQL) esas
+     direcciones dejan de responder, y las que quedaron guardadas en los
+     pedidos apuntan justo a ese formato público.
+
+     Esto las cambia al vuelo por enlaces firmados de un minuto, que
+     Supabase solo entrega a quien tiene permiso: tú, y el cliente dueño
+     del pedido. No hay que tocar los pedidos ya guardados.
+     ════════════════════════════════════════════════════════════════ -->
+<script id="vg-comprobantes-firmados-v38">
+(function(){
+  'use strict';
+  if(window.__VG38__) return; window.__VG38__ = true;
+
+  var PUB = '/storage/v1/object/public/comprobantes/';
+  var cache = {};          /* ruta -> url firmada, para no pedirla dos veces */
+
+  function cliente(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+
+  function rutaDe(url){
+    var i = String(url||'').indexOf(PUB);
+    if(i < 0) return null;
+    try{ return decodeURIComponent(String(url).slice(i + PUB.length).split('?')[0]); }
+    catch(e){ return null; }
+  }
+
+  async function firmar(ruta){
+    if(cache[ruta]) return cache[ruta];
+    var c = cliente(); if(!c) return null;
+    try{
+      var r = await c.storage.from('comprobantes').createSignedUrl(ruta, 60);
+      if(r.error || !r.data) return null;
+      cache[ruta] = r.data.signedUrl;
+      /* El enlace caduca al minuto; se olvida antes para no reusar uno muerto */
+      setTimeout(function(){ delete cache[ruta]; }, 50000);
+      return cache[ruta];
+    }catch(e){ return null; }
+  }
+
+  async function arreglar(img){
+    if(!img || img.dataset.vg38) return;
+    var ruta = rutaDe(img.getAttribute('src'));
+    if(!ruta) return;
+    img.dataset.vg38 = '1';
+    var url = await firmar(ruta);
+    if(url) img.src = url;
+  }
+
+  function barrer(raiz){
+    var nodos = (raiz||document).querySelectorAll ? (raiz||document).querySelectorAll('img') : [];
+    Array.prototype.forEach.call(nodos, function(i){
+      if(String(i.getAttribute('src')||'').indexOf(PUB) >= 0) arreglar(i);
+    });
+  }
+
+  function arrancar(){
+    barrer(document);
+    /* Los comprobantes se pintan al abrir un pedido, así que hay que
+       estar pendiente de lo que se añade después. */
+    new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        Array.prototype.forEach.call(m.addedNodes || [], function(n){
+          if(n.nodeType !== 1) return;
+          if(n.tagName === 'IMG') arreglar(n);
+          else barrer(n);
+        });
+      });
+    }).observe(document.documentElement, {childList:true, subtree:true});
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 37 — El desplegable de la lada, más corto
+
+     Era un <select> nativo con 22 países. El navegador lo abre entero,
+     así que en el escritorio ocupaba media pantalla y en el móvil casi
+     toda. La altura de la lista nativa no se puede limitar por CSS.
+
+     Se le pone encima un desplegable propio con altura máxima y buscador.
+     El <select> original SIGUE en la página, oculto: es él quien guarda
+     el valor, así que todo el código que lee #vgAuthRCC.value funciona
+     igual que antes.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-lada-v37">
+.vglada{position:relative;flex:none;width:118px;margin:8px 0}
+.vglada select{
+  position:absolute !important;opacity:0 !important;pointer-events:none !important;
+  width:1px !important;height:1px !important;margin:0 !important;
+}
+.vglada-btn{
+  width:100%;height:48px;display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:0 10px;cursor:pointer;font-family:inherit;font-size:.95rem;font-weight:700;
+  color:#eef0fa;border:1px solid rgba(255,255,255,.14);border-radius:12px;
+  background:rgba(255,255,255,.05);
+}
+.vglada-btn:hover{border-color:rgba(34,245,211,.45)}
+.vglada.abierto .vglada-btn{border-color:rgba(34,245,211,.7)}
+.vglada-btn .flecha{font-size:.7rem;opacity:.6;flex:none}
+.vglada-panel{
+  display:none;position:absolute;z-index:60;left:0;top:calc(100% + 6px);
+  width:250px;max-width:78vw;
+  border:1px solid rgba(34,245,211,.30);border-radius:14px;overflow:hidden;
+  background:#0d1120;box-shadow:0 18px 44px rgba(0,0,0,.6);
+}
+.vglada.abierto .vglada-panel{display:block}
+.vglada-buscar{
+  width:100%;height:40px;padding:0 12px;border:0;border-bottom:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.04);color:#fff;font-family:inherit;font-size:.86rem;
+}
+.vglada-buscar:focus{outline:none;background:rgba(34,245,211,.07)}
+.vglada-lista{
+  /* Lo importante: la lista deja de crecer y se desplaza dentro */
+  max-height:232px;overflow-y:auto;overscroll-behavior:contain;
+}
+.vglada-lista button{
+  width:100%;display:flex;align-items:center;gap:9px;
+  padding:10px 12px;border:0;background:transparent;color:#dbe3f5;
+  font-family:inherit;font-size:.88rem;font-weight:700;text-align:left;cursor:pointer;
+}
+.vglada-lista button:hover,.vglada-lista button.marcado{background:rgba(34,245,211,.14);color:#c7fff4}
+.vglada-lista button[aria-selected="true"]{background:rgba(34,245,211,.10);color:#8ff5e3}
+.vglada-lista .pais{color:#8593b5;font-size:.76rem;margin-left:auto}
+.vglada-vacio{padding:14px 12px;color:#7f8ea6;font-size:.82rem;text-align:center}
+@media(max-width:640px){
+  .vglada{width:104px}
+  .vglada-btn{font-size:.88rem;padding:0 8px}
+  .vglada-panel{width:230px}
+  .vglada-lista{max-height:200px}
+}
+</style>
+
+<script id="vg-lada-js-v37">
+(function(){
+  'use strict';
+  if(window.__VG37__) return; window.__VG37__ = true;
+
+  var NOMBRES = {
+    '+52':'México','+54':'Argentina','+57':'Colombia','+56':'Chile','+51':'Perú',
+    '+58':'Venezuela','+593':'Ecuador','+591':'Bolivia','+595':'Paraguay','+598':'Uruguay',
+    '+502':'Guatemala','+503':'El Salvador','+504':'Honduras','+505':'Nicaragua',
+    '+506':'Costa Rica','+507':'Panamá','+509':'Haití','+53':'Cuba','+1':'EE. UU.',
+    '+34':'España','+55':'Brasil','+351':'Portugal'
+  };
+
+  function montar(sel){
+    if(!sel || sel.dataset.vg37) return;
+    sel.dataset.vg37 = '1';
+
+    var caja = document.createElement('div');
+    caja.className = 'vglada';
+    sel.parentNode.insertBefore(caja, sel);
+    caja.appendChild(sel);
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'vglada-btn';
+    btn.setAttribute('aria-haspopup','listbox');
+    caja.appendChild(btn);
+
+    var panel = document.createElement('div');
+    panel.className = 'vglada-panel';
+    panel.innerHTML = '<input class="vglada-buscar" type="text" placeholder="Buscar país o lada..." aria-label="Buscar país">'+
+                      '<div class="vglada-lista" role="listbox"></div>';
+    caja.appendChild(panel);
+
+    var buscar = panel.querySelector('.vglada-buscar');
+    var lista  = panel.querySelector('.vglada-lista');
+
+    var opciones = Array.prototype.map.call(sel.options, function(o){
+      return { valor:o.value, texto:o.textContent.trim(), pais:NOMBRES[o.value] || '' };
+    });
+
+    function etiqueta(){
+      var o = opciones.filter(function(x){return x.valor === sel.value;})[0] || opciones[0];
+      btn.innerHTML = '<span>'+ (o ? o.texto : '+52') +'</span><span class="flecha">▼</span>';
+    }
+
+    function pintar(filtro){
+      var f = String(filtro||'').trim().toLowerCase();
+      var vis = opciones.filter(function(o){
+        if(!f) return true;
+        return o.texto.toLowerCase().indexOf(f) >= 0 ||
+               o.pais.toLowerCase().indexOf(f) >= 0 ||
+               o.valor.indexOf(f.replace(/^\+?/,'+')) >= 0;
+      });
+      if(!vis.length){ lista.innerHTML = '<div class="vglada-vacio">Sin resultados</div>'; return; }
+      lista.innerHTML = vis.map(function(o){
+        return '<button type="button" role="option" data-v="'+o.valor+'"'+
+               (o.valor===sel.value?' aria-selected="true"':'')+'>'+
+               '<span>'+o.texto+'</span><span class="pais">'+o.pais+'</span></button>';
+      }).join('');
+    }
+
+    function abrir(){
+      pintar('');
+      caja.classList.add('abierto');
+      buscar.value = '';
+      /* En el móvil no se enfoca el buscador: abriría el teclado y
+         taparía la lista, que es justo lo que se quería evitar. */
+      if(window.innerWidth > 640) setTimeout(function(){ buscar.focus(); }, 20);
+      var act = lista.querySelector('[aria-selected="true"]');
+      if(act) act.scrollIntoView({block:'nearest'});
+    }
+    function cerrar(){ caja.classList.remove('abierto'); }
+
+    function elegir(v){
+      sel.value = v;
+      try{ sel.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
+      etiqueta();
+      cerrar();
+    }
+
+    btn.onclick = function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      caja.classList.contains('abierto') ? cerrar() : abrir();
+    };
+    lista.onclick = function(ev){
+      var b = ev.target.closest('[data-v]');
+      if(b) elegir(b.getAttribute('data-v'));
+    };
+    buscar.oninput = function(){ pintar(this.value); };
+    buscar.onkeydown = function(ev){
+      if(ev.key === 'Enter'){
+        ev.preventDefault();
+        var p = lista.querySelector('[data-v]');
+        if(p) elegir(p.getAttribute('data-v'));
+      }else if(ev.key === 'Escape'){ cerrar(); btn.focus(); }
+    };
+    document.addEventListener('click', function(ev){
+      if(!caja.contains(ev.target)) cerrar();
+    });
+
+    etiqueta();
+  }
+
+  /* El formulario de cuenta se construye cuando se abre, así que hay que
+     esperarlo en vez de buscarlo una sola vez al cargar. */
+  function vigilar(){
+    var s = document.getElementById('vgAuthRCC');
+    if(s) montar(s);
+    new MutationObserver(function(){
+      var e = document.getElementById('vgAuthRCC');
+      if(e && !e.dataset.vg37) montar(e);
+    }).observe(document.body, {childList:true, subtree:true});
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', vigilar, {once:true});
+  else vigilar();
+})();
+</script>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 36 — Fluidez en el móvil
