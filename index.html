@@ -30718,6 +30718,183 @@ else init();
 </style>
 
 <!-- ════════════════════════════════════════════════════════════════
+     FASE 43 — Sección "Por qué elegirnos"
+
+     Va justo debajo de la oferta y encima del catálogo, que es donde el
+     visitante ya vio el gancho y está decidiendo si comprar aquí o irse.
+
+     Todo lo que dice es comprobable en la propia página: la entrega, el
+     chat por pedido, los reportes, los métodos de pago y los tokens. No
+     hay promesas que dependan de terceros.
+
+     Se mantiene corta a propósito: el motivo de la fase 42 fue que el
+     inicio era demasiado largo en móvil, y sería absurdo arreglarlo y
+     volver a alargarlo aquí.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-porque-v43">
+.vgpq{
+  margin:26px 0;padding:26px 22px;position:relative;overflow:hidden;
+  border:1px solid rgba(34,245,211,.20);
+  background:
+    radial-gradient(80% 60% at 15% 0%, rgba(34,245,211,.09), transparent 62%),
+    radial-gradient(70% 60% at 95% 100%, rgba(168,85,247,.11), transparent 62%),
+    linear-gradient(160deg,#101527,#0a0d18);
+  clip-path:polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+}
+.vgpq-eyebrow{
+  display:inline-block;padding:6px 13px;margin-bottom:12px;
+  border:1px solid rgba(34,245,211,.34);background:rgba(34,245,211,.10);
+  color:#8ff5e3;font-family:ui-monospace,Consolas,monospace;
+  font-size:.65rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+  clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.vgpq h2{
+  margin:0 0 6px;color:#fff;font-size:1.6rem;font-weight:900;line-height:1.08;
+  text-transform:uppercase;letter-spacing:.01em;
+}
+.vgpq h2 em{font-style:normal;
+  background:linear-gradient(90deg,#22f5d3,#a855f7);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#22f5d3}
+.vgpq > p.lead{margin:0 0 20px;color:#9aa8c4;font-size:.87rem;line-height:1.55;max-width:52ch}
+
+.vgpq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-bottom:20px}
+.vgpq-item{
+  padding:14px 15px;border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.035);
+  clip-path:polygon(0 0, calc(100% - 11px) 0, 100% 11px, 100% 100%, 11px 100%, 0 calc(100% - 11px));
+}
+.vgpq-item .ico{font-size:1.35rem;line-height:1;display:block;margin-bottom:8px}
+.vgpq-item b{display:block;color:#fff;font-size:.87rem;font-weight:850;margin-bottom:3px}
+.vgpq-item span{display:block;color:#8e9cba;font-size:.76rem;line-height:1.45}
+
+/* ── El bloque de tokens, que es el argumento fuerte ── */
+.vgpq-tokens{
+  padding:20px;position:relative;
+  border:1px solid rgba(214,168,79,.32);
+  background:
+    radial-gradient(70% 70% at 20% 0%, rgba(214,168,79,.13), transparent 65%),
+    linear-gradient(160deg,rgba(214,168,79,.07),rgba(255,255,255,.02));
+  clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+.vgpq-tokens h3{
+  margin:0 0 4px;color:#f0d090;font-size:1.06rem;font-weight:900;
+  text-transform:uppercase;letter-spacing:.03em;
+}
+.vgpq-tokens > p{margin:0 0 15px;color:#a99a7c;font-size:.8rem;line-height:1.5}
+.vgpq-gana{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.vgpq-gana div{
+  padding:13px;text-align:center;
+  border:1px solid rgba(214,168,79,.24);background:rgba(0,0,0,.22);
+  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.vgpq-gana b{
+  display:block;color:#f0d090;font-size:1.5rem;font-weight:900;line-height:1;
+  font-family:ui-monospace,Consolas,monospace;
+}
+.vgpq-gana span{display:block;color:#c4cee6;font-size:.74rem;font-weight:800;margin-top:6px;line-height:1.35}
+.vgpq-gana small{display:block;color:#8e9cba;font-size:.68rem;margin-top:3px;line-height:1.35}
+.vgpq-clave{
+  padding:12px 14px;margin-bottom:15px;
+  border-left:3px solid #22f5d3;background:rgba(34,245,211,.08);
+  color:#cfeee8;font-size:.82rem;line-height:1.5;
+}
+.vgpq-clave b{color:#8ff5e3}
+.vgpq-cta{
+  display:inline-flex;align-items:center;gap:9px;padding:13px 22px;cursor:pointer;
+  border:0;background:linear-gradient(120deg,#22f5d3,#a855f7);color:#04211b;
+  font-family:inherit;font-size:.85rem;font-weight:900;
+  box-shadow:0 0 26px rgba(34,245,211,.26);
+  clip-path:polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition:.15s;
+}
+.vgpq-cta:hover{filter:brightness(1.08)}
+.vgpq-cta:active{transform:scale(.97)}
+
+@media(max-width:640px){
+  .vgpq{padding:22px 16px;margin:20px 0}
+  .vgpq h2{font-size:1.32rem}
+  .vgpq-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .vgpq-item{padding:12px}
+  .vgpq-item .ico{font-size:1.2rem;margin-bottom:6px}
+  .vgpq-item b{font-size:.8rem}
+  .vgpq-item span{font-size:.71rem}
+  .vgpq-tokens{padding:16px}
+  .vgpq-cta{width:100%;justify-content:center}
+}
+</style>
+
+<script id="vg-porque-js-v43">
+(function(){
+  'use strict';
+  if(window.__VG43__) return; window.__VG43__ = true;
+
+  function html(){
+    return '<section class="vgpq" id="vgPorQue">'+
+      '<span class="vgpq-eyebrow">Por qué elegirnos</span>'+
+      '<h2>Comprar aquí te <em>devuelve algo</em></h2>'+
+      '<p class="lead">No solo entregamos rápido: cada compra y cada persona que traigas te acerca a un premio gratis.</p>'+
+
+      '<div class="vgpq-grid">'+
+        '<div class="vgpq-item"><span class="ico">⚡</span><b>Entrega en 20 min a 2 h</b>'+
+          '<span>Y ves el estado de tu pedido en todo momento.</span></div>'+
+        '<div class="vgpq-item"><span class="ico">💬</span><b>Chat por cada pedido</b>'+
+          '<span>Tu entrega queda guardada en tu cuenta, no se pierde.</span></div>'+
+        '<div class="vgpq-item"><span class="ico">🛠</span><b>Reportas y damos seguimiento</b>'+
+          '<span>Si algo falla, tiene número de reporte y respuesta.</span></div>'+
+        '<div class="vgpq-item"><span class="ico">💳</span><b>Paga como te acomode</b>'+
+          '<span>BBVA, Spin by OXXO, PayPal o Binance Pay.</span></div>'+
+      '</div>'+
+
+      '<div class="vgpq-tokens">'+
+        '<h3>🪙 Gana tokens y llévate premios</h3>'+
+        '<p>Se acumulan solos cuando te entregamos el pedido.</p>'+
+        '<div class="vgpq-gana">'+
+          '<div><b>0.25</b><span>por cada compra tuya</span></div>'+
+          '<div><b>1.0</b><span>por cada amigo que traigas</span>'+
+            '<small>en su primera compra</small></div>'+
+        '</div>'+
+        '<div class="vgpq-clave"><b>Solo se descuenta lo que cuesta el premio.</b> '+
+          'Si juntas 8 tokens y pides uno de 5, te quedan 3 para el siguiente. '+
+          'No se reinicia y no caduca.</div>'+
+        '<button type="button" class="vgpq-cta" id="vgpqCta">Ver mis tokens y mi enlace →</button>'+
+      '</div>'+
+    '</section>';
+  }
+
+  function montar(){
+    if(document.getElementById('vgPorQue')) return true;
+    var ancla = document.querySelector('.offers-showcase');
+    if(!ancla || !ancla.parentNode) return false;
+
+    var caja = document.createElement('div');
+    caja.innerHTML = html();
+    var sec = caja.firstChild;
+    ancla.parentNode.insertBefore(sec, ancla.nextSibling);
+
+    /* Lleva directo a la sección de tokens de su cuenta. Si no ha
+       entrado, vgOpenClientPanel le abre primero el acceso. */
+    var cta = document.getElementById('vgpqCta');
+    if(cta) cta.onclick = function(){
+      if(typeof window.vgOpenClientPanel === 'function') window.vgOpenClientPanel('tokens');
+      else if(typeof window.vgOpenAuth === 'function') window.vgOpenAuth();
+    };
+    return true;
+  }
+
+  function arrancar(){
+    if(montar()) return;
+    /* La oferta se pinta de forma asíncrona; se espera a que exista */
+    var n = 0;
+    var t = setInterval(function(){ if(montar() || ++n > 60) clearInterval(t); }, 250);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
      FASE 42 — Tres arreglos de la tienda en móvil
 
      1. EL BORDE DENTRO DE LA FOTO
@@ -30744,6 +30921,25 @@ else init();
 html body .card .imgbox,
 html body .service-carousel-card .imgbox{
   border:0 !important;
+}
+
+/* ── 1b. El corazón dejaba la foto descentrada ──
+   .imgbox es flex. El botón de favoritos estaba en position:relative,
+   así que contaba como un elemento más de la fila: la caja mide 190px
+   pero tenía que acomodar 190 de foto + 32 del corazón, y al centrar
+   los dos empujaba la foto 15.8px a la izquierda. Se salía por la
+   izquierda y dejaba un hueco oscuro por la derecha.
+
+   Sacándolo del flujo con position:absolute, la foto recupera todo el
+   ancho y el corazón se queda donde toca, arriba a la derecha. */
+html body .imgbox .vg-fav-btn{
+  position:absolute !important;
+  top:10px !important;
+  right:10px !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  z-index:5;
 }
 html body .card .imgbox > img,
 html body .service-carousel-card .imgbox > img{
