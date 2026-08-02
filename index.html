@@ -33,6 +33,18 @@
 <link href="apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
 <link href="./apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
 <meta content="#08090F" name="theme-color"/>
+
+<!-- ─── App instalable (PWA) ───────────────────────────────────────
+     Con esto el cliente puede instalar la tienda en su teléfono desde
+     el propio navegador: le queda el icono en la pantalla de inicio y
+     abre a pantalla completa, sin barra de direcciones. No hace falta
+     Play Store ni que nadie descargue un APK.
+     El mismo manifiesto sirve después para generar el APK. -->
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vessel Games">
 <script id="vg-supabase-public-config-v42">
   window.VG_SUPABASE_URL = "https://qlczzaajxvvkyuqqdjmu.supabase.co";
   window.VG_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsY3p6YWFqeHZ2a3l1cXFkam11Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0MDY4OTMsImV4cCI6MjA5NDk4Mjg5M30.p5A25H8epCHRmxHQjuMWa1iO_4Qqg5w0aCrlI-Ehjhc";
@@ -30716,6 +30728,387 @@ else init();
   #vg17Client::after{animation:none;display:none}
 }
 </style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 46 — La lista de usuarios del panel volvía vacía
+
+     vgAdminLoadUsers hacía  _allUsers = res.data || []  sin mirar nunca
+     res.error. Supabase NO lanza excepción cuando una consulta falla:
+     devuelve {data:null, error:{...}}. Así que cualquier fallo acababa
+     pintando "No hay usuarios registrados aun", que es justo lo
+     contrario de lo que pasaba: había usuarios, pero la consulta no
+     llegaba a traerlos.
+
+     La consulta pide vg_token_wallet incrustado, y eso exige una llave
+     foránea entre las dos tablas. Si falta, PostgREST responde con un
+     error en vez de datos.
+
+     Aquí se reemplaza por una versión que:
+       · mira el error y lo enseña, con el motivo de verdad;
+       · si el fallo es de la relación incrustada, reintenta sin ella y
+         trae los saldos por separado, para que la lista salga igual;
+       · aguanta nombres vacíos, que antes reventaban al pintar la
+         inicial del avatar.
+     ════════════════════════════════════════════════════════════════ -->
+<script id="vg-admin-usuarios-js-v46">
+(function(){
+  'use strict';
+  if(window.__VG46__) return; window.__VG46__ = true;
+
+  function cli(){
+    if(typeof window.vgGetSB === 'function') return window.vgGetSB();
+    return null;
+  }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  function aviso(wrap, texto, detalle){
+    wrap.innerHTML =
+      '<div style="padding:18px;border:1px solid rgba(255,77,109,.35);'+
+      'background:rgba(255,77,109,.08);border-radius:12px;color:#ffabbc;'+
+      'font-size:.86rem;line-height:1.55">'+
+      '<b style="display:block;color:#fff;margin-bottom:6px">'+esc(texto)+'</b>'+
+      (detalle ? '<span style="color:#e8a9b6;font-family:ui-monospace,Consolas,monospace;'+
+                 'font-size:.78rem">'+esc(detalle)+'</span>' : '')+
+      '</div>';
+  }
+
+  async function cargar(){
+    var wrap = document.getElementById('vgUsersTableWrap');
+    if(!wrap) return;
+    wrap.innerHTML = '<div style="text-align:center;padding:32px;color:#5a6180">Cargando usuarios...</div>';
+
+    var c = cli();
+    if(!c){ aviso(wrap, 'No hay conexión con el servidor.'); return; }
+
+    var CAMPOS = 'id,name,phone,email,referral_code,created_at,is_admin';
+
+    /* 1er intento: con los saldos incrustados */
+    var r = await c.from('vg_users')
+      .select(CAMPOS + ', vg_token_wallet(balance,total_purchases,total_earned)')
+      .order('created_at', {ascending:false})
+      .limit(200);
+
+    var usuarios = null;
+
+    if(!r.error){
+      usuarios = r.data || [];
+    }else{
+      /* 2º intento: sin la relación, que es lo que suele fallar */
+      var r2 = await c.from('vg_users')
+        .select(CAMPOS)
+        .order('created_at', {ascending:false})
+        .limit(200);
+
+      if(r2.error){
+        var m = r2.error.message || String(r2.error);
+        if(/permission|policy|row-level/i.test(m)){
+          aviso(wrap, 'La base de datos no te deja ver los usuarios.',
+                'Tu cuenta tiene que tener is_admin = true en vg_users. Detalle: ' + m);
+        }else{
+          aviso(wrap, 'No se pudieron cargar los usuarios.', m);
+        }
+        return;
+      }
+
+      usuarios = r2.data || [];
+
+      /* Los saldos se traen aparte y se pegan por user_id */
+      try{
+        var w = await c.from('vg_token_wallet').select('user_id,balance,total_purchases,total_earned');
+        if(!w.error && w.data){
+          var porId = {};
+          w.data.forEach(function(x){ porId[String(x.user_id)] = x; });
+          usuarios.forEach(function(u){ u.vg_token_wallet = porId[String(u.id)] || null; });
+        }
+      }catch(e){}
+    }
+
+    if(!usuarios.length){
+      wrap.innerHTML =
+        '<div style="padding:20px;color:#8593b5;font-size:.87rem;line-height:1.55">'+
+        'La consulta funcionó pero no devolvió ninguna fila.<br>'+
+        'Si sabes que hay cuentas registradas, revisa que el disparador '+
+        '<b>handle_new_user</b> esté creando la ficha en vg_users al darse de alta.'+
+        '</div>';
+      return;
+    }
+
+    pintar(wrap, usuarios);
+  }
+
+  /* Tabla propia con buscador y borrado. No se usa la original porque
+     no tenía forma de quitar una cuenta, que es lo que hacía falta para
+     limpiar las de prueba. */
+  var _lista = [];
+
+  function pintar(wrap, usuarios){
+    _lista = usuarios;
+    wrap.innerHTML =
+      '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px">'+
+        '<input id="vgUsrBuscar" placeholder="Buscar por nombre, correo o WhatsApp..." '+
+        'style="flex:1;min-width:200px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);'+
+        'color:#fff;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.85rem">'+
+        '<span id="vgUsrCuenta" style="color:#8593b5;font-size:.8rem;font-weight:800"></span>'+
+        '<button id="vgUsrHuerfanos" style="border:1px solid rgba(255,183,77,.4);background:rgba(255,183,77,.10);'+
+        'color:#ffd68a;border-radius:10px;padding:10px 13px;font-size:.78rem;font-weight:850;cursor:pointer">'+
+        '🧹 Limpiar fichas sin cuenta</button>'+
+      '</div>'+
+      '<div id="vgUsrMsg" style="min-height:20px;font-size:.82rem;font-weight:800;margin-bottom:8px"></div>'+
+      '<div id="vgUsrCuerpo"></div>';
+
+    qs('#vgUsrBuscar').oninput = function(){ filas(this.value); };
+    qs('#vgUsrHuerfanos').onclick = limpiarHuerfanos;
+    filas('');
+  }
+
+  function qs(s){ return document.querySelector(s); }
+
+  function msg(txt, ok){
+    var m = qs('#vgUsrMsg'); if(!m) return;
+    m.style.color = ok ? '#8ff5e3' : '#ff92a8';
+    m.textContent = txt || '';
+  }
+
+  function filas(filtro){
+    var f = String(filtro||'').trim().toLowerCase();
+    var vis = !f ? _lista : _lista.filter(function(u){
+      return [u.name,u.email,u.phone,u.referral_code].join(' ').toLowerCase().indexOf(f) >= 0;
+    });
+    var cnt = qs('#vgUsrCuenta');
+    if(cnt) cnt.textContent = vis.length + ' de ' + _lista.length;
+
+    var cuerpo = qs('#vgUsrCuerpo');
+    if(!vis.length){ cuerpo.innerHTML = '<div style="padding:16px;color:#8593b5">Nadie coincide con esa búsqueda.</div>'; return; }
+
+    cuerpo.innerHTML =
+      '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.84rem">'+
+      '<thead><tr style="color:#8e9cba;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em">'+
+        '<th style="text-align:left;padding:8px">Nombre</th>'+
+        '<th style="text-align:left;padding:8px">Correo</th>'+
+        '<th style="text-align:left;padding:8px">WhatsApp</th>'+
+        '<th style="text-align:right;padding:8px">Tokens</th>'+
+        '<th style="text-align:left;padding:8px">Alta</th>'+
+        '<th style="padding:8px"></th></tr></thead><tbody>'+
+      vis.map(function(u){
+        var w = u.vg_token_wallet || {};
+        var admin = u.is_admin === true;
+        return '<tr style="border-top:1px solid rgba(255,255,255,.07)">'+
+          '<td style="padding:9px 8px;color:#fff;font-weight:800">'+esc(u.name||'(sin nombre)')+
+            (admin?' <span style="color:#8ff5e3;font-size:.7rem">ADMIN</span>':'')+'</td>'+
+          '<td style="padding:9px 8px;color:#c4cee6">'+esc(u.email||'—')+'</td>'+
+          '<td style="padding:9px 8px;color:#c4cee6">'+esc(u.phone||'—')+'</td>'+
+          '<td style="padding:9px 8px;text-align:right;color:#e8bf6d;font-weight:900">'+
+            (Math.round(Number(w.balance||0)*100)/100)+'</td>'+
+          '<td style="padding:9px 8px;color:#8593b5">'+
+            (u.created_at? new Date(u.created_at).toLocaleDateString('es-MX') : '—')+'</td>'+
+          '<td style="padding:9px 8px;text-align:right">'+
+            (admin
+              ? '<span style="color:#5a6180;font-size:.75rem">protegida</span>'
+              : '<button data-borrar="'+esc(u.id)+'" data-nombre="'+esc(u.name||'esta cuenta')+'" '+
+                'style="border:1px solid rgba(255,77,109,.4);background:rgba(255,77,109,.10);color:#ffabbc;'+
+                'border-radius:9px;padding:7px 11px;font-size:.75rem;font-weight:850;cursor:pointer">Borrar</button>')+
+          '</td></tr>';
+      }).join('')+'</tbody></table></div>';
+
+    Array.prototype.forEach.call(cuerpo.querySelectorAll('[data-borrar]'), function(b){
+      b.onclick = function(){ borrar(b.getAttribute('data-borrar'), b.getAttribute('data-nombre')); };
+    });
+  }
+
+  async function borrar(id, nombre){
+    var c = cli(); if(!c) return;
+
+    /* Primero se mira qué cuelga de esa cuenta, para avisar de verdad */
+    var res = await c.rpc('vg_admin_usuario_resumen', {p_id:id});
+    if(res.error){
+      msg(/does not exist|function/i.test(res.error.message)
+        ? 'Falta correr supabase_fase47_BORRAR_USUARIOS.sql en Supabase.'
+        : res.error.message, false);
+      return;
+    }
+    var d = res.data || {};
+    var aviso = 'Vas a borrar a "' + (d.nombre || nombre) + '".\n\n';
+    if(d.pedidos > 0)   aviso += '⚠ Tiene ' + d.pedidos + ' pedido(s), que se borrarán con su chat.\n';
+    if(d.referidos > 0) aviso += '· Refirió a ' + d.referidos + ' persona(s); esas cuentas se quedan, solo pierden el vínculo.\n';
+    aviso += '\nEsto no se puede deshacer. ¿Continuar?';
+    if(!confirm(aviso)) return;
+
+    var r = await c.rpc('vg_admin_borrar_usuario', {p_id:id, p_con_pedidos:(d.pedidos > 0)});
+    if(r.error){ msg('No se pudo borrar: ' + r.error.message, false); return; }
+    msg('Cuenta borrada: ' + ((r.data && r.data.nombre) || nombre), true);
+    cargar();
+  }
+
+  async function limpiarHuerfanos(){
+    var c = cli(); if(!c) return;
+    if(!confirm('Quita las fichas de cuentas que ya no existen en Authentication.\n\n'+
+                'Son las que borraste desde Supabase y se quedaron aquí colgando.\n'+
+                'No toca administradores. ¿Continuar?')) return;
+    var r = await c.rpc('vg_admin_limpiar_huerfanos');
+    if(r.error){
+      msg(/does not exist|function/i.test(r.error.message)
+        ? 'Falta correr supabase_fase47_BORRAR_USUARIOS.sql en Supabase.'
+        : r.error.message, false);
+      return;
+    }
+    msg('Fichas huérfanas quitadas: ' + (r.data || 0), true);
+    cargar();
+  }
+
+  /* Se sustituye la original cuando exista */
+  function reemplazar(){
+    if(typeof window.vgAdminLoadUsers !== 'function') return false;
+    if(window.vgAdminLoadUsers.__vg46) return true;
+    cargar.__vg46 = true;
+    window.vgAdminLoadUsers = cargar;
+    return true;
+  }
+  if(!reemplazar()){
+    var n = 0;
+    var t = setInterval(function(){ if(reemplazar() || ++n > 80) clearInterval(t); }, 250);
+  }
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 44 — App instalable
+
+     Registra el service worker y ofrece el botón de instalar cuando
+     Android dice que se puede. Casi nadie encuentra la opción en el
+     menú del navegador, así que hay que enseñarla.
+
+     El aviso sale una sola vez cada 15 días si lo cierran, y nunca
+     cuando la tienda ya está abierta como app.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-app-v44">
+#vgInstalar{
+  position:fixed;left:12px;right:12px;bottom:14px;z-index:8200;
+  display:none;align-items:center;gap:12px;padding:13px 14px;
+  border:1px solid rgba(34,245,211,.40);
+  background:linear-gradient(110deg,rgba(13,18,32,.98),rgba(10,13,22,.98));
+  box-shadow:0 12px 34px rgba(0,0,0,.55), 0 0 26px rgba(34,245,211,.14);
+  clip-path:polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+}
+#vgInstalar.ver{display:flex}
+#vgInstalar img{width:42px;height:42px;flex:none;border-radius:11px}
+#vgInstalar .txt{flex:1;min-width:0}
+#vgInstalar b{display:block;color:#fff;font-size:.87rem;font-weight:900}
+#vgInstalar span{display:block;color:#8e9cba;font-size:.75rem;line-height:1.35;margin-top:2px}
+#vgInstalar .si{
+  flex:none;padding:11px 16px;border:0;cursor:pointer;
+  background:linear-gradient(120deg,#22f5d3,#a855f7);color:#04211b;
+  font-family:inherit;font-size:.8rem;font-weight:900;
+  clip-path:polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+}
+#vgInstalar .no{
+  flex:none;width:30px;height:30px;padding:0;border:0;background:transparent;
+  color:#6d7d95;font-size:1.2rem;cursor:pointer;line-height:1;
+}
+@media(min-width:901px){ #vgInstalar{left:auto;right:18px;width:400px} }
+</style>
+
+<script id="vg-app-js-v44">
+(function(){
+  'use strict';
+  if(window.__VG44__) return; window.__VG44__ = true;
+
+  var LLAVE = 'vg_instalar_pospuesto';
+  var DIAS  = 15;
+  var evento = null;
+
+  function yaEsApp(){
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.navigator.standalone === true;
+  }
+  function pospuesto(){
+    try{
+      var t = Number(localStorage.getItem(LLAVE) || 0);
+      return t && (Date.now() - t) < DIAS*24*60*60*1000;
+    }catch(e){ return false; }
+  }
+
+  /* ── Service worker ── */
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').then(function(reg){
+        /* Si hay una versión nueva esperando, se activa sin pedir nada:
+           la página va siempre a la red primero, así que no hay riesgo
+           de dejar al cliente con precios viejos. */
+        if(reg.waiting) reg.waiting.postMessage('vg-actualizar');
+        reg.addEventListener('updatefound', function(){
+          var nuevo = reg.installing;
+          if(!nuevo) return;
+          nuevo.addEventListener('statechange', function(){
+            if(nuevo.state === 'installed' && navigator.serviceWorker.controller)
+              nuevo.postMessage('vg-actualizar');
+          });
+        });
+      }).catch(function(){ /* sin service worker la tienda funciona igual */ });
+    });
+  }
+
+  /* ── Botón de instalar ── */
+  function caja(){
+    var c = document.getElementById('vgInstalar');
+    if(c) return c;
+    c = document.createElement('div');
+    c.id = 'vgInstalar';
+    c.innerHTML =
+      '<img src="/icon-192.png" alt="">'+
+      '<div class="txt"><b>Instala Vessel Games</b>'+
+        '<span>Ábrela desde tu pantalla de inicio, sin buscar el navegador.</span></div>'+
+      '<button type="button" class="si">Instalar</button>'+
+      '<button type="button" class="no" aria-label="Ahora no">×</button>';
+
+    c.querySelector('.si').onclick = async function(){
+      if(!evento) return;
+      c.classList.remove('ver');
+      evento.prompt();
+      try{ await evento.userChoice; }catch(e){}
+      evento = null;
+    };
+    c.querySelector('.no').onclick = function(){
+      c.classList.remove('ver');
+      try{ localStorage.setItem(LLAVE, String(Date.now())); }catch(e){}
+    };
+    document.body.appendChild(c);
+    return c;
+  }
+
+  window.addEventListener('beforeinstallprompt', function(ev){
+    ev.preventDefault();
+    evento = ev;
+    if(yaEsApp() || pospuesto()) return;
+    /* Se deja mirar la tienda antes de ofrecerle nada */
+    setTimeout(function(){ if(evento) caja().classList.add('ver'); }, 12000);
+  });
+
+  window.addEventListener('appinstalled', function(){
+    var c = document.getElementById('vgInstalar');
+    if(c) c.classList.remove('ver');
+    evento = null;
+    try{ localStorage.removeItem(LLAVE); }catch(e){}
+  });
+
+  /* Accesos directos del icono: /?ir=compras y /?ir=tokens */
+  function atajo(){
+    var ir = new URLSearchParams(location.search||'').get('ir');
+    if(!ir) return;
+    var vista = (ir === 'tokens') ? 'tokens' : 'purchases';
+    var n = 0;
+    var t = setInterval(function(){
+      if(typeof window.vgOpenClientPanel === 'function'){
+        clearInterval(t);
+        window.vgOpenClientPanel(vista);
+      }else if(++n > 40) clearInterval(t);
+    }, 250);
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', atajo, {once:true});
+  else atajo();
+})();
+</script>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 43 — Sección "Por qué elegirnos"
