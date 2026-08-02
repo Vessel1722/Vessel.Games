@@ -30775,6 +30775,42 @@ else init();
 html body #productModal.vg-actas-pro-modal .modal-body{
   grid-template-rows:auto auto auto auto minmax(0,1fr) !important;
 }
+
+/* ── El cuerpo tiene que llenar la tarjeta, en móvil Y en escritorio ──
+   Medido a 903x790: la tarjeta ocupaba 758px pero el cuerpo se quedaba
+   en 260, del alto de su contenido. La lista de 31 servicios acababa con
+   18px y sobraban 378px muertos entre la lista y los botones.
+
+   La tarjeta es una rejilla y no declara filas, así que su única fila se
+   ajusta al contenido en vez de estirarse. Con minmax(0,1fr) el cuerpo
+   ocupa toda la altura y la lista se queda con lo que de verdad sobra. */
+html body #productModal.vg-actas-pro-modal .modal-card{
+  grid-template-rows:minmax(0,1fr) !important;
+  align-items:stretch !important;
+}
+html body #productModal.vg-actas-pro-modal .modal-body{
+  height:100% !important;
+  min-height:0 !important;
+  align-self:stretch !important;
+  /* Y sobre todo esto: había un max-height de 66dvh que lo dejaba en
+     658px dentro de una tarjeta de 868. Ese tope existe para que el
+     cuerpo no tape la foto del producto en las fichas normales, pero en
+     Actas la foto está oculta, así que ahí solo ahogaba la lista. */
+  max-height:none !important;
+}
+
+/* Los botones de compra van flotando abajo (absolutos, 130px de alto a
+   8px del borde = 138px). El cuerpo reservaba 128px, así que la última
+   opción de la lista se metía debajo de ellos. Se reserva lo que de
+   verdad ocupan, más un respiro. */
+html body #productModal.vg-actas-pro-modal .modal-body{
+  padding-bottom:152px !important;
+}
+@media(min-width:821px){
+  html body #productModal.vg-actas-pro-modal .modal-body{
+    padding-bottom:124px !important;
+  }
+}
 </style>
 
 <script id="vg-garantia-js-v49">
@@ -33392,6 +33428,26 @@ html body #vgAdminModal .vg-admin-content{
      y la lista se aplastaba a 0px. */
   html body #productModal.vg-actas-pro-modal .modal-body{
     grid-template-rows:auto auto auto auto minmax(0,1fr) !important;
+  }
+
+  /* ── El cuerpo no llenaba la tarjeta ──
+     La tarjeta ocupa toda la pantalla (868px medidos), pero el cuerpo se
+     quedaba del alto de su contenido (658px). Resultado: la lista de
+     opciones se conformaba con 233px para 31 servicios, y sobraban
+     200px muertos entre la lista y los botones.
+
+     La tarjeta es una rejilla de una sola columna en móvil (la foto se
+     oculta), y sin filas declaradas esa única fila se ajusta al
+     contenido en vez de estirarse. Con minmax(0,1fr) el cuerpo ocupa
+     toda la altura y la lista se queda con lo que sobra de verdad. */
+  html body #productModal.vg-actas-pro-modal .modal-card{
+    grid-template-rows:minmax(0,1fr) !important;
+    align-items:stretch !important;
+  }
+  html body #productModal.vg-actas-pro-modal .modal-body{
+    height:100% !important;
+    min-height:0 !important;
+    align-self:stretch !important;
   }
   /* La lista es la que se desplaza; sin esto, al encogerla se cortarían
      las últimas opciones sin manera de llegar a ellas. */
