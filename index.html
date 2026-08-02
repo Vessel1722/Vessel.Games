@@ -14,13 +14,13 @@
 <meta content="https://www.vesselgames.xyz/" property="og:url"/>
 <meta content="Vessel Games | Marketplace Digital Premium" property="og:title"/>
 <meta content="Compra juegos, monedas, cuentas, software y servicios digitales con atención rápida." property="og:description"/>
-<meta content="https://www.vesselgames.xyz/portada-facebook-v6.png" property="og:image"/>
-<meta content="https://www.vesselgames.xyz/portada-facebook-v6.png" property="og:image:secure_url"/>
+<meta content="https://www.vesselgames.xyz/og-vessel-games.png" property="og:image"/>
+<meta content="https://www.vesselgames.xyz/og-vessel-games.png" property="og:image:secure_url"/>
 <meta content="image/png" property="og:image:type"/>
 <meta content="1200" property="og:image:width"/>
 <meta content="630" property="og:image:height"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<meta content="https://www.vesselgames.xyz/portada-facebook-v6.png" name="twitter:image"/>
+<meta content="https://www.vesselgames.xyz/og-vessel-games.png" name="twitter:image"/>
 <link href="https://i.imgur.com" rel="preconnect"/>
 <!-- Se quitó el <link rel="preload" as="video" fetchpriority="high"> del vídeo
      del hero: forzaba la descarga de 7.7 MB con prioridad alta, compitiendo
@@ -30730,6 +30730,144 @@ else init();
 </style>
 
 <!-- ════════════════════════════════════════════════════════════════
+     FASE 49 — Decir qué pasa si algo falla, donde se decide la compra
+
+     El sistema de reportes ya existe y funciona, pero el cliente no se
+     entera hasta DESPUÉS de pagar. La pregunta que todo comprador tiene
+     antes de dar el botón es "¿y si la cuenta no sirve?", y hoy nadie
+     se la contesta en ese momento.
+
+     Se añade una línea justo encima del botón de comprar. No promete
+     nada que dependa de Netflix o de MAX: solo dice lo que de verdad
+     haces, que es atender el reporte y darle seguimiento.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-garantia-v49">
+.vg-garantia{
+  display:flex;align-items:flex-start;gap:11px;
+  margin:12px 0 4px;padding:12px 14px;
+  border:1px solid rgba(25,230,193,.26);
+  background:linear-gradient(100deg,rgba(25,230,193,.09),rgba(25,230,193,.03));
+  border-radius:13px;
+  color:#c8e9e3;font-size:.82rem;line-height:1.5;
+}
+.vg-garantia .ico{font-size:1.15rem;line-height:1.2;flex:none}
+.vg-garantia b{color:#8ff5e3;font-weight:900}
+.vg-garantia span{display:block}
+.vg-garantia .fino{color:#8593b5;font-size:.75rem;margin-top:3px;display:block}
+@media(max-width:640px){
+  .vg-garantia{padding:11px 12px;font-size:.79rem;margin:10px 0 4px}
+}
+/* Pantalla baja (teléfono acostado): la caja se encoge para no comerse
+   el espacio de la lista de opciones, que es lo que hay que poder elegir. */
+@media(max-height:560px){
+  .vg-garantia{padding:8px 11px;font-size:.74rem;margin:8px 0 2px}
+  .vg-garantia .fino{display:none}
+  .vg-garantia .ico{font-size:1rem}
+}
+/* En el modal de Actas la caja va dentro de la rejilla, sin estirarla */
+#productModal.vg-actas-pro-modal .vg-garantia{align-self:start;margin:10px 0 0}
+
+/* Con la garantía dentro son CINCO elementos en la rejilla de Actas:
+   etiqueta, título, nota, garantía y la lista de opciones. La fila
+   elástica tiene que ser la última, la de las opciones: es la que debe
+   encoger y llevar el scroll. Las reglas originales dejaban el 1fr en
+   medio y la lista se aplastaba a 0px. */
+html body #productModal.vg-actas-pro-modal .modal-body{
+  grid-template-rows:auto auto auto auto minmax(0,1fr) !important;
+}
+</style>
+
+<script id="vg-garantia-js-v49">
+(function(){
+  'use strict';
+  if(window.__VG49__) return; window.__VG49__ = true;
+
+  var HTML =
+    '<span class="ico">🛡</span>'+
+    '<span><b>Si algo falla, lo resolvemos.</b> '+
+    'Repórtalo desde tu cuenta y le damos seguimiento hasta dejarlo funcionando.'+
+    '<span class="fino">Cada pedido tiene su propio chat: ahí te entregamos y ahí queda todo por escrito.</span>'+
+    '</span>';
+
+  function poner(){
+    var modal = document.getElementById('productModal');
+    if(!modal || !modal.classList.contains('active')) return;
+    if(modal.querySelector('.vg-garantia')) return;
+
+    var cuerpo = modal.querySelector('.modal-body');
+    if(!cuerpo) return;
+
+    var caja = document.createElement('div');
+    caja.className = 'vg-garantia';
+    caja.innerHTML = HTML;
+
+    /* Va justo debajo de la nota de entrega, arriba del todo.
+       Antes se ponía antes de .modal-actions, pero esos botones son
+       sticky: quedaban flotando por encima y la garantía terminaba
+       apareciendo DEBAJO de ellos, que es donde nadie la lee. */
+    var nota = cuerpo.querySelector('.modal-delivery-note');
+    if(nota && nota.parentNode === cuerpo) cuerpo.insertBefore(caja, nota.nextSibling);
+    else{
+      var opciones = cuerpo.querySelector('#modalOptions');
+      if(opciones && opciones.parentNode === cuerpo) cuerpo.insertBefore(caja, opciones);
+      else cuerpo.appendChild(caja);
+    }
+  }
+
+  /* El modal lo abren y repintan varios módulos, así que se vigila en
+     vez de engancharse a una sola función. */
+  function arrancar(){
+    new MutationObserver(function(){ poner(); })
+      .observe(document.documentElement, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+    [300, 900, 2000].forEach(function(ms){ setTimeout(poner, ms); });
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FASE 48 — Que el texto del carrusel se lea siempre
+
+     Las tarjetas del carrusel ponen la foto de fondo y el texto encima,
+     sin nada que los separe. El título y la descripción llevaban sombra,
+     pero el precio no llevaba nada: sobre una imagen clara —el degradado
+     de Adobe, el logo de MAX— desaparecía.
+
+     Se añade un velo degradado entre la foto y el texto: transparente
+     arriba para que la imagen se siga viendo, y oscuro abajo justo donde
+     va el texto. Es lo que hacen Netflix y Steam con sus portadas.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="vg-carrusel-legible-v48">
+/* El velo va en la capa de información, que ya está encima de la foto */
+html body .service-carousel-card .service-carousel-info{
+  background:linear-gradient(
+    180deg,
+    rgba(5,8,15,0)    0%,
+    rgba(5,8,15,.20) 38%,
+    rgba(5,8,15,.72) 72%,
+    rgba(5,8,15,.93) 100%
+  ) !important;
+}
+/* El precio era el único sin sombra y es el dato que más importa */
+html body .service-carousel-card .service-carousel-price{
+  text-shadow:0 1px 3px rgba(0,0,0,.85), 0 0 12px rgba(0,0,0,.6) !important;
+  font-weight:900 !important;
+}
+html body .service-carousel-card b,
+html body .service-carousel-card small{
+  text-shadow:0 1px 3px rgba(0,0,0,.85) !important;
+}
+/* La etiqueta de categoría se apoya en un fondo sólido, no traslúcido */
+html body .service-carousel-card .tag{
+  background:rgba(5,8,15,.72) !important;
+  border:1px solid rgba(25,230,193,.30) !important;
+  color:#8ff5e3 !important;
+}
+</style>
+
+<!-- ════════════════════════════════════════════════════════════════
      FASE 46 — La lista de usuarios del panel volvía vacía
 
      vgAdminLoadUsers hacía  _allUsers = res.data || []  sin mirar nunca
@@ -33248,8 +33386,12 @@ html body #vgAdminModal .vg-admin-content{
      ════════════════════════════════════════════════════════════════ -->
 <style id="vg-actas-movil-v31">
 @media(max-width:820px){
+  /* Cinco filas: etiqueta, título, nota de entrega, línea de garantía y
+     la lista de opciones, que es la única que debe encoger y llevar el
+     scroll. Al agregar la garantía (fase 49) esta rejilla se quedó corta
+     y la lista se aplastaba a 0px. */
   html body #productModal.vg-actas-pro-modal .modal-body{
-    grid-template-rows:auto auto auto minmax(0,1fr) !important;
+    grid-template-rows:auto auto auto auto minmax(0,1fr) !important;
   }
   /* La lista es la que se desplaza; sin esto, al encogerla se cortarían
      las últimas opciones sin manera de llegar a ellas. */
