@@ -15316,34 +15316,48 @@ window.vgBingSize = function(){
     return String(query||'').toLowerCase();
   }
 
+  /* Quien busca desde el teléfono casi nunca escribe los acentos.
+     Antes "creditos" no encontraba "Créditos Halo Infinite" y el
+     buscador respondía "sin coincidencias" teniendo el producto.
+     Se limpian los dos lados: lo que se escribe y lo que se compara.
+
+     El rango va con códigos y no con los acentos de verdad porque son
+     caracteres invisibles y cualquier editor puede comérselos. */
+  const VG_ACENTOS = new RegExp('[\\u0300-\\u036f]', 'g');
+  function sinAcentos(s){
+    return String(s || '').toLowerCase().normalize('NFD').replace(VG_ACENTOS, '');
+  }
+
   function productText(p){
-    return [
+    return sinAcentos([
       p.title,
       p.displayTitle,
       p.description,
       p.categoryName,
       (p.options || []).map(o => o.name).join(' ')
-    ].join(' ').toLowerCase();
+    ].join(' '));
   }
 
   function scoreProduct(p, q, expanded){
     const text = productText(p);
+    const titulo = sinAcentos(p.title);
+    const cat = sinAcentos(p.categoryName);
     let score = 0;
     if(text.includes(q)) score += 120;
-    if((p.title || '').toLowerCase().includes(q)) score += 90;
-    if((p.categoryName || '').toLowerCase().includes(q)) score += 24;
+    if(titulo.includes(q)) score += 90;
+    if(cat.includes(q)) score += 24;
     expanded.split(/\s+/).filter(Boolean).forEach(word => {
       if(text.includes(word)) score += 10;
-      if((p.title || '').toLowerCase().includes(word)) score += 14;
-      if((p.categoryName || '').toLowerCase().includes(word)) score += 6;
+      if(titulo.includes(word)) score += 14;
+      if(cat.includes(word)) score += 6;
     });
     return score;
   }
 
   function searchAllProducts(rawQuery){
-    const q = String(rawQuery || '').trim().toLowerCase();
+    const q = sinAcentos(String(rawQuery || '').trim());
     if(!q) return [];
-    const expanded = expandedSearch(q);
+    const expanded = sinAcentos(expandedSearch(q));
     return getAllServices()
       .map(p => ({ p, score: scoreProduct(p, q, expanded) }))
       .filter(x => x.score > 0)
@@ -15557,7 +15571,13 @@ window.vgBingSize = function(){
       if(!node.dataset.vgMxn || enPesos){
         const parsed = parseMoney(text);
         if(parsed !== null && !Number.isNaN(parsed)){
-          node.dataset.vgMxn = String(parsed);
+          /* Solo se escribe si de verdad cambió. Escribir un atributo
+             con el mismo valor igual despierta a todos los vigilantes
+             del documento —y hay catorce—, así que un repaso de estos
+             soltaba 440 avisos inútiles y bloqueaba la página casi dos
+             segundos. */
+          const valor = String(parsed);
+          if(node.dataset.vgMxn !== valor) node.dataset.vgMxn = valor;
         }
       }
     });
@@ -15673,8 +15693,21 @@ window.vgBingSize = function(){
     boot();
   }
 
+  /* Repasar los precios después de cada clic.
+     Con dos condiciones que antes no estaban:
+
+       · Solo en dólares. En pesos los precios ya se escriben en pesos,
+         así que el repaso no cambiaba absolutamente nada y aun así
+         recorría los 447 importes de la página. Ese era el motivo de
+         que quitar un artículo del carrito congelara todo un segundo.
+
+       · Uno a la vez. Antes cada clic programaba su propio repaso y
+         tres clics seguidos hacían tres recorridos completos. */
+  let repasoPendiente = null;
   document.addEventListener('click', () => {
-    setTimeout(updatePrices, 80);
+    if(currentCurrency !== 'USD') return;
+    clearTimeout(repasoPendiente);
+    repasoPendiente = setTimeout(updatePrices, 120);
   }, true);
 })();
 </script>
@@ -18298,6 +18331,18 @@ setTimeout(()=>{ensureSections();bindTabs();renderSettings();},600);
     }
   }
   function getClient(){
+    /* El mismo cliente que usa el resto de la página. Antes esta parte
+       se creaba el suyo aparte, y ese no llevaba la sesión iniciada: las
+       consultas salían como visitante anónimo. Desde la auditoría de
+       seguridad un anónimo no puede leer la tabla de pedidos, así que la
+       pestaña Recomendaciones salía vacía aunque hubiera reseñas.
+
+       La copia de abajo se queda solo por si el cliente principal aún no
+       está listo cuando se carga la página. */
+    if(typeof window.vgGetSB === 'function'){
+      const compartido = window.vgGetSB();
+      if(compartido) return compartido;
+    }
     const cfg = readCfg();
     if(!window.supabase || !cfg.url || !cfg.anon) return null;
     if(!window.__vgReviewsSB || window.__vgReviewsSBSig !== cfg.url + '|' + cfg.anon.slice(0,10)){
@@ -18351,6 +18396,20 @@ setTimeout(()=>{ensureSections();bindTabs();renderSettings();},600);
   async function loadPublicReviews(){
     const client = getClient();
     if(!client){ renderPublicReviews(fallbackReviews); return; }
+
+    /* Quien entra sin cuenta —que es casi todo el que llega por primera
+       vez, justo el que más necesita leer opiniones— no puede consultar
+       la tabla de pedidos, y con razón: ahí están los comprobantes y los
+       teléfonos de los clientes. La función vg_resenas_publicas devuelve
+       únicamente las reseñas ya aprobadas, sin abrir nada más. */
+    const rpc = await client.rpc('vg_resenas_publicas');
+    if(!rpc.error && Array.isArray(rpc.data) && rpc.data.length){
+      renderPublicReviews(rpc.data);
+      return;
+    }
+
+    /* Si la función todavía no está puesta, se intenta a la antigua:
+       para un administrador con sesión abierta sí funciona. */
     const res = await client.from('orders')
       .select('id,created_at,source,status,total,items,notes,client_name')
       .eq('source', REVIEW_SOURCE)
@@ -26639,17 +26698,33 @@ function alertNew(text, onClick){
 }
 
 /* ── Datos ───────────────────────────────────────────────────── */
+
+/* Las reseñas de los clientes se guardan en esta misma tabla, con
+   source='recommendation'. No son ventas: no tienen comprobante, ni
+   chat, ni nada que entregar, y aparecían en la lista de pedidos
+   estorbando. Se ven y se aprueban en la pestaña Recomendaciones.
+
+   Se filtran aquí en vez de con .neq('source','recommendation') porque
+   los pedidos normales traen source en nulo, y en Postgres una
+   comparación contra nulo no es "distinto": es "no se sabe". Con neq se
+   habrían caído TODOS los pedidos de la lista. */
+function sinResenas(filas){
+  return (filas||[]).filter(function(o){
+    return String((o && o.source) || '') !== 'recommendation';
+  });
+}
+
 async function myOrders(){
   var c=SB(); if(!c) throw new Error('Sin conexión con el servidor.');
   var r=await c.from('orders').select('*').order('created_at',{ascending:false}).limit(300);
   if(r.error) throw r.error;
-  return r.data||[];   /* RLS ya filtra: el cliente solo recibe los suyos */
+  return sinResenas(r.data);   /* RLS ya filtra: el cliente solo recibe los suyos */
 }
 async function allOrders(){
   var c=SB(); if(!c) throw new Error('Sin conexión con el servidor.');
   var r=await c.from('orders').select('*').order('created_at',{ascending:false}).limit(500);
   if(r.error) throw r.error;
-  return r.data||[];
+  return sinResenas(r.data);
 }
 async function fetchMsgs(ref){
   var c=SB(); if(!c||!ref) return [];
@@ -29877,9 +29952,16 @@ async function init(){
   colocar();
   /* Si el usuario inicia sesión después, se repinta con sus datos */
   var c=SB();
+  /* Sin sesión no hay wallet que cargar, y cargarWallet() llama a
+     getSession() por dentro. Encadenar eso desde este escucha alimentaba
+     la avalancha de eventos de sesión que colgaba la pestaña. */
   if(c && c.auth && c.auth.onAuthStateChange){
-    c.auth.onAuthStateChange(function(){
-      cargarWallet().then(pintarSeccion);
+    c.auth.onAuthStateChange(function(ev, sess){
+      if(!sess){ wallet = null; pintarSeccion(); return; }
+      c.rpc('vg_mi_wallet').then(function(r){
+        if(!r.error) wallet = r.data;
+        pintarSeccion();
+      }).catch(function(){});
     });
   }
 }
@@ -30728,6 +30810,766 @@ else init();
   #vg17Client::after{animation:none;display:none}
 }
 </style>
+
+<style id="vg-admin-resumen-v52">
+.vgres{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:9px;margin-bottom:12px}
+.vgres-c{
+  padding:12px 13px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);
+  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.vgres-c span{display:block;color:#8e9cba;font-size:.6rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.vgres-c b{display:block;color:#fff;font-size:1.35rem;font-weight:900;margin-top:5px;
+  font-family:ui-monospace,Consolas,monospace}
+.vgres-c small{display:block;color:#7f8ea6;font-size:.68rem;margin-top:2px}
+.vgres-c.alerta{border-color:rgba(255,183,77,.42);background:rgba(255,183,77,.09)}
+.vgres-c.alerta b{color:#ffd68a}
+.vgres-c.dinero b{color:#22f5d3}
+
+.vgbusca{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:11px}
+.vgbusca input{
+  flex:1;min-width:170px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);
+  color:#fff;border-radius:10px;padding:9px 12px;font-family:inherit;font-size:.83rem;
+}
+.vgbusca input:focus{outline:none;border-color:rgba(34,245,211,.45)}
+.vgbusca select{
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);color:#fff;
+  border-radius:10px;padding:9px 10px;font-family:inherit;font-size:.83rem;
+}
+.vgbusca .cuenta{align-self:center;color:#8593b5;font-size:.76rem;font-weight:800}
+/* Dentro de la columna de pedidos: pegado bajo el encabezado y sin
+   robarle alto al listado, que tiene que seguir siendo el que se
+   desplaza. */
+.vgA-list .vgbusca{
+  flex:none;margin:0;padding:9px;gap:7px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.02);
+}
+.vgA-list .vgbusca input{min-width:0;font-size:.79rem;padding:8px 10px}
+.vgA-list .vgbusca select{flex:1;min-width:0;font-size:.75rem;padding:7px 8px}
+.vgA-list .vgbusca .cuenta{flex:none;font-size:.7rem}
+
+.vgvence{margin-bottom:12px;padding:13px;border:1px solid rgba(255,183,77,.34);
+  background:rgba(255,183,77,.07);
+  clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))}
+.vgvence > span{display:block;color:#ffd68a;font-size:.64rem;font-weight:900;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+.vgvence-f{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:7px 0;border-top:1px solid rgba(255,255,255,.07);font-size:.81rem}
+.vgvence-f:first-of-type{border-top:0}
+.vgvence-f b{color:#fff;font-weight:800}
+.vgvence-f small{display:block;color:#8593b5;font-size:.72rem}
+.vgvence-f .dias{flex:none;color:#ffd68a;font-weight:900;font-family:ui-monospace,Consolas,monospace}
+
+/* Selector de periodo al entregar */
+#vgPeriodoFondo{position:fixed;inset:0;z-index:2147483600;display:none;
+  align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.84)}
+#vgPeriodoFondo.ver{display:flex}
+#vgPeriodoCaja{width:100%;max-width:360px;background:#0d1120;border:1px solid rgba(34,245,211,.30);
+  padding:24px 22px;color:#eef0fa;font-family:Inter,system-ui,sans-serif;
+  clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px))}
+#vgPeriodoCaja h4{margin:0 0 6px;color:#fff;font-size:1.05rem;font-weight:900}
+#vgPeriodoCaja p{margin:0 0 16px;color:#8e9cba;font-size:.82rem;line-height:1.5}
+#vgPeriodoCaja .ops{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#vgPeriodoCaja .ops button{padding:12px;cursor:pointer;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05);color:#e8edf9;font-family:inherit;font-size:.85rem;font-weight:850}
+#vgPeriodoCaja .ops button:hover{border-color:rgba(34,245,211,.5);color:#8ff5e3}
+#vgPeriodoCaja .ops button.nada{grid-column:1/-1;border-color:rgba(255,255,255,.10);color:#8593b5}
+</style>
+
+<script id="vg-admin-resumen-js-v52">
+(function(){
+  'use strict';
+  if(window.__VG52__) return; window.__VG52__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function dinero(n){ return '$'+Math.round(Number(n||0)).toLocaleString('es-MX'); }
+
+  var cache = { datos:null, hora:0 };
+  var intentos = 0;
+
+  /* ═══ 1. Resumen del día ═══ */
+  async function resumen(){
+    var cont = document.getElementById('vgAdminPedidos');
+    if(!cont || !cont.classList.contains('active')) return;
+    if(cont.querySelector('.vgres')) return;
+    if(!cont.children.length) return;
+
+    var caja = document.createElement('div');
+    caja.innerHTML =
+      '<div class="vgres" id="vgResumen">'+
+        '<div class="vgres-c dinero"><span>Vendido hoy</span><b>—</b><small>pedidos entregados</small></div>'+
+        '<div class="vgres-c"><span>Pedidos hoy</span><b>—</b><small>de cualquier estado</small></div>'+
+        '<div class="vgres-c alerta"><span>Pendientes</span><b>—</b><small>esperando que los atiendas</small></div>'+
+        '<div class="vgres-c"><span>Esta semana</span><b>—</b><small>vendido en 7 días</small></div>'+
+      '</div>';
+    cont.insertBefore(caja.firstChild, cont.firstChild);
+    ajustarAlto(cont);
+
+    /* La lista se vuelve a dibujar cada vez que se abre un pedido, así
+       que el resumen se re-inserta muy seguido. Con una copia guardada
+       por 20 segundos no se hace una consulta de red en cada clic. */
+    var lista = cache.datos;
+    if(!lista || Date.now() - cache.hora > 20000){
+      var c = cli(); if(!c) return;
+      var r = await c.from('orders').select('id,status,total,created_at,source').limit(1000);
+      if(r.error || !r.data) return;
+      lista = r.data;
+      cache.datos = lista; cache.hora = Date.now();
+    }
+
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+    var sem = new Date(Date.now() - 7*24*60*60*1000);
+    var ped = lista.filter(function(o){ return String(o.source||'') !== 'recommendation'; });
+
+    var deHoy   = ped.filter(function(o){ return new Date(o.created_at) >= hoy; });
+    var vendHoy = deHoy.filter(function(o){ return o.status === 'entregado'; })
+                       .reduce(function(s,o){ return s + Number(o.total||0); }, 0);
+    var vendSem = ped.filter(function(o){ return new Date(o.created_at) >= sem && o.status === 'entregado'; })
+                     .reduce(function(s,o){ return s + Number(o.total||0); }, 0);
+    var pend    = ped.filter(function(o){ return o.status === 'pendiente'; }).length;
+
+    var cs = document.querySelectorAll('#vgResumen .vgres-c b');
+    if(cs[0]) cs[0].textContent = dinero(vendHoy);
+    if(cs[1]) cs[1].textContent = deHoy.length;
+    if(cs[2]) cs[2].textContent = pend;
+    if(cs[3]) cs[3].textContent = dinero(vendSem);
+
+    var tarjPend = document.querySelectorAll('#vgResumen .vgres-c')[2];
+    if(tarjPend) tarjPend.classList.toggle('alerta', pend > 0);
+
+    porVencer(cont);
+  }
+
+  /* ═══ 2. A quién le vence pronto ═══ */
+  async function porVencer(cont){
+    if(cont.querySelector('.vgvence')) return;
+    var c = cli(); if(!c) return;
+    var r = await c.rpc('vg_admin_por_vencer', {p_dias:7});
+    if(r.error || !r.data || !r.data.length) return;
+
+    var d = document.createElement('div');
+    d.className = 'vgvence';
+    d.innerHTML = '<span>⏳ Vencen esta semana · '+r.data.length+'</span>'+
+      r.data.slice(0,6).map(function(x){
+        var dias = Number(x.dias||0);
+        return '<div class="vgvence-f"><div style="min-width:0">'+
+          '<b>'+esc(x.cliente)+'</b><small>'+esc(x.producto)+
+          (x.telefono ? ' · '+esc(x.telefono) : '')+'</small></div>'+
+          '<span class="dias">'+ (dias < 0 ? 'vencida' : dias+'d') +'</span></div>';
+      }).join('');
+
+    var res = cont.querySelector('.vgres');
+    if(res && res.nextSibling) cont.insertBefore(d, res.nextSibling);
+    else cont.insertBefore(d, cont.firstChild);
+    ajustarAlto(cont);
+  }
+
+  /* Las tres columnas del panel tienen alto fijo (100vh - 200px). Si se
+     mete algo encima sin descontarlo, el chat se sale de la pantalla y
+     hay que hacer scroll para llegar a él. */
+  function ajustarAlto(cont){
+    if(window.innerWidth <= 900) return;
+    var g = cont.querySelector('.vgA-grid'); if(!g) return;
+    var extra = 0;
+    ['.vgres', '.vgvence'].forEach(function(s){
+      var e = cont.querySelector(s);
+      if(e) extra += e.getBoundingClientRect().height + 12;
+    });
+    g.style.height = 'calc(100vh - ' + Math.round(200 + extra) + 'px)';
+  }
+
+  /* ═══ 3. Buscador sobre la lista de pedidos ═══ */
+  function buscador(){
+    var cont = document.getElementById('vgAdminPedidos');
+    if(!cont || !cont.classList.contains('active')) return;
+    /* La columna de pedidos del panel se llama .vgA-list (con su propio
+       .vgA-scroll dentro). Antes se buscaba .vg17-list, que es la del
+       panel del CLIENTE, y por eso el buscador nunca aparecía. */
+    var col   = cont.querySelector('.vgA-list');
+    var lista = col ? col.querySelector('.vgA-scroll') : cont.querySelector('.vg17-list');
+    if(!lista || cont.querySelector('.vgbusca')) return;
+
+    var b = document.createElement('div');
+    b.className = 'vgbusca';
+    b.innerHTML =
+      '<input id="vgBuscaPed" placeholder="Buscar por cliente, producto o número...">'+
+      '<select id="vgFiltroEstado">'+
+        '<option value="">Todos los estados</option>'+
+        '<option value="pendiente">Pendientes</option>'+
+        '<option value="proceso">En proceso</option>'+
+        '<option value="entregado">Entregados</option>'+
+        '<option value="cancelado">Cancelados</option>'+
+      '</select>'+
+      '<span class="cuenta" id="vgCuentaPed"></span>';
+    lista.parentNode.insertBefore(b, lista);
+
+    function filtrar(){
+      var q = (document.getElementById('vgBuscaPed').value||'').trim().toLowerCase();
+      var e = document.getElementById('vgFiltroEstado').value;
+      var tarjetas = lista.querySelectorAll('[data-o]');
+      var n = 0;
+      Array.prototype.forEach.call(tarjetas, function(t){
+        var txt = (t.textContent||'').toLowerCase();
+        var okQ = !q || txt.indexOf(q) >= 0;
+        var okE = !e || t.className.indexOf('st-'+e) >= 0;
+        var ver = okQ && okE;
+        t.style.display = ver ? '' : 'none';
+        if(ver) n++;
+      });
+      document.getElementById('vgCuentaPed').textContent = n + ' de ' + tarjetas.length;
+    }
+    document.getElementById('vgBuscaPed').oninput = filtrar;
+    document.getElementById('vgFiltroEstado').onchange = filtrar;
+    filtrar();
+  }
+
+  /* ═══ 4. Al entregar, preguntar el periodo ═══ */
+  function periodoCaja(){
+    var f = document.getElementById('vgPeriodoFondo');
+    if(f) return f;
+    f = document.createElement('div');
+    f.id = 'vgPeriodoFondo';
+    f.innerHTML = '<div id="vgPeriodoCaja"></div>';
+    f.addEventListener('click', function(ev){ if(ev.target===f) f.classList.remove('ver'); });
+    document.body.appendChild(f);
+    return f;
+  }
+
+  function preguntarPeriodo(idPedido, nombre){
+    var f = periodoCaja();
+    var c = f.querySelector('#vgPeriodoCaja');
+    c.innerHTML =
+      '<h4>¿Por cuánto tiempo?</h4>'+
+      '<p>'+esc(nombre||'Este pedido')+'<br>'+
+      'Con esto el cliente ve cuándo se le acaba y tú sabes a quién escribirle antes.</p>'+
+      '<div class="ops">'+
+        '<button data-m="1">1 mes</button>'+
+        '<button data-m="3">3 meses</button>'+
+        '<button data-m="6">6 meses</button>'+
+        '<button data-m="12">12 meses</button>'+
+        '<button class="nada" data-m="">No vence (recarga o código)</button>'+
+      '</div>';
+
+    Array.prototype.forEach.call(c.querySelectorAll('[data-m]'), function(b){
+      b.onclick = async function(){
+        f.classList.remove('ver');
+        var m = b.getAttribute('data-m');
+        var cl = cli(); if(!cl) return;
+        var r = await cl.rpc('vg_admin_entregar', {
+          p_order: idPedido,
+          p_meses: m ? Number(m) : null
+        });
+        if(r.error){
+          var m = String(r.error.message || '');
+          if(/uuid/i.test(m))
+            alert('Falta correr supabase_fase54_ARREGLA_PERIODO.sql en Supabase.\n\n'+
+                  'La función todavía pide el pedido como uuid y los tuyos son números.');
+          else if(/does not exist|schema cache|function/i.test(m))
+            alert('Falta correr supabase_fase50_RENOVACIONES.sql en Supabase.');
+          else alert('No se pudo guardar el periodo: ' + m);
+          return;
+        }
+        if(typeof window.showToast === 'function')
+          window.showToast('Entregado', m ? ('Vence en '+m+' mes(es)') : 'Sin vencimiento');
+      };
+    });
+    f.classList.add('ver');
+  }
+
+  /* Hay DOS formas de dejar un pedido entregado y antes solo se
+     escuchaba una:
+
+       · el botón de estado  [data-st="entregado"]
+       · el botón grande de abajo  #vg17ADelivBtn  ("Enviar entrega y
+         marcar como entregado"), que es el que de verdad se usa.
+
+     Además no se pregunta a ciegas: se espera a confirmar que el pedido
+     QUEDÓ entregado. Si se cancela el aviso de confirmación, no se
+     pregunta nada. */
+  function esperarEntregado(id, nombre){
+    var t0 = Date.now();
+    (function revisar(){
+      var fila = document.querySelector('#vgAdminPedidos [data-o="' + id + '"]');
+      if(fila && /st-entregado/.test(fila.className)){
+        preguntarPeriodo(id, nombre);
+        return;
+      }
+      if(Date.now() - t0 > 15000) return;   /* se canceló o falló: silencio */
+      setTimeout(revisar, 300);
+    })();
+  }
+
+  document.addEventListener('click', function(ev){
+    if(!ev.target || !ev.target.closest) return;
+    var b = ev.target.closest('#vg17ADelivBtn, [data-st="entregado"]');
+    if(!b) return;
+    if(!b.closest('#vgAdminPedidos')) return;
+
+    var fila = document.querySelector(
+      '#vgAdminPedidos .vgA-row.active[data-o], #vgAdminPedidos .vg17-card.active[data-o]');
+    var id = fila ? fila.getAttribute('data-o') : null;
+    if(!id) return;
+    if(fila && /st-entregado/.test(fila.className)) return;  /* ya estaba */
+
+    var t = document.querySelector('#vg17ADetail .vgA-idtop b');
+    esperarEntregado(id, t ? t.textContent.trim() : '');
+  });
+
+  function arrancar(){
+    /* El panel vive dentro de una función cerrada y no expone su
+       dibujado, así que se vigila la sección de pedidos: cada vez que
+       la re-dibuja hay que volver a poner el resumen y el buscador.
+
+       Se agrupan los avisos en uno solo por cuadro de animación: si no,
+       un innerHTML suelta cientos de mutaciones seguidas y se llamaría
+       cientos de veces. Las propias funciones se salen solas si ya
+       está puesto, así que insertar no vuelve a disparar nada. */
+    /* La sección se crea al abrir el panel por primera vez. Se espera,
+       pero no para siempre: si el visitante nunca es administrador, esto
+       deja de intentarlo al minuto y no gasta nada. */
+    var cont = document.getElementById('vgAdminPedidos');
+    if(!cont){
+      if(++intentos < 70) setTimeout(arrancar, 900);
+      return;
+    }
+
+    var pendiente = false;
+    new MutationObserver(function(){
+      if(pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(function(){
+        pendiente = false;
+        try{ resumen(); buscador(); }catch(e){}
+      });
+    }).observe(cont, {childList:true, subtree:true});
+
+    [400, 1200, 2600].forEach(function(ms){ setTimeout(function(){ resumen(); buscador(); }, ms); });
+    window.addEventListener('resize', function(){
+      var c = document.getElementById('vgAdminPedidos');
+      if(c) ajustarAlto(c);
+    });
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<script id="vg-seo-producto-v53">
+(function(){
+  'use strict';
+  if(window.__VG53__) return; window.__VG53__ = true;
+
+  var TITULO_BASE = document.title;
+  var DESC_BASE   = (document.querySelector('meta[name=description]')||{}).content || '';
+
+  /* Guarda de bucle. La versión anterior escribía en <head> desde un
+     observador que vigilaba todo el documento: cada escritura volvía a
+     dispararlo y la página se colgaba. Ahora se recuerda lo último
+     aplicado y no se toca nada si no cambió. */
+  var ultimo = null;
+  var escribiendo = false;
+
+  function meta(sel, valor){
+    var e = document.querySelector(sel);
+    if(e && valor != null) e.setAttribute(e.hasAttribute('content')?'content':'value', valor);
+  }
+
+  function limpiar(){
+    if(ultimo === null) return;      /* ya estaba limpio: no tocar nada */
+    ultimo = null;
+    escribiendo = true;
+    document.title = TITULO_BASE;
+    meta('meta[name=description]', DESC_BASE);
+    meta('meta[property="og:title"]', TITULO_BASE);
+    meta('meta[property="og:description"]', DESC_BASE);
+    var j = document.getElementById('vgJsonLdProducto');
+    if(j) j.remove();
+    escribiendo = false;
+  }
+
+  function aplicar(){
+    if(escribiendo) return;
+
+    var m = document.getElementById('productModal');
+    if(!m || !m.classList.contains('active')){ limpiar(); return; }
+
+    var t = (document.getElementById('modalTitle')||{}).textContent || '';
+    if(!t.trim()) return;
+    if(t.trim() === ultimo) return;  /* mismo producto: nada que rehacer */
+    ultimo = t.trim();
+    escribiendo = true;
+    var cat = (document.getElementById('modalCat')||{}).textContent || '';
+    var img = m.querySelector('.modal-img img');
+
+    /* Precio: el más bajo de las opciones, que es el "desde" */
+    var precios = Array.prototype.map.call(
+      m.querySelectorAll('#modalOptions .option strong, #modalOptions .option .option-price'),
+      function(e){ var n=String(e.textContent||'').replace(/[^\d.]/g,''); return parseFloat(n)||0; }
+    ).filter(function(n){ return n > 0; });
+    var desde = precios.length ? Math.min.apply(null, precios) : null;
+
+    var titulo = t.trim() + ' | Vessel Games';
+    var desc = t.trim() +
+      (cat ? ' · ' + cat.trim() : '') +
+      (desde ? ' desde $' + desde + ' MXN.' : '.') +
+      ' Entrega de 20 minutos a 2 horas con seguimiento por chat.';
+
+    document.title = titulo;
+    meta('meta[name=description]', desc);
+    meta('meta[property="og:title"]', titulo);
+    meta('meta[property="og:description"]', desc);
+
+    /* Datos estructurados: con esto Google puede mostrar el precio y la
+       disponibilidad directamente en el resultado de búsqueda. */
+    var vieja = document.getElementById('vgJsonLdProducto');
+    if(vieja) vieja.remove();
+    var datos = {
+      '@context':'https://schema.org',
+      '@type':'Product',
+      name: t.trim(),
+      description: desc,
+      brand: {'@type':'Brand', name:'Vessel Games'},
+      category: cat.trim() || undefined,
+      image: img && img.src ? img.src : undefined,
+      url: location.href
+    };
+    if(desde){
+      datos.offers = {
+        '@type':'Offer',
+        price: String(desde),
+        priceCurrency:'MXN',
+        availability:'https://schema.org/InStock',
+        url: location.href,
+        seller: {'@type':'Organization', name:'Vessel Games'}
+      };
+    }
+    var s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.id = 'vgJsonLdProducto';
+    s.textContent = JSON.stringify(datos);
+    document.head.appendChild(s);
+
+    escribiendo = false;
+  }
+
+  function arrancar(){
+    /* Se vigila SOLO la clase del modal, no el documento entero. Antes
+       observaba todo con subtree, y como esta función escribe en <head>,
+       cada escritura la volvía a disparar: bucle infinito y pestaña
+       colgada. */
+    var m = document.getElementById('productModal');
+    if(m){
+      new MutationObserver(function(){ aplicar(); })
+        .observe(m, {attributes:true, attributeFilter:['class']});
+    }
+    /* El título tarda en llegar tras abrir, por eso un par de repasos */
+    document.addEventListener('click', function(){ setTimeout(aplicar, 700); });
+    window.addEventListener('popstate', function(){ setTimeout(aplicar, 400); });
+    setTimeout(aplicar, 1500);
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<style id="vg-suscripciones-v51">
+.vgsub{display:grid;gap:11px}
+.vgsub-item{
+  padding:15px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.035);
+  clip-path:polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 13px 100%, 0 calc(100% - 13px));
+}
+.vgsub-item.pronto{border-color:rgba(255,183,77,.45);background:rgba(255,183,77,.07)}
+.vgsub-item.vencida{border-color:rgba(255,77,109,.45);background:rgba(255,77,109,.07)}
+.vgsub-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.vgsub-top b{display:block;color:#fff;font-size:.95rem;font-weight:850}
+.vgsub-top small{display:block;color:#8e9cba;font-size:.74rem;margin-top:2px}
+.vgsub-dias{
+  flex:none;text-align:center;padding:7px 12px;
+  font-family:ui-monospace,Consolas,monospace;font-weight:900;
+  border:1px solid rgba(34,245,211,.30);background:rgba(34,245,211,.10);color:#8ff5e3;
+  clip-path:polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+.vgsub-dias b{display:block;font-size:1.25rem;line-height:1;color:inherit}
+.vgsub-dias span{display:block;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;margin-top:3px;opacity:.8}
+.vgsub-item.pronto  .vgsub-dias{border-color:rgba(255,183,77,.42);background:rgba(255,183,77,.12);color:#ffd68a}
+.vgsub-item.vencida .vgsub-dias{border-color:rgba(255,77,109,.45);background:rgba(255,77,109,.12);color:#ffabbc}
+.vgsub-barra{height:5px;background:rgba(255,255,255,.09);overflow:hidden;margin-bottom:11px}
+.vgsub-barra i{display:block;height:100%;background:linear-gradient(90deg,#22f5d3,#a855f7)}
+.vgsub-item.pronto  .vgsub-barra i{background:linear-gradient(90deg,#ffb74d,#ff8a3d)}
+.vgsub-item.vencida .vgsub-barra i{background:linear-gradient(90deg,#ff3d81,#ff6b6b)}
+.vgsub-renovar{
+  width:100%;padding:11px;cursor:pointer;border:0;
+  background:linear-gradient(120deg,#22f5d3,#a855f7);color:#04211b;
+  font-family:inherit;font-size:.83rem;font-weight:900;
+  clip-path:polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
+}
+.vgsub-renovar:active{transform:scale(.985)}
+.vgsub-nota{color:#8593b5;font-size:.78rem;line-height:1.5;margin-bottom:14px}
+
+/* ── Comprobante ── */
+.vgrec-fondo{
+  position:fixed;inset:0;z-index:31000;display:none;
+  align-items:center;justify-content:center;padding:18px;
+  background:rgba(0,0,0,.82);
+}
+.vgrec-fondo.ver{display:flex}
+.vgrec{
+  width:100%;max-width:400px;background:#0d1120;color:#eef0fa;
+  border:1px solid rgba(34,245,211,.28);padding:26px 24px;
+  font-family:Inter,system-ui,sans-serif;
+}
+.vgrec-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px dashed rgba(255,255,255,.16)}
+.vgrec-head img{width:44px;height:44px;border-radius:11px;flex:none}
+.vgrec-head b{display:block;color:#fff;font-size:1.02rem;font-weight:900;letter-spacing:.04em}
+.vgrec-head span{display:block;color:#8593b5;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+.vgrec-fila{display:flex;justify-content:space-between;gap:14px;padding:8px 0;font-size:.85rem}
+.vgrec-fila span{color:#8e9cba}
+.vgrec-fila b{color:#fff;text-align:right;font-weight:800}
+.vgrec-total{margin-top:14px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.16);
+  display:flex;justify-content:space-between;align-items:baseline}
+.vgrec-total span{color:#8e9cba;font-size:.82rem}
+.vgrec-total b{color:#22f5d3;font-size:1.5rem;font-weight:900;font-family:ui-monospace,Consolas,monospace}
+.vgrec-pie{margin-top:18px;padding-top:14px;border-top:1px dashed rgba(255,255,255,.16);
+  color:#6d7d95;font-size:.7rem;line-height:1.5;text-align:center}
+.vgrec-btns{display:flex;gap:9px;margin-top:16px}
+.vgrec-btns button{flex:1;padding:11px;cursor:pointer;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.05);color:#e8edf9;font-family:inherit;font-size:.8rem;font-weight:850}
+.vgrec-btns .principal{border:0;background:linear-gradient(120deg,#22f5d3,#a855f7);color:#04211b}
+.vg17-recibo{
+  margin-top:9px;padding:9px 13px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);color:#c4cee6;
+  font-family:ui-monospace,Consolas,monospace;font-size:.72rem;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;border-radius:0;
+}
+.vg17-recibo:hover{border-color:rgba(34,245,211,.45);color:#8ff5e3}
+</style>
+
+<script id="vg-suscripciones-js-v51">
+(function(){
+  'use strict';
+  if(window.__VG51__) return; window.__VG51__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function dinero(n){
+    return (typeof window.vgFormatPrecio==='function')
+      ? window.vgFormatPrecio(n)
+      : '$'+Number(n||0).toLocaleString('es-MX')+' MXN';
+  }
+  function fecha(s){
+    try{ return new Date(s).toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}); }
+    catch(e){ return ''; }
+  }
+
+  /* ═══ Pestaña de suscripciones ═══ */
+  function pestana(){
+    var tabs = document.querySelector('#vg17Client .vg17-tabs');
+    if(!tabs || tabs.querySelector('[data-v="subs"]')) return;
+    var b = document.createElement('button');
+    b.className = 'vg17-tab';
+    b.setAttribute('data-v','subs');
+    b.textContent = 'Mis suscripciones';
+    /* Después de "Mis compras", que es donde el cliente la va a buscar */
+    var compras = tabs.querySelector('[data-v="purchases"]');
+    if(compras && compras.nextSibling) tabs.insertBefore(b, compras.nextSibling);
+    else tabs.appendChild(b);
+
+    b.onclick = function(){
+      Array.prototype.forEach.call(tabs.children, function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      render();
+    };
+  }
+
+  async function render(){
+    var cuerpo = document.getElementById('vg17CBody');
+    if(!cuerpo) return;
+    cuerpo.innerHTML = '<div class="vg17-empty">Cargando tus suscripciones...</div>';
+
+    var c = cli();
+    if(!c){ cuerpo.innerHTML = '<div class="vg17-empty">Sin conexión con el servidor.</div>'; return; }
+
+    var r = await c.rpc('vg_mis_suscripciones');
+    if(r.error){
+      cuerpo.innerHTML = '<div class="vg17-empty">'+
+        (/does not exist|function/i.test(r.error.message)
+          ? 'Falta correr <b>supabase_fase50_RENOVACIONES.sql</b> en Supabase.'
+          : esc(r.error.message))+'</div>';
+      return;
+    }
+
+    var lista = r.data || [];
+    if(!lista.length){
+      cuerpo.innerHTML =
+        '<div class="vg17-empty" style="padding:34px 18px;line-height:1.6">'+
+        'Todavía no tienes suscripciones activas.<br>'+
+        '<span style="color:#7f8ea6;font-size:.85rem">Cuando compres un servicio por mes '+
+        '(Netflix, MAX, Prime Video...) aquí verás cuándo se te acaba y podrás renovarlo de un toque.</span>'+
+        '</div>';
+      return;
+    }
+
+    cuerpo.innerHTML =
+      '<p class="vgsub-nota">Aquí ves lo que tienes activo y cuánto le queda. '+
+      'Te avisamos antes de que se acabe para que no te quedes sin servicio.</p>'+
+      '<div class="vgsub">'+ lista.map(tarjeta).join('') +'</div>';
+
+    Array.prototype.forEach.call(cuerpo.querySelectorAll('[data-renovar]'), function(b){
+      b.onclick = function(){ renovar(b.getAttribute('data-renovar'), b.getAttribute('data-nombre')); };
+    });
+  }
+
+  function tarjeta(s){
+    var dias = Number(s.dias||0);
+    var venc = s.vencida === true;
+    var clase = venc ? 'vencida' : (dias <= 5 ? 'pronto' : '');
+    var total = Number(s.periodo_meses||1) * 30;
+    var pct = venc ? 0 : Math.max(4, Math.min(100, Math.round(dias/total*100)));
+
+    return '<div class="vgsub-item '+clase+'">'+
+      '<div class="vgsub-top">'+
+        '<div style="min-width:0">'+
+          '<b>'+esc(s.producto)+'</b>'+
+          '<small>'+ (s.opcion ? esc(s.opcion)+' · ' : '') +
+            (venc ? 'Venció el ' : 'Vence el ') + esc(fecha(s.vence_at)) +'</small>'+
+        '</div>'+
+        '<div class="vgsub-dias"><b>'+ (venc ? '—' : dias) +'</b>'+
+          '<span>'+ (venc ? 'vencida' : (dias===1?'día':'días')) +'</span></div>'+
+      '</div>'+
+      '<div class="vgsub-barra"><i style="width:'+pct+'%"></i></div>'+
+      '<button class="vgsub-renovar" data-renovar="'+esc(s.id)+'" data-nombre="'+esc(s.producto)+'">'+
+        (venc ? 'Volver a contratar' : 'Renovar ahora') +'</button>'+
+    '</div>';
+  }
+
+  /* Renovar = abrir el mismo producto para que compre igual que la
+     primera vez. No se cobra nada solo, que sería una sorpresa fea. */
+  function renovar(id, nombre){
+    var servicios = window.SERVICES || [];
+    var p = servicios.filter(function(x){
+      return String(x.title||'').toLowerCase().indexOf(String(nombre||'').toLowerCase().slice(0,14)) >= 0;
+    })[0];
+
+    if(p && typeof window.openProduct === 'function'){
+      if(typeof window.vgCloseClientPanel === 'function') window.vgCloseClientPanel();
+      var panel = document.getElementById('vg17Client');
+      if(panel) panel.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(function(){ window.openProduct(p.id); }, 250);
+    }else if(typeof window.showSection === 'function'){
+      var panel2 = document.getElementById('vg17Client');
+      if(panel2) panel2.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(function(){ window.showSection('all'); }, 200);
+    }
+  }
+
+  /* ═══ Comprobante de compra ═══ */
+  function caja(){
+    var d = document.getElementById('vgReciboFondo');
+    if(d) return d;
+    d = document.createElement('div');
+    d.id = 'vgReciboFondo';
+    d.className = 'vgrec-fondo';
+    d.innerHTML = '<div class="vgrec" id="vgReciboCaja"></div>';
+    d.addEventListener('click', function(ev){ if(ev.target === d) d.classList.remove('ver'); });
+    document.body.appendChild(d);
+    return d;
+  }
+
+  window.vgVerRecibo = function(datos){
+    var f = caja();
+    var c = f.querySelector('#vgReciboCaja');
+    c.innerHTML =
+      '<div class="vgrec-head">'+
+        '<img src="/icon-192.png" alt="">'+
+        '<div><b>VESSEL GAMES</b><span>Comprobante de compra</span></div>'+
+      '</div>'+
+      '<div class="vgrec-fila"><span>Pedido</span><b>#'+esc(datos.id)+'</b></div>'+
+      '<div class="vgrec-fila"><span>Fecha</span><b>'+esc(datos.fecha)+'</b></div>'+
+      '<div class="vgrec-fila"><span>Producto</span><b>'+esc(datos.producto)+'</b></div>'+
+      (datos.opcion ? '<div class="vgrec-fila"><span>Opción</span><b>'+esc(datos.opcion)+'</b></div>' : '')+
+      '<div class="vgrec-fila"><span>Estado</span><b>'+esc(datos.estado)+'</b></div>'+
+      '<div class="vgrec-total"><span>Total pagado</span><b>'+esc(datos.total)+'</b></div>'+
+      '<div class="vgrec-pie">Gracias por tu compra.<br>www.vesselgames.xyz</div>'+
+      '<div class="vgrec-btns">'+
+        '<button class="principal" id="vgRecCopiar">Copiar datos</button>'+
+        '<button id="vgRecCerrar">Cerrar</button>'+
+      '</div>';
+
+    c.querySelector('#vgRecCerrar').onclick = function(){ f.classList.remove('ver'); };
+    c.querySelector('#vgRecCopiar').onclick = function(){
+      var txt = 'VESSEL GAMES — Comprobante de compra\n'+
+        'Pedido: #'+datos.id+'\nFecha: '+datos.fecha+'\nProducto: '+datos.producto+
+        (datos.opcion? '\nOpción: '+datos.opcion : '')+
+        '\nEstado: '+datos.estado+'\nTotal: '+datos.total+'\n\nwww.vesselgames.xyz';
+      var b = this;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(function(){
+          b.textContent = '✓ Copiado';
+          setTimeout(function(){ b.textContent = 'Copiar datos'; }, 1800);
+        }).catch(function(){ prompt('Copia tu comprobante:', txt); });
+      }else prompt('Copia tu comprobante:', txt);
+    };
+    f.classList.add('ver');
+  };
+
+  /* Botón de comprobante dentro del detalle del pedido */
+  function botonRecibo(){
+    var det = document.getElementById('vg17CDetail');
+    if(!det || det.querySelector('.vg17-recibo')) return;
+    var hero = det.querySelector('.vg17-hero');
+    if(!hero) return;
+
+    var titulo = (hero.querySelector('h3')||{}).textContent || 'Pedido';
+    var sub    = (hero.querySelector('p')||{}).textContent || '';
+    var precio = (hero.querySelector('.vg17-hero-price')||{}).textContent || '';
+    var chip   = (det.querySelector('.vg17-chip')||{}).textContent || 'Pendiente';
+    var partes = sub.split('·');
+
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'vg17-recibo';
+    b.textContent = '🧾 Ver comprobante';
+    b.onclick = function(){
+      window.vgVerRecibo({
+        id:       (partes[0]||'').replace(/[^0-9a-zA-Z]/g,'').slice(0,8),
+        fecha:    (partes[1]||'').trim(),
+        producto: titulo.trim(),
+        opcion:   '',
+        estado:   chip.trim(),
+        total:    precio.trim()
+      });
+    };
+    hero.appendChild(b);
+  }
+
+  function arrancar(){
+    /* Se vigila SOLO el panel del cliente, no el documento entero. Un
+       observador sobre todo el árbol se dispara con cada latido del
+       chat y de los temporizadores, y eso es CPU tirada a la basura. */
+    var panel = document.getElementById('vg17Client');
+    if(panel){
+      new MutationObserver(function(){
+        if(panel.classList.contains('active')){ pestana(); botonRecibo(); }
+      }).observe(panel, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+    }
+    [500, 1500, 3000].forEach(function(ms){
+      setTimeout(function(){ if(document.querySelector('#vg17Client.active')){ pestana(); botonRecibo(); } }, ms);
+    });
+  }
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
 
 <!-- ════════════════════════════════════════════════════════════════
      FASE 49 — Decir qué pasa si algo falla, donde se decide la compra
@@ -31695,8 +32537,17 @@ html body .service-carousel-card .imgbox > img{
     revisarSesion();
 
     var c = cli();
+    /* Se usa la sesión que el propio evento entrega. Llamar a
+       getSession() aquí dentro provocaba una avalancha: getSession puede
+       emitir otro evento de sesión, que vuelve a disparar este escucha
+       y los demás, y cada vuelta deja un temporizador de refresco de 30s
+       colgado. Medido: 28 temporizadores nuevos en 6 segundos, y la
+       pestaña acababa colgada. */
     if(c && c.auth && c.auth.onAuthStateChange){
-      c.auth.onAuthStateChange(function(){ revisarSesion(); });
+      c.auth.onAuthStateChange(function(ev, sess){
+        conSesion = !!sess;
+        pintarCuenta();
+      });
     }
 
     /* El catálogo y el encabezado se repintan solos varias veces durante
@@ -31883,8 +32734,13 @@ html body .service-carousel-card .imgbox > img{
     /* Al entrar o salir de la cuenta se revisa otra vez, así el cliente
        ve los datos sin reiniciar el pedido. */
     var c = cli();
+    /* Igual que arriba: la sesión llega en el evento. Pedirla otra vez
+       con getSession() encadenaba eventos y dejaba temporizadores. */
     if(c && c.auth && c.auth.onAuthStateChange){
-      c.auth.onAuthStateChange(function(){ revisar(); });
+      c.auth.onAuthStateChange(function(ev, sess){
+        conSesion = !!sess;
+        pintar();
+      });
     }
   }
 
@@ -32544,10 +33400,18 @@ html body .service-carousel-card .imgbox > img{
     revisarRol();
     /* Al iniciar o cerrar sesión el botón tiene que aparecer o irse */
     var c = cliente();
+    /* Sin getSession() aquí dentro: encadenaba eventos y dejaba
+       temporizadores de refresco colgados. Si el evento trae sesión se
+       consulta el rol una vez; si no, se oculta el botón y ya. */
     if(c && c.auth && c.auth.onAuthStateChange){
-      c.auth.onAuthStateChange(function(){
+      c.auth.onAuthStateChange(function(ev, sess){
         try{ sessionStorage.removeItem(LLAVE); }catch(e){}
-        revisarRol();
+        if(!sess){ mostrar(false); return; }
+        c.rpc('is_admin').then(function(r){
+          var ok = !r.error && r.data === true;
+          try{ sessionStorage.setItem(LLAVE, ok ? '1' : '0'); }catch(e){}
+          mostrar(ok);
+        }).catch(function(){ mostrar(false); });
       });
     }
     /* El contador se refresca solo mientras la pestaña está a la vista */
@@ -33574,5 +34438,2092 @@ html body .nav a.brand > span > small{
 }
 </style>
 
+
+
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 55 · La reseña, desde el propio pedido
+
+     El mensaje automático mandaba al cliente a la página de inicio a
+     buscar la sección de reseñas y a reescribir qué compró. Casi nadie
+     hace ese viaje. Aquí el botón aparece dentro de su pedido, ya sabe
+     qué producto es, y son dos toques.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-resena-v55">
+.vgres55{
+  margin:11px 0 0;padding:14px 15px;
+  border:1px solid rgba(255,214,138,.30);
+  background:linear-gradient(135deg,rgba(255,214,138,.10),rgba(255,214,138,.03));
+  clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+.vgres55 b{display:block;color:#ffd68a;font-size:.86rem;font-weight:900;margin-bottom:3px}
+.vgres55 small{display:block;color:#9aa7c2;font-size:.76rem;line-height:1.45;margin-bottom:11px}
+.vgres55 button{
+  width:100%;padding:12px;cursor:pointer;border:0;
+  background:linear-gradient(135deg,#ffd68a,#f5b342);color:#241a05;
+  font-family:inherit;font-size:.87rem;font-weight:900;letter-spacing:.02em;
+  clip-path:polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px));
+}
+.vgres55 button:hover{filter:brightness(1.07)}
+.vgres55 button:disabled{opacity:.55;cursor:default;filter:none}
+.vgres55.hecha{border-color:rgba(34,245,211,.30);
+  background:linear-gradient(135deg,rgba(34,245,211,.10),rgba(34,245,211,.03))}
+.vgres55.hecha b{color:#8ff5e3}
+.vgres55.hecha small{margin-bottom:0}
+
+/* ── La ventana ── */
+#vgRes55Fondo{position:fixed;inset:0;z-index:2147483601;display:none;
+  align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.86)}
+#vgRes55Fondo.ver{display:flex}
+#vgRes55Caja{
+  width:100%;max-width:400px;max-height:92vh;overflow-y:auto;
+  background:#0d1120;border:1px solid rgba(255,214,138,.30);
+  padding:24px 22px;color:#eef0fa;font-family:Inter,system-ui,sans-serif;
+  clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+}
+#vgRes55Caja h4{margin:0 0 4px;color:#fff;font-size:1.1rem;font-weight:900}
+#vgRes55Caja .prod{margin:0 0 18px;color:#8e9cba;font-size:.82rem;line-height:1.5}
+#vgRes55Caja .prod b{color:#cfd8ee;font-weight:800}
+
+/* Estrellas grandes: en el teléfono se falla el toque con cualquier
+   cosa más chica, y una reseña que empieza mal no se termina. */
+#vgRes55Estrellas{display:flex;gap:4px;justify-content:center;margin-bottom:16px}
+#vgRes55Estrellas button{
+  width:46px;height:46px;flex:none;padding:0;cursor:pointer;border:0;background:none;
+  font-size:1.9rem;line-height:1;color:#39415c;transition:transform .12s,color .12s;
+}
+#vgRes55Estrellas button.on{color:#ffd15c}
+#vgRes55Estrellas button:hover{transform:scale(1.14)}
+#vgRes55Nota{text-align:center;color:#ffd68a;font-size:.78rem;font-weight:800;
+  margin:-10px 0 16px;min-height:1.1em}
+
+#vgRes55Caja input,#vgRes55Caja textarea{
+  width:100%;box-sizing:border-box;margin-bottom:10px;
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);
+  color:#fff;border-radius:10px;padding:10px 12px;
+  font-family:inherit;font-size:.85rem;
+}
+#vgRes55Caja textarea{min-height:96px;resize:vertical;line-height:1.5}
+#vgRes55Caja input:focus,#vgRes55Caja textarea:focus{outline:none;border-color:rgba(255,214,138,.5)}
+#vgRes55Cuenta{display:block;text-align:right;color:#67718c;font-size:.7rem;margin:-6px 0 12px}
+#vgRes55Caja .pie{display:grid;grid-template-columns:1fr 1.6fr;gap:8px}
+#vgRes55Caja .pie button{padding:12px;cursor:pointer;border:0;font-family:inherit;
+  font-size:.85rem;font-weight:900;
+  clip-path:polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 9px 100%, 0 calc(100% - 9px))}
+#vgRes55Caja .pie .no{background:rgba(255,255,255,.06);color:#8593b5}
+#vgRes55Caja .pie .si{background:linear-gradient(135deg,#ffd68a,#f5b342);color:#241a05}
+#vgRes55Caja .pie button:disabled{opacity:.5;cursor:default}
+#vgRes55Msg{display:block;margin-top:11px;font-size:.79rem;line-height:1.45;min-height:1em}
+#vgRes55Msg.mal{color:#ff9db0}
+#vgRes55Msg.bien{color:#8ff5e3}
+</style>
+
+<script id="vg-resena-js-v55">
+(function(){
+  'use strict';
+  if(window.__VG55__) return; window.__VG55__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  var NOTAS = ['', 'Muy mal', 'Mal', 'Regular', 'Bien', '¡Excelente!'];
+
+  /* Pedidos que ya tienen reseña. Se pregunta una vez y se guarda: el
+     detalle del pedido se vuelve a dibujar en cada clic y no tiene
+     sentido preguntar lo mismo cada vez. */
+  var hechas = null;
+  var cargando = null;
+
+  function cargarHechas(){
+    if(hechas) return Promise.resolve(hechas);
+    if(cargando) return cargando;
+    var c = cli();
+    if(!c){ hechas = {}; return Promise.resolve(hechas); }
+    cargando = c.rpc('vg_mis_resenas').then(function(r){
+      hechas = {};
+      if(!r.error && Array.isArray(r.data))
+        r.data.forEach(function(id){ hechas[String(id)] = true; });
+      cargando = null;
+      return hechas;
+    }).catch(function(){ hechas = {}; cargando = null; return hechas; });
+    return cargando;
+  }
+
+  /* ═══ La ventana ═══ */
+  var estrellas = 5, idActual = null, prodActual = '';
+
+  function caja(){
+    var f = document.getElementById('vgRes55Fondo');
+    if(f) return f;
+    f = document.createElement('div');
+    f.id = 'vgRes55Fondo';
+    f.innerHTML =
+      '<div id="vgRes55Caja">'+
+        '<h4>¿Cómo te fue?</h4>'+
+        '<p class="prod" id="vgRes55Prod"></p>'+
+        '<div id="vgRes55Estrellas"></div>'+
+        '<div id="vgRes55Nota"></div>'+
+        '<input id="vgRes55Nombre" maxlength="40" placeholder="Tu nombre o iniciales (opcional)">'+
+        '<textarea id="vgRes55Texto" maxlength="260" '+
+          'placeholder="¿Llegó rápido? ¿Te resolvimos las dudas? Cuéntalo con tus palabras."></textarea>'+
+        '<span id="vgRes55Cuenta">0 / 260</span>'+
+        '<div class="pie">'+
+          '<button type="button" class="no" id="vgRes55No">Ahora no</button>'+
+          '<button type="button" class="si" id="vgRes55Si">Enviar reseña</button>'+
+        '</div>'+
+        '<span id="vgRes55Msg"></span>'+
+      '</div>';
+    document.body.appendChild(f);
+
+    f.addEventListener('click', function(ev){ if(ev.target === f) cerrar(); });
+    document.getElementById('vgRes55No').onclick = cerrar;
+    document.getElementById('vgRes55Si').onclick = enviar;
+
+    var ta = document.getElementById('vgRes55Texto');
+    ta.addEventListener('input', function(){
+      document.getElementById('vgRes55Cuenta').textContent = ta.value.length + ' / 260';
+    });
+
+    var e = document.getElementById('vgRes55Estrellas');
+    for(var i = 1; i <= 5; i++){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('data-e', i);
+      b.setAttribute('aria-label', i + ' estrellas');
+      b.textContent = '★';
+      e.appendChild(b);
+    }
+    e.addEventListener('click', function(ev){
+      var b = ev.target.closest('[data-e]');
+      if(b) pintarEstrellas(Number(b.getAttribute('data-e')));
+    });
+    return f;
+  }
+
+  function pintarEstrellas(n){
+    estrellas = n;
+    Array.prototype.forEach.call(
+      document.querySelectorAll('#vgRes55Estrellas button'),
+      function(b){ b.classList.toggle('on', Number(b.getAttribute('data-e')) <= n); });
+    document.getElementById('vgRes55Nota').textContent = NOTAS[n] || '';
+  }
+
+  function cerrar(){
+    var f = document.getElementById('vgRes55Fondo');
+    if(f) f.classList.remove('ver');
+  }
+
+  function abrir(id, producto){
+    idActual = id; prodActual = producto || '';
+    caja().classList.add('ver');
+    document.getElementById('vgRes55Prod').innerHTML =
+      'Tu opinión sobre <b>' + esc(prodActual || 'este pedido') + '</b>.<br>'+
+      'Se publica solo si la aprobamos, y te ganas tokens por dejarla.';
+    document.getElementById('vgRes55Texto').value = '';
+    document.getElementById('vgRes55Cuenta').textContent = '0 / 260';
+    document.getElementById('vgRes55Msg').textContent = '';
+    document.getElementById('vgRes55Msg').className = '';
+    document.getElementById('vgRes55Si').disabled = false;
+    document.getElementById('vgRes55Si').textContent = 'Enviar reseña';
+    pintarEstrellas(5);
+  }
+
+  async function enviar(){
+    var msg = document.getElementById('vgRes55Msg');
+    var btn = document.getElementById('vgRes55Si');
+    var texto = (document.getElementById('vgRes55Texto').value || '').trim();
+    var nombre = (document.getElementById('vgRes55Nombre').value || '').trim();
+
+    if(texto.length < 10){
+      msg.className = 'mal';
+      msg.textContent = 'Escribe un poco más, con diez letras no se entiende.';
+      return;
+    }
+    var c = cli();
+    if(!c){ msg.className='mal'; msg.textContent='No hay conexión con el servidor.'; return; }
+
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    msg.className = ''; msg.textContent = '';
+
+    var r = await c.rpc('vg_dejar_resena', {
+      p_order: idActual, p_estrellas: estrellas, p_texto: texto, p_nombre: nombre || null
+    });
+
+    if(r.error){
+      var m = String(r.error.message || '');
+      btn.disabled = false; btn.textContent = 'Enviar reseña';
+      msg.className = 'mal';
+      msg.textContent = /does not exist|schema cache/i.test(m)
+        ? 'Falta correr supabase_fase55_RESENA_DIRECTA.sql en Supabase.'
+        : m;
+      return;
+    }
+
+    var tok = Number((r.data && r.data.tokens) || 0);
+    if(hechas) hechas[String(idActual)] = true;
+    cerrar();
+    pintarAviso(idActual, true, tok);
+    if(typeof window.vgReloadWallet === 'function') window.vgReloadWallet();
+    if(typeof window.showToast === 'function')
+      window.showToast('¡Gracias!', tok > 0
+        ? 'Tu reseña quedó en revisión y ganaste ' + tok + ' tokens.'
+        : 'Tu reseña quedó en revisión.');
+  }
+
+  /* ═══ El botón dentro del pedido ═══ */
+  function pintarAviso(id, hecha, tokens){
+    var det = document.getElementById('vg17CDetail');
+    if(!det) return;
+    var vieja = det.querySelector('.vgres55');
+    if(vieja) vieja.remove();
+
+    var hero = det.querySelector('.vg17-hero');
+    if(!hero) return;
+
+    var d = document.createElement('div');
+    d.className = 'vgres55' + (hecha ? ' hecha' : '');
+    /* Con esto se sabe de qué pedido es el aviso que ya está puesto y no
+       se vuelve a dibujar en cada re-dibujado del panel. */
+    d.setAttribute('data-para', id);
+    d.innerHTML = hecha
+      ? '<b>✓ Gracias por tu reseña</b><small>Queda en revisión y se publica en cuanto la aprobemos.'+
+        (tokens > 0 ? ' Ganaste <b style="display:inline">'+tokens+' tokens</b>.' : '')+'</small>'
+      : '<b>⭐ ¿Nos dejas tu reseña?</b>'+
+        '<small>Te toma diez segundos, nos ayuda un montón y te ganas tokens para tu próxima compra.</small>'+
+        '<button type="button">⭐ Dejar mi reseña</button>';
+
+    if(!hecha){
+      var titulo = hero.querySelector('h3');
+      var nombre = titulo ? titulo.textContent.trim() : '';
+      d.querySelector('button').onclick = function(){ abrir(id, nombre); };
+    }
+    hero.parentNode.insertBefore(d, hero.nextSibling);
+  }
+
+  function idDelPedido(){
+    var card = document.querySelector('#vg17Client .vg17-card.active[data-o]')
+            || document.querySelector('.vg17-card.active[data-o]');
+    return card ? card.getAttribute('data-o') : null;
+  }
+
+  async function revisar(){
+    var det = document.getElementById('vg17CDetail');
+    if(!det) return;
+    var hero = det.querySelector('.vg17-hero');
+    /* Solo tiene sentido pedir reseña de algo que ya se entregó */
+    if(!hero || !/st-entregado/.test(hero.className)){
+      var v = det.querySelector('.vgres55'); if(v) v.remove();
+      return;
+    }
+    var id = idDelPedido();
+    if(!id) return;
+    /* Ya está puesto para este mismo pedido: no rehacerlo */
+    var puesto = det.querySelector('.vgres55');
+    if(puesto && puesto.getAttribute('data-para') === id) return;
+
+    var h = await cargarHechas();
+    /* El panel pudo cambiar de pedido mientras se preguntaba */
+    if(idDelPedido() !== id) return;
+    pintarAviso(id, !!h[String(id)], 0);
+  }
+
+  function arrancar(){
+    var panel = document.getElementById('vg17Client');
+    if(!panel){
+      if(++intentos < 70) setTimeout(arrancar, 900);
+      return;
+    }
+    var pendiente = false;
+    new MutationObserver(function(){
+      if(pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(function(){ pendiente = false; try{ revisar(); }catch(e){} });
+    }).observe(panel, {childList:true, subtree:true});
+    [500, 1400, 2800].forEach(function(ms){ setTimeout(revisar, ms); });
+  }
+  var intentos = 0;
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 59 · Cinco mejoras
+
+       · Pantalla "Hoy" en el panel: todo lo que te toca, en una vista.
+       · Buscador que sugiere mientras escribes.
+       · Volver a comprar desde un pedido viejo.
+       · El disparo diario de los avisos de renovación.
+
+     La respuesta fuera de horario no está aquí: vive en la base de
+     datos, porque tiene que contestar aunque nadie tenga la página
+     abierta.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-mejoras-v59">
+
+/* ── Pantalla Hoy ────────────────────────────────────────────── */
+.vghoy{display:grid;gap:13px}
+.vghoy-tit{display:flex;align-items:baseline;gap:10px;margin-bottom:2px}
+.vghoy-tit h3{margin:0;font-size:1.02rem;font-weight:900;color:#fff}
+.vghoy-tit span{font-size:.76rem;color:#8593b5}
+.vghoy-caja{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);
+  border-radius:14px;overflow:hidden}
+.vghoy-cab{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.04),transparent)}
+.vghoy-cab b{font-size:.68rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase;
+  color:#8593b5}
+.vghoy-num{font-family:ui-monospace,Consolas,monospace;font-size:.9rem;font-weight:900;
+  padding:2px 10px;border-radius:999px}
+.vghoy-num.cero{background:rgba(255,255,255,.06);color:#7f8ea6}
+.vghoy-num.hay{background:rgba(255,183,77,.16);color:#ffd68a}
+.vghoy-num.urge{background:rgba(255,77,109,.18);color:#ff9db0}
+.vghoy-fila{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 14px;border-top:1px solid rgba(255,255,255,.055);
+  cursor:pointer;transition:background .14s}
+.vghoy-fila:first-of-type{border-top:0}
+.vghoy-fila:hover{background:rgba(255,255,255,.05)}
+.vghoy-fila > div{min-width:0}
+.vghoy-fila b{display:block;font-size:.85rem;font-weight:800;color:#fff;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vghoy-fila small{display:block;font-size:.73rem;color:#8593b5;margin-top:1px}
+.vghoy-lado{flex:none;text-align:right}
+.vghoy-lado i{display:block;font-style:normal;font-family:ui-monospace,Consolas,monospace;
+  font-size:.86rem;font-weight:900;color:#22f5d3}
+.vghoy-lado em{display:block;font-style:normal;font-size:.68rem;color:#8593b5;margin-top:1px}
+.vghoy-lado .dias{color:#ffd68a}
+.vghoy-nada{padding:26px 14px;text-align:center;color:#7f8ea6;font-size:.82rem}
+.vghoy-nada b{display:block;color:#8ff5e3;font-size:.9rem;margin-bottom:3px}
+.vghoy-cargando{padding:22px 14px;text-align:center;color:#8593b5;font-size:.82rem}
+
+/* ── Volver a comprar ───────────────────────────────────────── */
+.vgotra{margin:11px 0 0;display:flex;gap:9px;flex-wrap:wrap}
+.vgotra button{
+  flex:1;min-width:150px;padding:11px 14px;cursor:pointer;
+  border:1px solid rgba(34,245,211,.34);background:rgba(34,245,211,.09);
+  color:#8ff5e3;font-family:inherit;font-size:.82rem;font-weight:850;
+  border-radius:11px;transition:.15s;
+}
+.vgotra button:hover{background:rgba(34,245,211,.16);border-color:rgba(34,245,211,.55)}
+.vgotra button:disabled{opacity:.55;cursor:default}
+</style>
+
+<script id="vg-mejoras-js-v59">
+(function(){
+  'use strict';
+  if(window.__VG59__) return; window.__VG59__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function dinero(n){ return '$'+Math.round(Number(n||0)).toLocaleString('es-MX'); }
+
+  /* ═══════════════════════════════════════════════════════════
+     1 · PANTALLA "HOY"
+
+     El panel tiene quince pestañas. Lo que de verdad te toca hacer
+     está repartido entre tres de ellas y es fácil que algo se quede
+     sin atender un día entero. Esto lo junta en una sola vista, y va
+     primero en la fila de pestañas por eso mismo.
+     ═══════════════════════════════════════════════════════════ */
+  function montarHoy(){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return false;
+    var tabs = modal.querySelector('.vg-admin-tabs');
+    var cont = modal.querySelector('.vg-admin-content');
+    if(!tabs || !cont) return false;
+    if(document.getElementById('vgAdminHoy')) return true;
+
+    var sec = document.createElement('section');
+    sec.className = 'vg-admin-section';
+    sec.id = 'vgAdminHoy';
+    sec.innerHTML = '<div class="vghoy"><div class="vghoy-cargando">Cargando…</div></div>';
+    cont.insertBefore(sec, cont.firstChild);
+
+    var b = document.createElement('button');
+    b.className = 'vg-admin-tab';
+    b.setAttribute('data-tab', 'hoy');
+    b.textContent = '⭑ Hoy';
+    tabs.insertBefore(b, tabs.firstChild);
+
+    /* Se enciende a mano y no con el manejador de pestañas de la
+       página, porque ese ya corrió antes de que esta pestaña
+       existiera y no la conoce. */
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-tab'),
+        function(x){ x.classList.toggle('active', x === b); });
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-section'),
+        function(s){ s.classList.toggle('active', s === sec); });
+      cargarHoy();
+    });
+
+    return true;
+  }
+
+  function irAPedido(id){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return;
+    var tab = Array.prototype.filter.call(modal.querySelectorAll('.vg-admin-tab'),
+      function(t){ return (t.getAttribute('data-tab')||'') === 'pedidos'
+                       || /pedidos/i.test(t.textContent||''); })[0];
+    if(tab) tab.click();
+    if(!id) return;
+    /* La lista tarda en dibujarse: se busca la fila unas cuantas veces
+       y se deja de intentar. */
+    var t0 = Date.now();
+    (function busca(){
+      var fila = document.querySelector('#vgAdminPedidos [data-o="' + id + '"]');
+      if(fila){ fila.click(); fila.scrollIntoView({block:'center'}); return; }
+      if(Date.now() - t0 < 6000) setTimeout(busca, 250);
+    })();
+  }
+
+  function irASeccion(nombre){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return;
+    var tab = Array.prototype.filter.call(modal.querySelectorAll('.vg-admin-tab'),
+      function(t){ return (t.getAttribute('data-tab')||'') === nombre
+                       || new RegExp(nombre,'i').test(t.textContent||''); })[0];
+    if(tab) tab.click();
+  }
+
+  function caja(titulo, n, clase, cuerpo){
+    return '<div class="vghoy-caja">'+
+      '<div class="vghoy-cab"><b>'+esc(titulo)+'</b>'+
+        '<span class="vghoy-num '+clase+'">'+n+'</span></div>'+
+      cuerpo+'</div>';
+  }
+
+  async function cargarHoy(){
+    var raiz = document.querySelector('#vgAdminHoy .vghoy');
+    if(!raiz) return;
+    var c = cli();
+    if(!c){ raiz.innerHTML = '<div class="vghoy-cargando">Sin conexión con el servidor.</div>'; return; }
+    raiz.innerHTML = '<div class="vghoy-cargando">Cargando…</div>';
+
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+
+    var res = await Promise.all([
+      c.from('orders').select('id,status,total,created_at,source,product_name,items,customer_name,client_name')
+       .order('created_at',{ascending:false}).limit(400),
+      c.rpc('vg_admin_por_vencer', {p_dias:7}),
+      c.from('vg_support_tickets').select('id,product_name,problem_description,status,created_at,customer_name')
+       .order('created_at',{ascending:false}).limit(100)
+    ]);
+
+    var pedidos = (res[0] && !res[0].error && res[0].data) ? res[0].data : [];
+    var vencen  = (res[1] && !res[1].error && Array.isArray(res[1].data)) ? res[1].data : [];
+    var tickets = (res[2] && !res[2].error && res[2].data) ? res[2].data : [];
+
+    pedidos = pedidos.filter(function(o){ return String(o.source||'') !== 'recommendation'; });
+    var pend = pedidos.filter(function(o){ return String(o.status||'') === 'pendiente'; });
+    var abiertos = tickets.filter(function(t){ return String(t.status||'') !== 'resuelto'; });
+
+    var vendHoy = pedidos.filter(function(o){
+      return new Date(o.created_at) >= hoy && o.status === 'entregado'; })
+      .reduce(function(s,o){ return s + Number(o.total||0); }, 0);
+
+    function nombre(o){
+      return String(o.product_name || (o.items && o.items[0] && o.items[0].title) || 'Pedido');
+    }
+
+    var html = '<div class="vghoy-tit"><h3>Lo que te toca hoy</h3>'+
+      '<span>Vendido hoy: <b style="color:#22f5d3">'+dinero(vendHoy)+'</b></span></div>';
+
+    /* ── Pedidos pendientes ── */
+    html += caja('Pedidos esperándote', pend.length,
+      pend.length ? (pend.length > 4 ? 'urge' : 'hay') : 'cero',
+      pend.length
+        ? pend.slice(0,8).map(function(o){
+            var h = new Date(o.created_at);
+            var mins = Math.round((Date.now() - h.getTime())/60000);
+            var espera = mins < 60 ? mins+' min' : Math.round(mins/60)+' h';
+            return '<div class="vghoy-fila" data-ped="'+esc(String(o.id))+'">'+
+              '<div><b>'+esc(nombre(o))+'</b>'+
+              '<small>'+esc(o.customer_name||o.client_name||'Cliente')+'</small></div>'+
+              '<div class="vghoy-lado"><i>'+dinero(o.total)+'</i>'+
+              '<em class="'+(mins>120?'dias':'')+'">esperando '+espera+'</em></div></div>';
+          }).join('')
+        : '<div class="vghoy-nada"><b>Nada pendiente</b>Todos los pedidos están atendidos.</div>');
+
+    /* ── Por vencer ── */
+    html += caja('Suscripciones por vencer', vencen.length,
+      vencen.length ? 'hay' : 'cero',
+      vencen.length
+        ? vencen.slice(0,8).map(function(x){
+            var d = Number(x.dias||0);
+            return '<div class="vghoy-fila" data-ped="'+esc(String(x.id))+'">'+
+              '<div><b>'+esc(x.cliente||'Cliente')+'</b>'+
+              '<small>'+esc(x.producto||'')+(x.telefono?' · '+esc(x.telefono):'')+'</small></div>'+
+              '<div class="vghoy-lado"><i class="dias">'+(d<0?'vencida':d+' días')+'</i>'+
+              '<em>'+dinero(x.total)+'</em></div></div>';
+          }).join('')
+        : '<div class="vghoy-nada"><b>Ninguna por vencer</b>Nadie se te va esta semana.</div>');
+
+    /* ── Tickets ── */
+    html += caja('Tickets sin resolver', abiertos.length,
+      abiertos.length ? 'hay' : 'cero',
+      abiertos.length
+        ? abiertos.slice(0,6).map(function(t){
+            var q = String(t.problem_description||'').replace(/\s+/g,' ').trim();
+            return '<div class="vghoy-fila" data-tk="1">'+
+              '<div><b>'+esc(t.product_name||'Ticket')+'</b>'+
+              '<small>'+esc(t.customer_name||'Cliente')+
+              (q ? ' · '+esc(q.slice(0,54))+(q.length>54?'…':'') : '')+'</small></div>'+
+              '<div class="vghoy-lado"><em>'+esc(String(t.status||'abierto'))+'</em></div></div>';
+          }).join('')
+        : '<div class="vghoy-nada"><b>Bandeja limpia</b>No hay tickets abiertos.</div>');
+
+    raiz.innerHTML = html;
+
+    Array.prototype.forEach.call(raiz.querySelectorAll('[data-ped]'), function(f){
+      f.onclick = function(){ irAPedido(f.getAttribute('data-ped')); };
+    });
+    Array.prototype.forEach.call(raiz.querySelectorAll('[data-tk]'), function(f){
+      f.onclick = function(){ irASeccion('soporte'); };
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     2 · AVISOS DE RENOVACIÓN, UNA VEZ AL DÍA
+
+     Si tu proyecto tiene tarea programada, esto no hace falta y no
+     estorba: la función no repite avisos. Si no la tiene, este es el
+     que los dispara, la primera vez que abres el panel cada día.
+     ═══════════════════════════════════════════════════════════ */
+  async function renovacionesDelDia(){
+    try{
+      var hoy = new Date().toISOString().slice(0,10);
+      if(localStorage.getItem('vg_renov_dia') === hoy) return;
+      var c = cli(); if(!c) return;
+      var r = await c.rpc('vg_avisar_renovaciones');
+      if(r.error) return;                     /* falta el SQL: se calla */
+      localStorage.setItem('vg_renov_dia', hoy);
+      var n = (r.data && r.data.avisados) || 0;
+      if(n > 0 && typeof window.showToast === 'function')
+        window.showToast('Avisos enviados', 'Se avisó a ' + n + ' cliente(s) que su suscripción vence.');
+    }catch(e){}
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     4 · VOLVER A COMPRAR
+     ═══════════════════════════════════════════════════════════ */
+  function idPedidoCliente(){
+    var card = document.querySelector('#vg17Client .vg17-card.active[data-o]')
+            || document.querySelector('.vg17-card.active[data-o]');
+    return card ? card.getAttribute('data-o') : null;
+  }
+
+  /* Compara sin acentos y sin mayúsculas: el título guardado en el
+     pedido no siempre viene escrito igual que el del catálogo.
+
+     El rango va con códigos y no con los acentos de verdad porque son
+     caracteres invisibles: pegados tal cual, cualquier editor puede
+     comérselos sin avisar. */
+  var ACENTOS = new RegExp('[\\u0300-\\u036f]', 'g');
+  function llano(s){
+    return String(s||'').toLowerCase().normalize('NFD').replace(ACENTOS,'');
+  }
+
+  /* Busca en el catálogo el producto de un pedido viejo. Primero por
+     nombre exacto; si no, por parecido, porque el título guardado en el
+     pedido puede traer la opción pegada ("Netflix Nueva · 1 Mes"). */
+  function productoDe(titulo){
+    var lista = Array.isArray(window.SERVICES) ? window.SERVICES : [];
+    var t = llano(titulo);
+    if(!t) return null;
+    for(var i=0;i<lista.length;i++){
+      if(lista[i] && llano(lista[i].title) === t) return lista[i];
+    }
+    var mejor = null, largo = 0;
+    for(var j=0;j<lista.length;j++){
+      var lt = llano(lista[j] && lista[j].title);
+      if(lt && t.indexOf(lt) >= 0 && lt.length > largo){ mejor = lista[j]; largo = lt.length; }
+    }
+    return mejor;
+  }
+
+  /* El panel del cliente tapa la ventana del producto, así que hay que
+     quitarlo de en medio antes de abrirla. */
+  function cerrarPanelCliente(){
+    if(typeof window.vgCloseClientPanel === 'function'){
+      try{ window.vgCloseClientPanel(); return; }catch(e){}
+    }
+    var p = document.getElementById('vg17Client');
+    if(p) p.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function fotoDe(titulo){
+    var lista = Array.isArray(window.SERVICES) ? window.SERVICES : [];
+    var t = llano(titulo);
+    for(var i=0;i<lista.length;i++){
+      if(lista[i] && llano(lista[i].title) === t) return lista[i].image || '';
+    }
+    for(var j=0;j<lista.length;j++){
+      if(lista[j] && t.indexOf(llano(lista[j].title)) >= 0) return lista[j].image || '';
+    }
+    return '';
+  }
+
+  async function volverAComprar(id, btn){
+    var c = cli(); if(!c) return;
+    btn.disabled = true; btn.textContent = 'Agregando…';
+    try{
+      var r = await c.from('orders').select('product_name,product_option,total,items')
+                     .eq('id', id).limit(1);
+      if(r.error || !r.data || !r.data.length) throw new Error('No encontré ese pedido.');
+      var o = r.data[0];
+      var it = (o.items && o.items[0]) || {};
+      var titulo = String(o.product_name || it.title || '').trim();
+      if(!titulo) throw new Error('Ese pedido no tiene producto guardado.');
+
+      var opcion = String(o.product_option || it.option || it.name || '').trim();
+
+      /* El carrito NO es window.cart: es una variable interna de la
+         página. Meterle cosas por fuera crea un carrito paralelo que
+         nadie mira —que es justo lo que pasaba—. Así que se recorre el
+         mismo camino que el botón de comprar de siempre: se abre el
+         producto, se elige su opción y se usa su propio "agregar". */
+      var prod = productoDe(titulo);
+      if(!prod) throw new Error('Ese producto ya no está en el catálogo. '+
+        'Búscalo arriba o pídelo en Cotizar un servicio.');
+      if(typeof window.openProduct !== 'function')
+        throw new Error('No se pudo abrir el producto.');
+
+      cerrarPanelCliente();
+      window.openProduct(prod.id);
+      await new Promise(function(r){ setTimeout(r, 260); });
+
+      var modal = document.getElementById('productModal');
+      if(!modal || !modal.classList.contains('active'))
+        throw new Error('No se pudo abrir el producto.');
+
+      /* Se elige la opción pulsando la que ya está en pantalla, para que
+         corra el manejador de la página y no quede a medias. */
+      var elegida = false;
+      if(opcion){
+        var ops = modal.querySelectorAll('#modalOptions .option');
+        for(var i=0;i<ops.length;i++){
+          var nom = ops[i].querySelector('b');
+          if(nom && llano(nom.textContent) === llano(opcion)){
+            ops[i].click(); elegida = true; break;
+          }
+        }
+      }
+
+      if(elegida || !opcion){
+        if(typeof window.addSelectedToCart === 'function') window.addSelectedToCart();
+        btn.textContent = '✓ Agregado al carrito';
+        setTimeout(function(){
+          if(typeof window.openCart === 'function') window.openCart();
+        }, 380);
+      }else{
+        /* La opción que compró ya no existe —cambiaron los paquetes—.
+           Se le deja el producto abierto para que elija, en vez de
+           meterle al carrito algo que no pidió. */
+        btn.disabled = false;
+        btn.textContent = '🔁 Volver a comprar';
+        if(typeof window.showToast === 'function')
+          window.showToast('Elige la opción',
+            'Ya no existe «' + opcion + '». Escoge la que quieras.');
+      }
+    }catch(e){
+      btn.disabled = false;
+      btn.textContent = '🔁 Volver a comprar';
+      alert(e.message || String(e));
+    }
+  }
+
+  function ponerBotonOtra(){
+    var det = document.getElementById('vg17CDetail');
+    if(!det) return;
+    var hero = det.querySelector('.vg17-hero');
+    if(!hero) return;
+    var id = idPedidoCliente();
+    if(!id) return;
+
+    var ya = det.querySelector('.vgotra');
+    if(ya && ya.getAttribute('data-para') === id) return;
+    if(ya) ya.remove();
+
+    var d = document.createElement('div');
+    d.className = 'vgotra';
+    d.setAttribute('data-para', id);
+    d.innerHTML = '<button type="button">🔁 Volver a comprar</button>';
+    d.querySelector('button').onclick = function(){ volverAComprar(id, this); };
+
+    /* Debajo de la caja de reseña si la hay, si no pegado al encabezado */
+    var resena = det.querySelector('.vgres55');
+    var ancla = resena || hero;
+    ancla.parentNode.insertBefore(d, ancla.nextSibling);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     Arranque
+     ═══════════════════════════════════════════════════════════ */
+  var intentos = 0;
+  function arrancar(){
+
+    var panelC = document.getElementById('vg17Client');
+    if(panelC && !panelC.dataset.vg59){
+      panelC.dataset.vg59 = '1';
+      var pend = false;
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){ pend = false; try{ ponerBotonOtra(); }catch(e){} });
+      }).observe(panelC, {childList:true, subtree:true});
+    }
+
+    var modal = document.getElementById('vgAdminModal');
+    if(modal && !modal.dataset.vg59){
+      if(montarHoy()){
+        modal.dataset.vg59 = '1';
+        renovacionesDelDia();
+      }
+    }
+
+    if(++intentos < 90) setTimeout(arrancar, 1000);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 63 · Sección Fortnite con el aspecto de la tienda real
+
+     La tienda del juego no es una rejilla de tarjetas iguales: es un
+     mosaico. Cada artículo trae de la API su tamaño de mosaico, sus
+     colores de fondo y su render grande, y con eso se arma igual.
+
+       · tileSize      1x1, 2x1, 3x1, 4x1  → cuántas columnas ocupa
+       · colors        color1/2/3          → el degradado detrás
+       · newDisplayAsset.renderImages      → el render del personaje
+       · banner        "700 paVos de descuento"
+
+     La letra es Barlow Condensed, que la página ya cargaba. Es lo más
+     parecido a la Burbank Big Condensed del juego sin pedir una fuente
+     nueva.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-fortnite-v62">
+#productsGrid:has(.vgfn-mosaico){display:block !important}
+
+/* ─────────────────────────────────────────────────────────────
+   EL ANCHO DE TODA LA PÁGINA
+
+   Esto NO es de Fortnite: afecta a todas tus secciones.
+
+   El body es una rejilla con justify-items:center. Eso hace que su
+   contenido se encoja a su tamaño natural y se centre, en vez de
+   ocupar el ancho disponible. En una pantalla de 1920 el catálogo se
+   quedaba en 1135 y la zona de productos en 811: se desperdiciaba el
+   42% de la pantalla, con los servicios igual que con Fortnite.
+
+   Estirándolo, la zona de productos pasa de 811 a 1156.
+   ───────────────────────────────────────────────────────────── */
+html body > main{ justify-self:stretch; width:100%; }
+
+/* En Fortnite se quita además la columna de categorías: enumera
+   productos del catálogo y ninguno de la tienda de Fortnite está ahí,
+   así que salían todas en cero ocupando 260px. Sin ella el mosaico
+   llega a 1436. */
+html body.vgfn-activo #marketView .layout{ grid-template-columns:minmax(0,1fr) !important; }
+html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !important; }
+
+.vgfn-cab{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding:15px 18px;margin-bottom:18px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(120deg,#1d1240,#0b1733 62%,#0a1020);
+  border-radius:16px;
+}
+.vgfn-cab h3{
+  margin:0 0 2px;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1.42rem;font-weight:900;color:#fff;letter-spacing:.02em;
+  text-transform:uppercase;line-height:1;
+}
+.vgfn-cab p{margin:0;font-size:.79rem;color:#9aa7c2;line-height:1.5}
+.vgfn-cab b{color:#7fdcff;font-weight:800}
+.vgfn-tarifa{flex:none;text-align:right;line-height:1.5}
+.vgfn-tarifa b{
+  display:block;font-family:'Barlow Condensed',Inter,sans-serif;
+  color:#ffd68a;font-size:1.28rem;font-weight:900;text-transform:uppercase;
+}
+.vgfn-tarifa span{font-size:.7rem;color:#8593b5}
+
+.vgfn-filtros{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+.vgfn-filtro{
+  border:0;background:rgba(255,255,255,.07);color:#c3cde3;
+  border-radius:6px;padding:8px 14px;cursor:pointer;
+  font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:.94rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  white-space:nowrap;transition:.14s;
+}
+.vgfn-filtro:hover{background:rgba(255,255,255,.14);color:#fff}
+.vgfn-filtro.on{background:#7fdcff;color:#06203a}
+.vgfn-filtro i{font-style:normal;opacity:.65;margin-left:4px}
+
+/* Las medidas van por el ancho de ESTA zona, no el de la ventana.
+   El catálogo vive junto a una barra lateral, así que en una pantalla
+   de 1000px el mosaico solo dispone de unos 490. Midiendo la ventana
+   salían seis columnas en ese hueco y las piezas quedaban de 75px:
+   los nombres se cortaban y el precio se encimaba al tipo. */
+.vgfn-seccion{margin-bottom:30px;container-type:inline-size}
+.vgfn-seccion > h4{
+  margin:0 0 12px;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1.62rem;font-weight:900;letter-spacing:.03em;text-transform:uppercase;
+  color:#fff;line-height:1;display:flex;align-items:center;gap:12px;
+}
+.vgfn-seccion > h4 em{
+  font-style:normal;font-size:.82rem;font-weight:700;color:#7f8ea6;
+  letter-spacing:.14em;padding-top:3px;
+}
+/* Los destacados abren la tienda, así que su título va más grande y en
+   el azul de Fortnite, como el "Lo más vendido" del juego. */
+.vgfn-dest > h4{font-size:1.95rem;color:#7fdcff}
+.vgfn-dest > h4 em{color:#5c7fa8}
+.vgfn-dest{padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:26px}
+
+/* ── El mosaico ──────────────────────────────────────────────
+   Todos los tamaños que manda la API son "N por 1", así que las
+   piezas solo crecen a lo ancho y la altura de fila es siempre la
+   misma. Por eso basta con grid-auto-rows fija. */
+.vgfn-mosaico{
+  display:grid;gap:9px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:206px;
+  grid-auto-flow:dense;
+}
+@container (min-width:430px){ .vgfn-mosaico{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:222px} }
+@container (min-width:640px){ .vgfn-mosaico{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:238px;gap:10px} }
+@container (min-width:900px){ .vgfn-mosaico{grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:252px} }
+@container (min-width:1150px){ .vgfn-mosaico{grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:264px} }
+
+/* Si el navegador no entiende consultas de contenedor, se queda en dos
+   columnas y se ensancha solo en pantallas grandes. Feo antes que roto. */
+@supports not (container-type:inline-size){
+  @media(min-width:1400px){ .vgfn-mosaico{grid-template-columns:repeat(4,minmax(0,1fr))} }
+}
+
+.vgfn-t{
+  position:relative;overflow:hidden;border-radius:9px;cursor:pointer;
+  background:#1b2233;isolation:isolate;
+  transition:transform .14s ease, box-shadow .14s ease;
+}
+.vgfn-t:hover{transform:translateY(-4px);box-shadow:0 14px 34px rgba(0,0,0,.5)}
+/* Una pieza nunca puede ocupar más columnas de las que hay. Se parte
+   de dos y se le da su ancho real solo cuando el mosaico ya lo tiene. */
+.vgfn-t.w2,.vgfn-t.w3,.vgfn-t.w4{grid-column:span 2}
+@container (min-width:640px){ .vgfn-t.w3,.vgfn-t.w4{grid-column:span 3} }
+@container (min-width:900px){ .vgfn-t.w4{grid-column:span 4} }
+
+/* El degradado que viene con cada artículo */
+.vgfn-fondo{position:absolute;inset:0;z-index:0}
+.vgfn-luz{
+  position:absolute;left:50%;top:42%;width:130%;aspect-ratio:1;z-index:1;
+  transform:translate(-50%,-50%);border-radius:50%;opacity:.55;
+}
+/* Las imágenes que manda la API son TODAS cuadradas: 2048x2048 los
+   renders y 256x256 los iconos. Con object-fit:cover, meter un cuadrado
+   en una pieza doble recortaba casi la mitad del artículo. Con contain
+   no se corta nada y el hueco lo llena el degradado, que es justo lo
+   que hace el juego. */
+.vgfn-t img{
+  position:absolute;left:0;right:0;top:0;z-index:2;
+  width:100%;height:calc(100% - 52px);
+  object-fit:contain;object-position:center 46%;
+  padding:8px 8px 0;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.42));
+  transition:transform .28s ease;
+}
+.vgfn-t:hover img{transform:scale(1.06)}
+
+/* Franja de abajo con el nombre y el precio */
+.vgfn-pie{
+  position:absolute;left:0;right:0;bottom:0;z-index:3;
+  padding:26px 11px 10px;
+  background:linear-gradient(0deg,rgba(6,8,16,.95) 26%,rgba(6,8,16,.72) 62%,transparent);
+}
+.vgfn-nom{
+  margin:0 0 1px;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1.08rem;font-weight:900;line-height:1.05;color:#fff;
+  text-transform:uppercase;letter-spacing:.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  text-shadow:0 2px 8px rgba(0,0,0,.6);
+}
+.vgfn-tipo{
+  margin:0 0 7px;font-size:.63rem;font-weight:700;color:#a8b4cc;
+  text-transform:uppercase;letter-spacing:.1em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.vgfn-precio{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.vgfn-mxn{
+  font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1.3rem;font-weight:900;color:#fff;line-height:1;letter-spacing:.01em;
+}
+.vgfn-pav{
+  display:flex;align-items:center;gap:4px;
+  font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:.94rem;font-weight:800;color:#cfe6ff;line-height:1;
+}
+.vgfn-pav s{color:#7c8aa5;font-weight:700;margin-right:3px}
+.vgfn-moneda{
+  width:14px;height:14px;flex:none;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,#a8e4ff,#1b7fd4 62%,#0d5493);
+  box-shadow:0 0 0 1px rgba(255,255,255,.35) inset;
+}
+
+/* Cintas de la esquina, como las del juego. Van en columna para que la
+   segunda caiga debajo de la primera sin cuentas de posición. */
+.vgfn-cintas{
+  position:absolute;left:0;top:11px;z-index:4;
+  display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+  max-width:88%;
+}
+.vgfn-cinta{
+  display:inline-block;
+  line-height:1.25;
+  background:#ffd400;color:#241a05;
+  font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:.78rem;font-weight:900;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 10px 3px 9px;border-radius:0 4px 4px 0;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+  white-space:nowrap;
+}
+/* La de lo que incluye va más discreta: es un dato, no una oferta. Y
+   con una sola línea siempre: la más larga que manda la tienda es
+   "Accesorio mochilero reactivo", que partida en dos tapaba media
+   pieza. Si no cabe, se corta con puntos suspensivos. */
+/* Se llamaba "info" y salía del doble de alto. La causa: hay tres
+   reglas en la página con el selector `.info` a secas que ponen
+   display:flex con !important, escritas para otra cosa. Cualquier
+   elemento del sitio con esa clase se las come.
+
+   No se pelea con !important: se le cambia el nombre a uno que sea
+   solo de aquí. Un nombre genérico en una hoja global es el problema,
+   no el síntoma. */
+.vgfn-cinta.dato{
+  background:rgba(127,220,255,.92);color:#06203a;
+  font-size:.64rem;letter-spacing:.06em;padding:2px 9px 2px 8px;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Botón de agregar: aparece al pasar por encima, siempre visible al tacto */
+.vgfn-add{
+  position:absolute;right:9px;top:9px;z-index:5;
+  width:34px;height:34px;border:0;cursor:pointer;border-radius:8px;
+  background:rgba(6,8,16,.72);color:#fff;
+  font-size:1.3rem;font-weight:700;line-height:1;
+  display:grid;place-items:center;
+  opacity:0;transform:scale(.85);transition:.14s;
+}
+.vgfn-t:hover .vgfn-add{opacity:1;transform:scale(1)}
+.vgfn-add:hover{background:#7fdcff;color:#06203a}
+.vgfn-add.puesto{opacity:1;transform:scale(1);background:#4ade80;color:#052e16}
+@media(hover:none){ .vgfn-add{opacity:1;transform:scale(1)} }
+
+/* ── El efecto de la tienda del juego ────────────────────────
+   La pieza se inclina en 3D hacia donde está el cursor y le cruza un
+   brillo por encima, como cuando pasas por un artículo en Fortnite.
+
+   Solo con ratón: en una pantalla táctil no hay "pasar por encima", y
+   forzarlo dejaría las piezas torcidas al tocarlas. Y se apaga si el
+   sistema pide menos movimiento. */
+@media (hover:hover) and (pointer:fine){
+  .vgfn-mosaico{perspective:1150px}
+  .vgfn-t{transform-style:preserve-3d}
+
+  .vgfn-t.gira{
+    transition:transform .07s linear, box-shadow .18s ease;
+    transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(16px);
+    box-shadow:0 24px 50px rgba(0,0,0,.58);
+  }
+  /* El brillo va detrás del nombre y del botón, sobre la imagen */
+  .vgfn-t:after{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    opacity:0;transition:opacity .2s ease;mix-blend-mode:screen;
+    background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,.34),rgba(255,255,255,.07) 40%,transparent 64%);
+  }
+  .vgfn-t.gira:after{opacity:1}
+  .vgfn-t.gira img{transform:scale(1.07) translateZ(26px)}
+  .vgfn-t.gira .vgfn-pie{transform:translateZ(20px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .vgfn-t.gira{transform:none;transition:none}
+  .vgfn-t.gira:after{opacity:0}
+  .vgfn-t.gira img{transform:none}
+}
+
+/* ── Ficha de la canción ─────────────────────────────────────
+   Sube desde abajo al pasar por encima. En pantalla táctil se queda
+   siempre visible, porque ahí no hay "pasar por encima" y si no la
+   información no se vería nunca. */
+.vgfn-mus{
+  position:absolute;left:0;right:0;bottom:0;z-index:4;
+  padding:11px 11px 74px;
+  background:linear-gradient(0deg,rgba(4,6,12,.96) 62%,rgba(4,6,12,.80) 84%,transparent);
+  transform:translateY(100%);opacity:0;
+  transition:transform .2s ease, opacity .2s ease;
+  pointer-events:none;
+}
+.vgfn-t:hover .vgfn-mus,.vgfn-t.gira .vgfn-mus{transform:translateY(0);opacity:1}
+.vgfn-mus-ar{
+  margin:0 0 2px;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1rem;font-weight:800;color:#fff;line-height:1.15;
+  text-transform:uppercase;letter-spacing:.01em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.vgfn-mus-d{
+  margin:0 0 8px;font-size:.66rem;font-weight:700;color:#7fdcff;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.vgfn-dif{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px}
+.vgfn-dif span{display:flex;align-items:center;gap:3px}
+.vgfn-dif b{
+  font-size:.56rem;font-weight:800;color:#8fa0bd;letter-spacing:.08em;
+  text-transform:uppercase;width:26px;flex:none;
+}
+.vgfn-dif i{
+  width:5px;height:9px;border-radius:1px;background:rgba(255,255,255,.16);flex:none;
+}
+.vgfn-dif i.on{background:#7fdcff}
+/* En pantalla táctil la ficha no se muestra: taparía el nombre y el
+   precio, que es lo que el cliente necesita ver. Ahí el artista va en
+   la línea de debajo del título, que se arma en el guion. */
+@media (hover:none){ .vgfn-mus{display:none} }
+@media (prefers-reduced-motion:reduce){ .vgfn-mus{transition:none} }
+
+/* ── Portada de la sección, armada con la tienda del día ─────
+   Los renders se abanican a la derecha, detrás del texto. El texto
+   sigue legible porque el degradado que ya trae la portada lo cubre
+   desde la izquierda. */
+.vgfn-portada{
+  position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+}
+.vgfn-portada:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,#070910 38%,rgba(7,9,16,.78) 56%,rgba(7,9,16,.12) 80%,transparent);
+}
+.vgfn-portada img{
+  position:absolute;
+  opacity:0;transform:translateY(14px);
+  animation:vgfnEntra .5s ease forwards;
+  animation-delay:calc(var(--i) * .07s);
+  z-index:calc(5 - var(--i));
+}
+@keyframes vgfnEntra{ to{opacity:1;transform:translateY(0)} }
+
+/* Recortes (Fortnite): PNG sin fondo, de pie sobre la portada.
+   El alto se queda por debajo del 100% a propósito. Antes iban al 118%
+   para que llenaran y lo que pasaba era que se les cortaban los pies:
+   una figura recortada tiene que caber entera o parece un error. */
+.vgfn-portada.recortes img{
+  bottom:6%;height:84%;width:auto;
+  right:calc(2% + var(--i) * 11%);
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.55));
+}
+
+/* Cartas (el resto): son fotos con fondo, así que se enseñan como
+   tarjetas en abanico, ligeramente giradas. Puestas a sangre como los
+   recortes se verían como trozos de imagen pegados. */
+/* El abanico se queda en la mitad derecha. El texto de la portada ocupa
+   hasta 700px y antes las tarjetas se le encimaban a la descripción. */
+.vgfn-portada.cartas img{
+  bottom:15%;height:58%;width:auto;max-width:18%;
+  object-fit:cover;border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  right:calc(2% + var(--i) * 6.5%);
+  box-shadow:0 14px 34px rgba(0,0,0,.55);
+  transform:translateY(14px) rotate(calc((var(--i) - 2) * 3deg));
+}
+@keyframes vgfnEntraCarta{
+  to{opacity:1;transform:translateY(0) rotate(calc((var(--i) - 2) * 3deg))}
+}
+.vgfn-portada.cartas img{animation-name:vgfnEntraCarta}
+
+/* Cuántas imágenes se ponen lo decide el guion, no esta media query:
+   contar allí evita depender de ganarle en especificidad a las capas
+   de estilos que ya trae la página. Aquí solo se recolocan. */
+@media(max-width:900px){
+  .vgfn-portada.recortes img{height:70%;right:calc(0% + var(--i) * 32%)}
+  .vgfn-portada.cartas img{height:48%;max-width:38%;right:calc(4% + var(--i) * 30%)}
+  .vgfn-portada:after{
+    background:linear-gradient(90deg,#070910 34%,rgba(7,9,16,.80) 62%,rgba(7,9,16,.25));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .vgfn-portada img{animation:none;opacity:1;transform:none}
+  .vgfn-portada.cartas img{transform:rotate(calc((var(--i) - 2) * 3deg))}
+}
+
+/* ── Buscador propio de la sección ────────────────────────── */
+.vgfn-buscar{position:relative;margin-bottom:14px}
+.vgfn-buscar input{
+  width:100%;box-sizing:border-box;height:46px;padding:0 108px 0 16px;
+  border:1px solid rgba(255,255,255,.14);border-radius:10px;
+  background:rgba(255,255,255,.05);color:#fff;
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:1.05rem;
+  font-weight:700;letter-spacing:.02em;
+}
+.vgfn-buscar input::placeholder{color:#7f8ea6;font-weight:600}
+.vgfn-buscar input:focus{outline:none;border-color:rgba(127,220,255,.55);
+  background:rgba(127,220,255,.06)}
+.vgfn-buscar input::-webkit-search-cancel-button{filter:invert(.7)}
+.vgfn-buscar span{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:.86rem;font-weight:800;
+  color:#7f8ea6;text-transform:uppercase;letter-spacing:.08em;pointer-events:none;
+}
+
+/* ── Ventana de detalle ───────────────────────────────────── */
+#vgfnModal{
+  position:fixed;inset:0;z-index:2147483400;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(4,6,12,.88);
+}
+#vgfnModal.ver{display:flex}
+.vgfn-m-caja{
+  position:relative;width:100%;max-width:860px;max-height:92vh;overflow-y:auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  background:#0d1220;border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  overflow:hidden;
+}
+@media(max-width:720px){ .vgfn-m-caja{grid-template-columns:1fr;max-height:94vh} }
+.vgfn-m-x{
+  position:absolute;right:10px;top:10px;z-index:5;
+  width:36px;height:36px;border:0;border-radius:9px;cursor:pointer;
+  background:rgba(4,6,12,.7);color:#fff;font-size:1.5rem;line-height:1;
+}
+.vgfn-m-x:hover{background:#fff;color:#0d1220}
+.vgfn-m-art{position:relative;min-height:320px;overflow:hidden}
+@media(max-width:720px){ .vgfn-m-art{min-height:240px} }
+.vgfn-m-luz{position:absolute;left:50%;top:44%;width:120%;aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;opacity:.55}
+.vgfn-m-art img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;padding:16px;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.45));
+}
+.vgfn-m-info{padding:22px 22px 24px;display:flex;flex-direction:column}
+.vgfn-m-sec{
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:.76rem;font-weight:800;
+  letter-spacing:.16em;text-transform:uppercase;color:#7fdcff;margin-bottom:4px;
+}
+.vgfn-m-info h3{
+  margin:0 0 3px;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1.85rem;font-weight:900;line-height:1.02;color:#fff;
+  text-transform:uppercase;letter-spacing:.01em;
+}
+.vgfn-m-tipo{
+  margin:0 0 12px;font-size:.68rem;font-weight:700;color:#8fa0bd;
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.vgfn-m-desc{margin:0 0 14px;font-size:.86rem;color:#a8b4cc;line-height:1.55}
+.vgfn-mus.suelta{
+  position:static;transform:none;opacity:1;padding:0 0 14px;background:none;
+  pointer-events:auto;display:block;
+}
+.vgfn-m-precio{
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+  padding:12px 0;border-top:1px solid rgba(255,255,255,.09);
+  border-bottom:1px solid rgba(255,255,255,.09);margin-bottom:14px;
+}
+.vgfn-m-precio b{
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:2rem;font-weight:900;
+  color:#fff;line-height:1;
+}
+.vgfn-m-precio span{
+  display:flex;align-items:center;gap:5px;
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:1.05rem;font-weight:800;
+  color:#cfe6ff;
+}
+.vgfn-m-precio s{color:#7c8aa5;font-weight:700}
+.vgfn-m-regalo{
+  padding:12px 14px;margin-bottom:16px;border-radius:10px;
+  background:rgba(127,220,255,.08);border:1px solid rgba(127,220,255,.22);
+  font-size:.79rem;color:#a8bdd6;line-height:1.5;
+}
+.vgfn-m-regalo b{
+  display:block;color:#7fdcff;font-size:.7rem;font-weight:900;
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;
+}
+.vgfn-m-btns{margin-top:auto;display:grid;gap:8px}
+.vgfn-m-btns button{
+  padding:14px;border:0;border-radius:10px;cursor:pointer;
+  font-family:'Barlow Condensed',Inter,sans-serif;font-size:1.1rem;font-weight:900;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+.vgfn-m-comprar{background:#7fdcff;color:#06203a}
+.vgfn-m-comprar:hover{background:#a5e8ff}
+.vgfn-m-carrito{background:rgba(255,255,255,.08);color:#e6edf9}
+.vgfn-m-carrito:hover{background:rgba(255,255,255,.16)}
+
+.vgfn-estado{
+  padding:46px 18px;text-align:center;color:#8593b5;font-size:.88rem;
+  border:1px dashed rgba(255,255,255,.14);border-radius:16px;
+}
+.vgfn-estado b{display:block;color:#fff;font-size:1.05rem;margin-bottom:5px;
+  font-family:'Barlow Condensed',Inter,sans-serif;text-transform:uppercase;letter-spacing:.03em}
+.vgfn-estado button{
+  margin-top:14px;padding:10px 20px;cursor:pointer;border:0;border-radius:8px;
+  background:#7fdcff;color:#06203a;font-family:'Barlow Condensed',Inter,sans-serif;
+  font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;
+}
+.vgfn-hueso{
+  border-radius:9px;background:linear-gradient(100deg,#161d2c 30%,#212a3d 50%,#161d2c 70%);
+  background-size:220% 100%;animation:vgfnBrilla 1.3s linear infinite;
+}
+@keyframes vgfnBrilla{to{background-position:-120% 0}}
+@media(prefers-reduced-motion:reduce){
+  .vgfn-hueso{animation:none}
+  .vgfn-t,.vgfn-t img{transition:none}
+  .vgfn-t:hover{transform:none}
+  .vgfn-t:hover img{transform:none}
+}
+</style>
+
+<script id="vg-fortnite-js-v62">
+(function(){
+  'use strict';
+  if(window.__VG62__) return; window.__VG62__ = true;
+
+  /* ═══════════════════════════════════════════════════════════
+     LA TARIFA
+
+     100 pavos = $10 MXN. Es el único número que hay que tocar para
+     cambiar todos los precios de la sección.
+
+     Se puede probar otro sin desplegar nada, desde la consola:
+        localStorage.setItem('vg_fn_por_100', 12)
+     ═══════════════════════════════════════════════════════════ */
+  var POR_100_DEFECTO = 10;
+
+  function porCien(){
+    var g = Number(localStorage.getItem('vg_fn_por_100'));
+    return (g > 0) ? g : POR_100_DEFECTO;
+  }
+  function aPesos(pavos){ return Math.round(Number(pavos||0) * porCien() / 100); }
+  function pesos(n){ return '$' + Number(n||0).toLocaleString('es-MX'); }
+
+  var API = 'https://fortnite-api.com/v2/shop?language=es';
+  var LLAVE = 'vg_fn_tienda_v2';
+
+  var tienda = null;
+  var cargando = false;
+  var filtro = 'todo';
+  var busqueda = '';        /* el buscador propio de la sección */
+
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* Compara sin acentos ni mayúsculas: en el teléfono casi nadie los
+     escribe, y "cancion" tiene que encontrar "Canción". El rango va con
+     códigos porque los acentos combinantes son caracteres invisibles y
+     cualquier editor puede comérselos sin avisar. */
+  var ACENTOS = new RegExp('[\\u0300-\\u036f]', 'g');
+  function llano(s){
+    return String(s||'').toLowerCase().normalize('NFD').replace(ACENTOS,'').trim();
+  }
+
+  /* Los colores llegan como "586167ff": seis dígitos de color y dos de
+     transparencia, que aquí sobran. */
+  function hex(c, porDefecto){
+    if(!c || typeof c !== 'string') return porDefecto;
+    var s = c.replace('#','').slice(0,6);
+    return /^[0-9a-f]{6}$/i.test(s) ? ('#'+s) : porDefecto;
+  }
+
+  function normalizar(e){
+    if(!e) return null;
+    var br = (e.brItems && e.brItems[0]) || null;
+    var tr = (e.tracks && e.tracks[0]) || null;
+    var ins = (e.instruments && e.instruments[0]) || null;
+    var car = (e.cars && e.cars[0]) || null;
+
+    var nombre = (e.bundle && e.bundle.name) || (br && br.name) || (tr && tr.title) ||
+                 (ins && ins.name) || (car && car.name) || '';
+    if(!nombre) return null;
+
+    /* El render grande es el que usa el juego en sus mosaicos y se ve
+       mucho mejor que el icono, sobre todo en las piezas anchas. */
+    var render = e.newDisplayAsset && e.newDisplayAsset.renderImages &&
+                 e.newDisplayAsset.renderImages[0] && e.newDisplayAsset.renderImages[0].image;
+    var img = render ||
+              (e.bundle && e.bundle.image) ||
+              (br && br.images && (br.images.featured || br.images.icon || br.images.smallIcon)) ||
+              (tr && tr.albumArt) ||
+              (ins && ins.images && ins.images.large) ||
+              (car && car.images && car.images.large) || '';
+
+    var tipo = e.bundle ? 'Lote' :
+               (br && br.type && br.type.displayValue) ||
+               (tr ? 'Canción' : (ins ? 'Instrumento' : (car ? 'Vehículo' : 'Artículo')));
+
+    var col = e.colors || {};
+    var ancho = 1;
+    var m = String(e.tileSize||'').match(/Size_(\d+)_x_/);
+    if(m) ancho = Math.max(1, Math.min(4, Number(m[1])));
+
+    return {
+      id: e.offerId || (e.layoutId + '|' + nombre),
+      n: nombre,
+      t: tipo,
+      r: (br && br.rarity && br.rarity.displayValue) || '',
+      i: img,
+      v: Number(e.finalPrice || 0),
+      vr: Number(e.regularPrice || 0),
+      /* La sección y su orden salen tal cual del juego.
+
+         El orden es layout.rank de MAYOR a menor. Antes se usaba
+         layout.index y salía casi al revés: la web abre con Escuadrón
+         del subidón y a mí me abría con Taquilla ardiente. Comprobado
+         contra fortnite.com: ordenando por rank las quince secciones
+         quedan en el mismo orden, una por una.
+
+         Los 21 artículos que llegan sin sección son los que la web
+         agrupa al final: los tres vehículos en "Accesorios de vehículo"
+         y el resto en "Lotes y ofertas especiales". */
+      s: (e.layout && e.layout.name) ||
+         (/veh|rueda|estela|carrocer/i.test(tipo) ? 'Accesorios de vehículo'
+                                                  : 'Lotes y ofertas especiales'),
+      o: (e.layout && typeof e.layout.rank === 'number') ? e.layout.rank
+         : (/veh|rueda|estela|carrocer/i.test(tipo) ? -1 : -2),
+      p: Number(e.sortPriority || 0),
+      w: ancho,
+      c1: hex(col.color1, '#2a3350'),
+      c2: hex(col.color2, '#121726'),
+      c3: hex(col.color3, '#5b6f9c'),
+      b: (e.banner && e.banner.value) || '',
+      d: (br && br.description) || (e.bundle && e.bundle.info) || '',
+
+      /* Ficha de la canción, para las 125 pistas que trae la tienda.
+         La API no da audio —solo título, artista, año, BPM, duración y
+         dificultad— así que no hay demo posible desde aquí. Con estos
+         datos se arma la ficha que enseña el juego en Festival, que es
+         lo que de verdad mira quien va a comprar una pista. */
+      mu: tr ? {
+        ar: tr.artist || '',
+        an: tr.releaseYear || 0,
+        bpm: tr.bpm || 0,
+        du: tr.duration || 0,
+        dif: tr.difficulty || null
+      } : null
+    };
+  }
+
+  function leerCache(){
+    try{
+      var c = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+      if(c && c.fecha && Array.isArray(c.articulos) && c.articulos.length) return c;
+    }catch(e){}
+    return null;
+  }
+  function guardarCache(c){
+    try{ localStorage.setItem(LLAVE, JSON.stringify(c)); }catch(e){}
+  }
+
+  async function traerTienda(forzar){
+    if(cargando) return tienda;
+    var cache = leerCache();
+    var hoy = new Date().toISOString().slice(0,10);
+    if(!forzar && cache && String(cache.fecha).slice(0,10) === hoy){
+      tienda = cache;
+      return tienda;
+    }
+
+    cargando = true;
+    try{
+      var r = await fetch(API, {cache:'no-store'});
+      if(!r.ok) throw new Error('La tienda no respondió (' + r.status + ')');
+      var j = await r.json();
+      var entradas = (j && j.data && j.data.entries) || [];
+      if(!entradas.length) throw new Error('La tienda vino vacía.');
+
+      /* Se quitan repetidos por nombre DENTRO de cada sección, no en
+         toda la tienda. Fortnite muestra a propósito el mismo artículo
+         en varias secciones —una skin de Los Simpson sale también en su
+         lote—, y quitarlo en todas menos la primera lo sacaba de la
+         sección donde el cliente lo va a buscar. */
+      var arts = [], vistos = {};
+      for(var k=0;k<entradas.length;k++){
+        var a = normalizar(entradas[k]);
+        if(!a || !a.i || !a.v) continue;
+        var clave = a.s + '|' + a.n;
+        if(vistos[clave]) continue;
+        vistos[clave] = true;
+        arts.push(a);
+      }
+      /* Mismo orden que en el juego: las secciones de mayor a menor
+         rango, y dentro de cada una por la prioridad que manda Epic. */
+      arts.sort(function(x,y){ return (y.o - x.o) || (y.p - x.p); });
+
+      tienda = { fecha: (j.data.date || new Date().toISOString()), articulos: arts };
+      guardarCache(tienda);
+      if(typeof window.renderNav === 'function') try{ window.renderNav(); }catch(e){}
+      return tienda;
+    }catch(e){
+      if(cache){ tienda = cache; tienda.vieja = true; return tienda; }
+      tienda = { error: e.message || String(e) };
+      return tienda;
+    }finally{
+      cargando = false;
+    }
+  }
+
+  /* ── Pintar ───────────────────────────────────────────────── */
+  function huesos(){
+    var anchos = [2,1,1,1,3,1,1,2,1,1,1,1];
+    var h = anchos.map(function(w){
+      return '<div class="vgfn-hueso'+(w>1?' w'+w:'')+'" style="grid-column:span '+w+'"></div>';
+    }).join('');
+    return '<div class="vgfn-mosaico">' + h + '</div>';
+  }
+
+  /* ── Ficha de la canción ──────────────────────────────────────
+     Las barras de dificultad son las mismas cuatro que enseña Festival
+     (voz, guitarra, bajo, batería) sobre una escala de 0 a 6. */
+  var INSTRUS = [['vocals','Voz'],['guitar','Guit'],['bass','Bajo'],['drums','Bat']];
+
+  function minutos(seg){
+    seg = Math.round(Number(seg)||0);
+    if(!seg) return '';
+    var m = Math.floor(seg/60), s = seg % 60;
+    return m + ':' + (s<10?'0':'') + s;
+  }
+
+  function fichaMusica(mu){
+    if(!mu) return '';
+    var linea = [mu.ar, mu.an || ''].filter(Boolean).join(' · ');
+    var datos = [];
+    if(mu.bpm) datos.push(mu.bpm + ' BPM');
+    if(mu.du)  datos.push(minutos(mu.du));
+
+    var barras = '';
+    if(mu.dif){
+      barras = '<div class="vgfn-dif">' + INSTRUS.map(function(par){
+        var n = Math.max(0, Math.min(6, Number(mu.dif[par[0]] || 0)));
+        var puntos = '';
+        for(var i=1;i<=6;i++) puntos += '<i'+(i<=n?' class="on"':'')+'></i>';
+        return '<span><b>'+par[1]+'</b>'+puntos+'</span>';
+      }).join('') + '</div>';
+    }
+
+    return '<div class="vgfn-mus">'+
+      (linea ? '<p class="vgfn-mus-ar">'+esc(linea)+'</p>' : '')+
+      (datos.length ? '<p class="vgfn-mus-d">'+esc(datos.join(' · '))+'</p>' : '')+
+      barras+
+    '</div>';
+  }
+
+  function mosaico(a){
+    var mxn = aPesos(a.v);
+    var rebaja = a.vr > a.v;
+    /* Las dos etiquetas van en una columna: si hay ahorro, el aviso de
+       lo que incluye cae debajo; si no lo hay, sube a ese sitio solo.
+       Antes eran excluyentes y el aviso desaparecía en cuanto el
+       artículo estaba rebajado, que es justo cuando más se mira.
+
+       El descuento en pavos no se enseña: el cliente paga pesos, y ya
+       se le dice cuánto ahorra en su moneda. */
+    var etiquetas = '';
+    if(rebaja) etiquetas += '<span class="vgfn-cinta">Ahorras '+pesos(aPesos(a.vr)-mxn)+'</span>';
+    if(a.b && !/pavos/i.test(a.b))
+      etiquetas += '<span class="vgfn-cinta dato">'+esc(a.b)+'</span>';
+    var cinta = etiquetas ? '<div class="vgfn-cintas">'+etiquetas+'</div>' : '';
+    return '<article class="vgfn-t'+(a.w>1?' w'+a.w:'')+'" data-fn="'+esc(a.id)+'">'+
+      '<span class="vgfn-fondo" style="background:linear-gradient(155deg,'+a.c1+','+a.c2+')"></span>'+
+      '<span class="vgfn-luz" style="background:radial-gradient(circle,'+a.c3+' 0%,transparent 64%)"></span>'+
+      '<img src="'+esc(a.i)+'" alt="'+esc(a.n)+'" loading="lazy" decoding="async" '+
+        'referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'+
+      cinta+
+      fichaMusica(a.mu)+
+      '<button class="vgfn-add" type="button" aria-label="Agregar '+esc(a.n)+' al carrito">+</button>'+
+      '<div class="vgfn-pie">'+
+        '<p class="vgfn-nom">'+esc(a.n)+'</p>'+
+        '<p class="vgfn-tipo">'+esc(a.t)+
+          (a.mu && a.mu.ar ? ' · '+esc(a.mu.ar) : (a.r ? ' · '+esc(a.r) : ''))+'</p>'+
+        '<div class="vgfn-precio">'+
+          '<span class="vgfn-mxn">'+pesos(mxn)+'</span>'+
+          '<span class="vgfn-pav"><span class="vgfn-moneda"></span>'+
+            (rebaja?'<s>'+a.vr.toLocaleString('es-MX')+'</s>':'')+
+            a.v.toLocaleString('es-MX')+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</article>';
+  }
+
+  function pintar(){
+    var grid = document.getElementById('productsGrid');
+    if(!grid) return;
+    var vacio = document.getElementById('emptyState');
+    if(vacio) vacio.style.display = 'none';
+
+    if(!tienda){ grid.innerHTML = cabecera(true) + huesos(); return; }
+
+    if(tienda.error){
+      grid.innerHTML = cabecera() +
+        '<div class="vgfn-estado"><b>No pude cargar la tienda</b>'+
+        esc(tienda.error)+'<br>Puede ser tu conexión, o que el servicio esté en mantenimiento.'+
+        '<br><button type="button" id="vgfnReintentar">Intentar de nuevo</button></div>';
+      var b = document.getElementById('vgfnReintentar');
+      if(b) b.onclick = async function(){ tienda=null; pintar(); await traerTienda(true); pintar(); };
+      return;
+    }
+
+    /* Se busca por el buscador propio de la sección y también por el de
+       arriba, para que quien llegue escribiendo desde el catálogo no
+       aterrice aquí sin filtrar. Sin acentos: en el teléfono casi nadie
+       los escribe. */
+    var q = llano(busqueda || (document.getElementById('globalSearch')||{}).value || '');
+
+    var lista = tienda.articulos.filter(function(a){
+      if(filtro !== 'todo' && !coincideFiltro(a, filtro)) return false;
+      if(q && llano(a.n+' '+a.t+' '+a.s+' '+(a.mu&&a.mu.ar||'')).indexOf(q) < 0) return false;
+      return true;
+    });
+
+    if(!lista.length){
+      grid.innerHTML = cabecera() +
+        '<div class="vgfn-estado"><b>Nada con ese filtro</b>'+
+        'Prueba con otra categoría o borra lo que escribiste en el buscador.</div>';
+      armarFiltros();
+      return;
+    }
+
+    var porSeccion = {}, orden = [];
+    lista.forEach(function(a){
+      if(!porSeccion[a.s]){ porSeccion[a.s] = []; orden.push(a.s); }
+      porSeccion[a.s].push(a);
+    });
+
+    /* ── Destacados de hoy ────────────────────────────────────
+       Fortnite abre su tienda con "Lo más vendido de hoy". Esa lista
+       la arma su web con cifras de ventas que Epic NO publica en
+       ninguna API, así que no se puede copiar tal cual y llamarla así
+       sería inventar un dato.
+
+       Lo que sí publica Epic es a qué artículos les da los mosaicos
+       grandes, que es donde pone lo que quiere empujar ese día. Con
+       eso se arma una fila de destacados de verdad, y se llama por su
+       nombre. Solo aparece sin filtros ni búsqueda, para no estorbar
+       cuando alguien busca algo concreto. */
+    if(filtro === 'todo' && !q){
+      var dest = lista.filter(function(a){ return a.w >= 3; });
+      lista.forEach(function(a){
+        if(dest.length >= 6) return;
+        if(a.w === 2 && a.vr > a.v && dest.indexOf(a) < 0) dest.push(a);
+      });
+      if(dest.length >= 3){
+        porSeccion['__dest'] = dest.slice(0, 6);
+        orden.unshift('__dest');
+      }
+    }
+
+    var html = cabecera();
+    orden.forEach(function(s){
+      var titulo = (s === '__dest') ? 'Destacados de hoy' : s;
+      html += '<section class="vgfn-seccion'+(s==='__dest'?' vgfn-dest':'')+'">'+
+        '<h4>'+esc(titulo)+'<em>'+porSeccion[s].length+'</em></h4>'+
+        '<div class="vgfn-mosaico">'+ porSeccion[s].map(mosaico).join('') +'</div></section>';
+    });
+    grid.innerHTML = html;
+
+    armarFiltros();
+    grid.querySelectorAll('.vgfn-add').forEach(function(b){
+      b.onclick = function(ev){
+        ev.stopPropagation();
+        agregar(b.closest('[data-fn]').getAttribute('data-fn'), b);
+      };
+    });
+    /* La pieza entera abre el detalle. El "+" lleva stopPropagation
+       para que agregar al carrito no abra además la ventana. */
+    grid.querySelectorAll('[data-fn]').forEach(function(t){
+      t.onclick = function(){ abrirDetalle(t.getAttribute('data-fn')); };
+    });
+
+    var bi = document.getElementById('vgfnBuscar');
+    if(bi){
+      var espera = null;
+      bi.oninput = function(){
+        busqueda = bi.value;
+        clearTimeout(espera);
+        /* Se espera un momento: repintar 266 piezas en cada tecla
+           hace que el cursor se sienta pegajoso. */
+        espera = setTimeout(function(){
+          var foco = document.activeElement === bi;
+          var pos = bi.selectionStart;
+          pintar();
+          if(foco){
+            var n = document.getElementById('vgfnBuscar');
+            if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} }
+          }
+        }, 180);
+      };
+    }
+    var cn = document.getElementById('vgfnBuscarN');
+    if(cn) cn.textContent = lista.length + (lista.length===1?' artículo':' artículos');
+
+    efectoGiro();
+  }
+
+  /* ── El giro en 3D ────────────────────────────────────────────
+     Un solo oyente para todo el mosaico, no uno por pieza: hay más de
+     260 y ponerle un oyente a cada una se nota al dibujar.
+
+     Lo que llega del ratón se guarda y se aplica una vez por cuadro de
+     animación. Sin eso, un movimiento rápido dispara cientos de
+     escrituras de estilo por segundo y el desplazamiento se arrastra. */
+  var GIRO = 7;   /* grados máximos; el juego es sutil, no un tobogán */
+
+  function efectoGiro(){
+    var grid = document.getElementById('productsGrid');
+    if(!grid || grid.dataset.vgfnGiro) return;
+    if(!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    grid.dataset.vgfnGiro = '1';
+
+    var pendiente = false, dato = null, actual = null;
+
+    function aplicar(){
+      pendiente = false;
+      if(!dato) return;
+      var t = dato.t, r = t.getBoundingClientRect();
+      var px = (dato.x - r.left) / r.width;      /* 0 a 1 */
+      var py = (dato.y - r.top) / r.height;
+      t.style.setProperty('--ry', ((px - .5) *  2 * GIRO).toFixed(2) + 'deg');
+      t.style.setProperty('--rx', ((py - .5) * -2 * GIRO).toFixed(2) + 'deg');
+      t.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      t.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+    }
+
+    function soltar(t){
+      if(!t) return;
+      t.classList.remove('gira');
+      t.style.removeProperty('--rx'); t.style.removeProperty('--ry');
+      t.style.removeProperty('--mx'); t.style.removeProperty('--my');
+    }
+
+    grid.addEventListener('pointermove', function(ev){
+      var t = ev.target && ev.target.closest ? ev.target.closest('.vgfn-t') : null;
+      if(t !== actual){ soltar(actual); actual = t; if(t) t.classList.add('gira'); }
+      if(!t) return;
+      dato = {t:t, x:ev.clientX, y:ev.clientY};
+      if(pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(aplicar);
+    }, {passive:true});
+
+    /* Al salir del mosaico entero, y al desplazar la página, se sueltan:
+       si no, una pieza se queda torcida cuando el cursor ya no está. */
+    grid.addEventListener('pointerleave', function(){ soltar(actual); actual = null; }, {passive:true});
+    window.addEventListener('scroll', function(){
+      if(actual){ soltar(actual); actual = null; }
+    }, {passive:true});
+  }
+
+  function cabecera(cargandoAhora){
+    var n = tienda && tienda.articulos ? tienda.articulos.length : 0;
+    var f = tienda && tienda.fecha ? new Date(tienda.fecha) : null;
+    /* La fecha se lee en UTC a propósito. Fortnite rota la tienda a las
+       00:00 UTC, que en México son las 5 o 6 de la tarde del día
+       anterior; en hora local salía la fecha de ayer bajo el título
+       "de hoy". */
+    var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+                 'septiembre','octubre','noviembre','diciembre'];
+    var cuando = f ? (f.getUTCDate() + ' de ' + meses[f.getUTCMonth()]) : '';
+    return '<div class="vgfn-cab">'+
+      '<div><h3>Tienda de Fortnite'+(tienda&&tienda.vieja?' · copia guardada':'')+'</h3>'+
+      '<p>'+(cargandoAhora ? 'Cargando la tienda de hoy…'
+        : 'Cambia sola cuando Fortnite rota la tienda. <b>'+n+' artículos</b>'+
+          (cuando?' · '+cuando:''))+'<br>'+
+        'Todo se entrega <b>vía regalo</b> a tu cuenta: solo hace falta tu nombre de '+
+        'usuario de Epic y que seamos amigos en Fortnite desde hace 48 horas.</p></div>'+
+      '<div class="vgfn-tarifa"><b>100 pavos = '+pesos(porCien())+' MXN</b>'+
+      '<span>Precios ya convertidos</span></div>'+
+    '</div>' +
+    '<div class="vgfn-buscar">'+
+      '<input id="vgfnBuscar" type="search" autocomplete="off" '+
+        'placeholder="Buscar skin, baile, pico, canción…" value="'+esc(busqueda)+'">'+
+      '<span id="vgfnBuscarN"></span>'+
+    '</div>'+
+    '<div class="vgfn-filtros" id="vgfnFiltros"></div>';
+  }
+
+  var FILTROS = [
+    {id:'todo',t:'Todo'},{id:'skin',t:'Skins'},{id:'lote',t:'Lotes'},
+    {id:'baile',t:'Bailes'},{id:'pico',t:'Picos'},{id:'mochila',t:'Mochilas'},
+    {id:'ala',t:'Alas delta'},{id:'envol',t:'Envoltorios'},{id:'musica',t:'Música'}
+  ];
+  var MAPA = {
+    skin:['atuendo','traje','outfit'],
+    lote:['lote','bundle'],
+    baile:['baile','gesto','emote'],
+    pico:['pico','herramienta'],
+    mochila:['mochila','back'],
+    ala:['ala delta','planeador','glider'],
+    envol:['envoltorio','wrap'],
+    musica:['canción','música','pista','instrumento','jam']
+  };
+  function coincideFiltro(a, f){
+    var claves = MAPA[f]; if(!claves) return true;
+    var t = String(a.t||'').toLowerCase();
+    for(var i=0;i<claves.length;i++) if(t.indexOf(claves[i]) >= 0) return true;
+    return false;
+  }
+
+  function armarFiltros(){
+    var c = document.getElementById('vgfnFiltros');
+    if(!c || !tienda || !tienda.articulos) return;
+    c.innerHTML = FILTROS.map(function(f){
+      var n = f.id === 'todo' ? tienda.articulos.length
+            : tienda.articulos.filter(function(a){ return coincideFiltro(a, f.id); }).length;
+      if(!n) return '';
+      return '<button class="vgfn-filtro'+(filtro===f.id?' on':'')+'" data-f="'+f.id+'">'+
+        f.t+'<i>'+n+'</i></button>';
+    }).join('');
+    c.querySelectorAll('[data-f]').forEach(function(b){
+      b.onclick = function(){ filtro = b.getAttribute('data-f'); pintar(); };
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     VENTANA DE DETALLE
+
+     Antes las piezas no se podían abrir: solo estaba el "+" del
+     carrito, así que quien le picaba a una skin esperando comprarla no
+     encontraba dónde pagar. Ahora se abre igual que en la tienda del
+     juego, con el artículo grande y los dos caminos: pagar ya o
+     seguir viendo.
+     ═══════════════════════════════════════════════════════════ */
+  function porId(id){
+    if(!tienda || !tienda.articulos) return null;
+    for(var i=0;i<tienda.articulos.length;i++)
+      if(String(tienda.articulos[i].id) === String(id)) return tienda.articulos[i];
+    return null;
+  }
+
+  function cajaDetalle(){
+    var f = document.getElementById('vgfnModal');
+    if(f) return f;
+    f = document.createElement('div');
+    f.id = 'vgfnModal';
+    f.innerHTML = '<div class="vgfn-m-caja" role="dialog" aria-modal="true"></div>';
+    f.addEventListener('click', function(ev){ if(ev.target === f) cerrarDetalle(); });
+    document.body.appendChild(f);
+    document.addEventListener('keydown', function(ev){
+      if(ev.key === 'Escape') cerrarDetalle();
+    });
+    return f;
+  }
+  function cerrarDetalle(){
+    var f = document.getElementById('vgfnModal');
+    if(f) f.classList.remove('ver');
+  }
+
+  function abrirDetalle(id){
+    var a = porId(id); if(!a) return;
+    var f = cajaDetalle(), c = f.querySelector('.vgfn-m-caja');
+    var mxn = aPesos(a.v), rebaja = a.vr > a.v;
+
+    c.innerHTML =
+      '<button class="vgfn-m-x" type="button" aria-label="Cerrar">×</button>'+
+      '<div class="vgfn-m-art" style="background:linear-gradient(155deg,'+a.c1+','+a.c2+')">'+
+        '<span class="vgfn-m-luz" style="background:radial-gradient(circle,'+a.c3+' 0%,transparent 62%)"></span>'+
+        '<img src="'+esc(a.i)+'" alt="'+esc(a.n)+'" referrerpolicy="no-referrer">'+
+      '</div>'+
+      '<div class="vgfn-m-info">'+
+        '<span class="vgfn-m-sec">'+esc(a.s)+'</span>'+
+        '<h3>'+esc(a.n)+'</h3>'+
+        '<p class="vgfn-m-tipo">'+esc(a.t)+(a.r?' · '+esc(a.r):'')+'</p>'+
+        (a.d ? '<p class="vgfn-m-desc">'+esc(a.d)+'</p>' : '')+
+        (a.mu ? fichaMusica(a.mu).replace('vgfn-mus','vgfn-mus suelta') : '')+
+        '<div class="vgfn-m-precio">'+
+          '<b>'+pesos(mxn)+' MXN</b>'+
+          '<span><span class="vgfn-moneda"></span>'+
+          (rebaja?'<s>'+a.vr.toLocaleString('es-MX')+'</s> ':'')+
+          a.v.toLocaleString('es-MX')+' pavos</span>'+
+        '</div>'+
+        '<div class="vgfn-m-regalo">'+
+          '<b>Se entrega vía regalo</b>'+
+          'Necesitamos tu nombre de usuario de Epic. Para que Fortnite permita '+
+          'el regalo tenemos que ser amigos en el juego desde hace 48 horas, así '+
+          'que agréganos en cuanto hagas el pedido.'+
+        '</div>'+
+        '<div class="vgfn-m-btns">'+
+          '<button class="vgfn-m-comprar" type="button">Comprar ahora</button>'+
+          '<button class="vgfn-m-carrito" type="button">Agregar al carrito</button>'+
+        '</div>'+
+      '</div>';
+
+    c.querySelector('.vgfn-m-x').onclick = cerrarDetalle;
+    c.querySelector('.vgfn-m-comprar').onclick = function(){ comprarYa(a); };
+    c.querySelector('.vgfn-m-carrito').onclick = function(ev){
+      agregar(a.id, ev.currentTarget);
+      setTimeout(cerrarDetalle, 700);
+    };
+    f.classList.add('ver');
+  }
+
+  /* Se usa el mismo camino de pago que el resto de la tienda: se arma
+     el pedido y se le pasa a openPaymentModal, que es quien enseña los
+     datos para depositar y recoge el comprobante. */
+  function comprarYa(a){
+    if(typeof openPaymentModal !== 'function'){
+      alert('No se pudo abrir el pago. Intenta agregarlo al carrito.');
+      return;
+    }
+    cerrarDetalle();
+    openPaymentModal({
+      items: [{ title: 'Fortnite · ' + a.n,
+                option: a.v.toLocaleString('es-MX') + ' pavos · ' + a.t + ' · vía regalo',
+                price: aPesos(a.v) }],
+      total: aPesos(a.v),
+      source: 'fortnite'
+    });
+  }
+
+  /* ── Al carrito ──────────────────────────────────────────────
+     Se empuja al mismo arreglo que usa el resto de la tienda. Es una
+     variable de nivel superior, así que se alcanza por nombre; hacerlo
+     por window.cart crearía un carrito paralelo que nadie mira. */
+  function agregar(id, btn){
+    if(!tienda || !tienda.articulos) return;
+    var a = null;
+    for(var i=0;i<tienda.articulos.length;i++)
+      if(String(tienda.articulos[i].id) === String(id)){ a = tienda.articulos[i]; break; }
+    if(!a) return;
+
+    try{
+      cart.push({
+        title: 'Fortnite · ' + a.n,
+        option: a.v.toLocaleString('es-MX') + ' pavos · ' + a.t,
+        price: aPesos(a.v),
+        image: a.i
+      });
+      if(typeof updateCartCount === 'function') updateCartCount();
+    }catch(e){
+      alert('No se pudo agregar al carrito: ' + (e.message||e));
+      return;
+    }
+
+    btn.classList.add('puesto');
+    btn.textContent = '✓';
+    setTimeout(function(){ btn.classList.remove('puesto'); btn.textContent = '+'; }, 1400);
+    if(typeof window.showToast === 'function')
+      window.showToast('Agregado', a.n + ' · ' + pesos(aPesos(a.v)) + ' MXN');
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     Enganche con la tienda
+     ═══════════════════════════════════════════════════════════ */
+  function icono(){
+    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px">'+
+      '<path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/><path d="M9 12h6"/></svg>';
+  }
+
+  function meterCategoria(){
+    if(typeof CATEGORIES === 'undefined' || !Array.isArray(CATEGORIES)) return false;
+    for(var i=0;i<CATEGORIES.length;i++) if(CATEGORIES[i].id === 'fortnite') return true;
+    var iGaming = -1;
+    for(var j=0;j<CATEGORIES.length;j++) if(CATEGORIES[j].id === 'gaming'){ iGaming = j; break; }
+    CATEGORIES.splice(iGaming >= 0 ? iGaming + 1 : 1, 0, {
+      id:'fortnite', label:'Fortnite', icon:icono(),
+      desc:'La tienda del día, con los precios ya en pesos. Skins, lotes, bailes, picos y música. '+
+           'Todo se entrega vía regalo a tu cuenta de Epic.',
+      bg:'radial-gradient(90% 120% at 78% 20%,#3a1d6e,#131046 45%,#0a1024)'
+    });
+    if(typeof renderNav === 'function') renderNav();
+    return true;
+  }
+
+  function envolver(){
+    if(typeof window.showSection === 'function' && !window.showSection.__vg62){
+      var orig = window.showSection;
+      var nueva = function(cat){
+        var r = orig.apply(this, arguments);
+        document.body.classList.toggle('vgfn-activo', cat === 'fortnite');
+        /* La portada se rehace siempre, para cualquier sección: cada
+           una se ilustra con lo suyo y así los recortes de Fortnite no
+           se quedan encima de la portada de Streaming o de Actas. */
+        portada(cat);
+        if(cat === 'fortnite'){
+          var t = document.getElementById('productsTitle');
+          if(t) t.textContent = 'Tienda de Fortnite de hoy';
+          pintar();
+          if(!tienda) traerTienda(false).then(function(){ pintar(); portada('fortnite'); });
+        }
+        return r;
+      };
+      nueva.__vg62 = true;
+      window.showSection = nueva;
+    }
+
+    /* En la barra lateral, junto a cada categoría va cuántos productos
+       tiene en el catálogo. Los de Fortnite no viven ahí, así que salía
+       un "0" que parecía una sección rota. */
+    if(typeof window.renderNav === 'function' && !window.renderNav.__vg62){
+      var origN = window.renderNav;
+      var nuevaN = function(){
+        var r = origN.apply(this, arguments);
+        try{
+          var n = (tienda && tienda.articulos) ? tienda.articulos.length : '';
+          document.querySelectorAll('.side-item').forEach(function(b){
+            if(!/fortnite/i.test(b.textContent)) return;
+            var s = b.querySelector('span');
+            if(s) s.textContent = n === '' ? '·' : n;
+          });
+        }catch(e){}
+        return r;
+      };
+      nuevaN.__vg62 = true;
+      window.renderNav = nuevaN;
+    }
+
+    /* El buscador y el ordenador llaman a renderProducts, que borraría
+       el mosaico. Se vuelve a pintar si es la sección activa. */
+    if(typeof window.renderProducts === 'function' && !window.renderProducts.__vg62){
+      var origR = window.renderProducts;
+      var nuevaR = function(){
+        if(typeof activeCategory !== 'undefined' && activeCategory === 'fortnite'){
+          pintar();
+          return;
+        }
+        return origR.apply(this, arguments);
+      };
+      nuevaR.__vg62 = true;
+      window.renderProducts = nuevaR;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     LA PORTADA DE LA SECCIÓN
+
+     Las demás secciones tienen una foto fija. Esta no puede tenerla:
+     la tienda cambia todos los días y una foto de hace un mes enseña
+     skins que ya no se venden.
+
+     Así que la portada se arma con los renders de la tienda de hoy —
+     los de las piezas grandes, que son las que Epic promociona— y se
+     renueva sola cada mañana sin que nadie suba nada.
+     ═══════════════════════════════════════════════════════════ */
+  function portada(cat){
+    var hero = document.querySelector('#marketView .section-hero');
+    if(!hero) return;
+
+    var vieja = hero.querySelector('.vgfn-portada');
+    if(vieja) vieja.remove();
+
+    /* Cuántas caben se decide aquí y no en el CSS. En una portada de
+       355px la cuarta y la quinta se salen por la izquierda y se
+       encaraman al texto, y esconderlas con una media query dependía
+       de ganar una pelea de especificidad contra decenas de capas de
+       estilos que ya trae la página. Contando aquí no hay pelea. */
+    var cuantas = window.innerWidth < 900 ? 2 : 5;
+    var urls = [], modo = '';
+
+    if(cat === 'fortnite'){
+      if(!tienda || !tienda.articulos || !tienda.articulos.length) return;
+      /* Se prefieren las piezas anchas —las que Epic destaca ese día— y
+         se completa con lo primero que haya. Solo renders de verdad: un
+         icono de 256px estirado a media portada se ve pixelado. */
+      var cand = tienda.articulos.filter(function(a){
+        return a.i && a.i.indexOf('newdisplayassets') > 0;
+      });
+      var grandes = cand.filter(function(a){ return a.w >= 2; });
+      urls = grandes.concat(cand.filter(function(a){ return grandes.indexOf(a) < 0; }))
+                    .slice(0, cuantas).map(function(a){ return a.i; });
+      modo = 'recortes';   /* PNG sin fondo: van de pie sobre la portada */
+    }else{
+      /* Las demás secciones se ilustran con sus propios productos. No
+         hace falta buscar fotos ni subirlas: las que ya se enseñan en
+         el catálogo son exactamente lo que la sección vende, y si un
+         día cambias un producto, la portada cambia con él. */
+      var S = Array.isArray(window.SERVICES) ? window.SERVICES : [];
+      var props = S.filter(function(s){
+        return s && s.image && (cat === 'all' || s.category === cat);
+      });
+      /* Para "Todos" se toma uno de cada categoría, que enseña la
+         variedad en vez de cinco cosas parecidas. */
+      if(cat === 'all'){
+        var vistas = {}, mezcla = [];
+        props.forEach(function(s){
+          if(vistas[s.category]) return;
+          vistas[s.category] = true; mezcla.push(s);
+        });
+        props = mezcla;
+      }
+      urls = props.slice(0, cuantas).map(function(s){ return s.image; });
+      modo = 'cartas';     /* fotos con fondo: van como tarjetas en abanico */
+    }
+
+    if(urls.length < 1) return;
+
+    var d = document.createElement('div');
+    d.className = 'vgfn-portada ' + modo;
+    d.setAttribute('aria-hidden', 'true');
+    d.innerHTML = urls.map(function(u, i){
+      return '<img src="'+esc(u)+'" alt="" loading="lazy" decoding="async" '+
+             'referrerpolicy="no-referrer" style="--i:'+i+'" '+
+             'onerror="this.remove()">';
+    }).join('');
+    hero.appendChild(d);
+  }
+
+  var intentos = 0;
+  function arrancar(){
+    if(!meterCategoria()){
+      if(++intentos < 60) setTimeout(arrancar, 500);
+      return;
+    }
+    envolver();
+
+    /* Si se gira el teléfono o se cambia el tamaño de la ventana, la
+       cuenta de imágenes de la portada cambia. Se rehace, con espera
+       para no rehacerla en cada píxel del arrastre. */
+    var esperaTam = null;
+    window.addEventListener('resize', function(){
+      if(!document.querySelector('#marketView .vgfn-portada')) return;
+      clearTimeout(esperaTam);
+      esperaTam = setTimeout(function(){
+        portada(typeof activeCategory !== 'undefined' ? activeCategory : 'all');
+      }, 260);
+    }, {passive:true});
+
+    /* Si se entra directo a una sección por enlace, showSection ya
+       corrió antes de que este bloque existiera y no dibujó portada. */
+    setTimeout(function(){
+      var mv = document.getElementById('marketView');
+      if(mv && mv.classList.contains('active') &&
+         !document.querySelector('#marketView .vgfn-portada')){
+        portada(typeof activeCategory !== 'undefined' ? activeCategory : 'all');
+      }
+    }, 700);
+
+    var pedir = function(){ traerTienda(false); };
+    if(typeof requestIdleCallback === 'function') requestIdleCallback(pedir, {timeout:4000});
+    else setTimeout(pedir, 2500);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+
+  window.vgFortnite = {
+    tarifa: porCien,
+    refrescar: async function(){ await traerTienda(true); pintar(); return tienda; },
+    datos: function(){ return tienda; }
+  };
+})();
+</script>
 </body>
 </html>
