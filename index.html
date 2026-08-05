@@ -35410,6 +35410,14 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
    No se pelea con !important: se le cambia el nombre a uno que sea
    solo de aquí. Un nombre genérico en una hoja global es el problema,
    no el síntoma. */
+/* Aviso de que a este artículo le queda poco. Va en rojo porque es lo
+   único de la pieza que caduca; el amarillo ya lo usa el ahorro. */
+.vgfn-cinta.vgfn-urge{
+  background:#ff4d6d;color:#fff;
+  font-size:.66rem;letter-spacing:.06em;padding:2px 9px 2px 8px;
+}
+.vgfn-reloj{color:#ff8fa3 !important;font-weight:800}
+
 .vgfn-cinta.dato{
   background:rgba(127,220,255,.92);color:#06203a;
   font-size:.64rem;letter-spacing:.06em;padding:2px 9px 2px 8px;
@@ -35717,6 +35725,19 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
   var API = 'https://fortnite-api.com/v2/shop?language=es';
   var LLAVE = 'vg_fn_tienda_v2';
 
+  /* Versión de la FORMA de los datos guardados, no de la tienda.
+
+     La copia se guarda en el navegador del cliente y vale todo el día.
+     Al añadir campos nuevos —la fecha de salida, la ficha de la canción,
+     la descripción— las copias de antes seguían siendo válidas por
+     fecha pero les faltaban esos datos, así que las novedades no salían
+     y no había ningún error que lo delatara.
+
+     Subiendo este número, cualquier copia con otra forma se descarta y
+     se vuelve a pedir. Hay que subirlo SIEMPRE que se añada o se quite
+     un campo en normalizar(). */
+  var FORMA = 3;
+
   var tienda = null;
   var cargando = false;
   var filtro = 'todo';
@@ -35804,6 +35825,11 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
       c3: hex(col.color3, '#5b6f9c'),
       b: (e.banner && e.banner.value) || '',
       d: (br && br.description) || (e.bundle && e.bundle.info) || '',
+      /* Cuándo deja de venderse ESTE artículo. No es la misma fecha
+         para todos: en una tienda cualquiera hay nueve fechas de salida
+         distintas, desde esta noche hasta tres semanas. Por eso el
+         aviso va por artículo y no uno general para toda la sección. */
+      f: e.outDate || '',
 
       /* Ficha de la canción, para las 125 pistas que trae la tienda.
          La API no da audio —solo título, artista, año, BPM, duración y
@@ -35823,7 +35849,10 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
   function leerCache(){
     try{
       var c = JSON.parse(localStorage.getItem(LLAVE) || 'null');
-      if(c && c.fecha && Array.isArray(c.articulos) && c.articulos.length) return c;
+      /* La forma cuenta tanto como la fecha: una copia de hoy con la
+         forma vieja es tan inservible como una de ayer. */
+      if(c && c.forma === FORMA && c.fecha &&
+         Array.isArray(c.articulos) && c.articulos.length) return c;
     }catch(e){}
     return null;
   }
@@ -35866,7 +35895,7 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
          rango, y dentro de cada una por la prioridad que manda Epic. */
       arts.sort(function(x,y){ return (y.o - x.o) || (y.p - x.p); });
 
-      tienda = { fecha: (j.data.date || new Date().toISOString()), articulos: arts };
+      tienda = { forma: FORMA, fecha: (j.data.date || new Date().toISOString()), articulos: arts };
       guardarCache(tienda);
       if(typeof window.renderNav === 'function') try{ window.renderNav(); }catch(e){}
       return tienda;
@@ -35886,6 +35915,27 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
       return '<div class="vgfn-hueso'+(w>1?' w'+w:'')+'" style="grid-column:span '+w+'"></div>';
     }).join('');
     return '<div class="vgfn-mosaico">' + h + '</div>';
+  }
+
+  /* ── Cuánto le queda a un artículo ───────────────────────────
+     Devuelve minutos, o null si no hay fecha o ya pasó. */
+  function restan(fecha){
+    if(!fecha) return null;
+    var t = Date.parse(fecha);
+    if(isNaN(t)) return null;
+    var m = Math.floor((t - Date.now()) / 60000);
+    return m > 0 ? m : null;
+  }
+
+  /* Se redondea hacia abajo a propósito: si quedan 59 minutos se dice
+     "59 min", nunca "1 h". Prometer más tiempo del que hay es lo único
+     que no se puede hacer en un aviso de este tipo. */
+  function cuanto(min){
+    if(min < 60) return min + ' min';
+    var h = Math.floor(min / 60);
+    if(h < 24) return h + ' h ' + (min % 60) + ' min';
+    var d = Math.floor(h / 24);
+    return d + (d === 1 ? ' día' : ' días');
   }
 
   /* ── Ficha de la canción ──────────────────────────────────────
@@ -35936,6 +35986,13 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
        se le dice cuánto ahorra en su moneda. */
     var etiquetas = '';
     if(rebaja) etiquetas += '<span class="vgfn-cinta">Ahorras '+pesos(aPesos(a.vr)-mxn)+'</span>';
+    /* El aviso de salida solo aparece si de verdad queda poco. Ponerlo
+       en los 266 sería ruido: hay artículos que se van dentro de tres
+       semanas y avisarlo no le sirve a nadie. */
+    var quedan = restan(a.f);
+    if(quedan !== null && quedan < 24*60)
+      etiquetas += '<span class="vgfn-cinta vgfn-urge" data-fin="'+esc(a.f)+'">'+
+                   'Se va en '+cuanto(quedan)+'</span>';
     if(a.b && !/pavos/i.test(a.b))
       etiquetas += '<span class="vgfn-cinta dato">'+esc(a.b)+'</span>';
     var cinta = etiquetas ? '<div class="vgfn-cintas">'+etiquetas+'</div>' : '';
@@ -36073,6 +36130,57 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
     if(cn) cn.textContent = lista.length + (lista.length===1?' artículo':' artículos');
 
     efectoGiro();
+    arrancarReloj();
+  }
+
+  /* ── El reloj ────────────────────────────────────────────────
+     Un solo temporizador para todos los avisos, y va cada 30 segundos:
+     los avisos se miden en minutos, así que refrescar cada segundo
+     gastaría batería sin que nadie note la diferencia.
+
+     Se apaga solo al salir de la sección. Un temporizador olvidado
+     corriendo sobre elementos que ya no existen es de las cosas que
+     hacen que una página se sienta pesada sin motivo aparente. */
+  var reloj = null;
+
+  function pararReloj(){
+    if(reloj){ clearInterval(reloj); reloj = null; }
+  }
+
+  function arrancarReloj(){
+    pararReloj();
+    var tic = function(){
+      var vivos = 0;
+
+      var avisos = document.querySelectorAll('#productsGrid .vgfn-urge[data-fin]');
+      Array.prototype.forEach.call(avisos, function(e){
+        var m = restan(e.getAttribute('data-fin'));
+        if(m === null){ e.remove(); return; }
+        e.textContent = 'Se va en ' + cuanto(m);
+        vivos++;
+      });
+
+      var cab = document.querySelector('#productsGrid .vgfn-reloj');
+      if(cab){
+        if(!vivos){ cab.remove(); }
+        else{
+          var mins = Array.prototype.map.call(avisos, function(e){
+            return restan(e.getAttribute('data-fin'));
+          }).filter(function(x){ return x !== null; });
+          if(mins.length){
+            var min = Math.min.apply(null, mins);
+            cab.textContent = mins.length + (mins.length === 1 ? ' se va' : ' se van') +
+                              ' en ' + cuanto(min);
+            vivos++;
+          }
+        }
+      }
+
+      /* Cuando ya no queda nada que contar, el reloj se apaga solo. */
+      if(!vivos) pararReloj();
+    };
+    if(document.querySelector('#productsGrid .vgfn-urge, #productsGrid .vgfn-reloj'))
+      reloj = setInterval(tic, 30000);
   }
 
   /* ── El giro en 3D ────────────────────────────────────────────
@@ -36130,6 +36238,21 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
     }, {passive:true});
   }
 
+  /* Aviso general: solo cuenta los que se van en las próximas 24 horas.
+     Decir "la tienda cambia en 10 h" sería falso para casi todos —de
+     266 artículos solo se van 18 esta noche— y empujaría a comprar con
+     prisa algo que va a seguir ahí una semana. */
+  function avisoSalida(){
+    if(!tienda || !tienda.articulos) return '';
+    var pronto = tienda.articulos.filter(function(a){
+      var m = restan(a.f); return m !== null && m < 24*60;
+    });
+    if(!pronto.length) return '';
+    var min = Math.min.apply(null, pronto.map(function(a){ return restan(a.f); }));
+    return ' · <b class="vgfn-reloj" data-min="'+min+'">'+pronto.length+
+           (pronto.length === 1 ? ' se va' : ' se van')+' en '+cuanto(min)+'</b>';
+  }
+
   function cabecera(cargandoAhora){
     var n = tienda && tienda.articulos ? tienda.articulos.length : 0;
     var f = tienda && tienda.fecha ? new Date(tienda.fecha) : null;
@@ -36144,7 +36267,7 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
       '<div><h3>Tienda de Fortnite'+(tienda&&tienda.vieja?' · copia guardada':'')+'</h3>'+
       '<p>'+(cargandoAhora ? 'Cargando la tienda de hoy…'
         : 'Cambia sola cuando Fortnite rota la tienda. <b>'+n+' artículos</b>'+
-          (cuando?' · '+cuando:''))+'<br>'+
+          (cuando?' · '+cuando:'')+avisoSalida())+'<br>'+
         'Todo se entrega <b>vía regalo</b> a tu cuenta: solo hace falta tu nombre de '+
         'usuario de Epic y que seamos amigos en Fortnite desde hace 48 horas.</p></div>'+
       '<div class="vgfn-tarifa"><b>100 pavos = '+pesos(porCien())+' MXN</b>'+
@@ -36356,6 +36479,7 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
            una se ilustra con lo suyo y así los recortes de Fortnite no
            se quedan encima de la portada de Streaming o de Actas. */
         portada(cat);
+        if(cat !== 'fortnite') pararReloj();
         if(cat === 'fortnite'){
           var t = document.getElementById('productsTitle');
           if(t) t.textContent = 'Tienda de Fortnite de hoy';
