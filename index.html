@@ -14005,7 +14005,7 @@ window.vgBingSize = function(){
 <div class="vg-faq-list">
 <div class="vg-faq-item">
 <button class="vg-faq-q" onclick="vgToggleFaq(this)"><span>¿Cómo realizo mi pago?</span><span class="vg-faq-icon">+</span></button>
-<div class="vg-faq-a">Elige tu producto, selecciona una opción y toca "Comprar". Verás los datos de pago (BBVA, OXXO, PayPal o Binance). Copia los datos, realiza el depósito y envía el comprobante por WhatsApp.</div>
+<div class="vg-faq-a">Elige tu producto, selecciona una opción y toca "Comprar". Verás los datos de pago (BBVA, Spin by OXXO o Binance Pay) con el monto exacto y tu número de referencia. Copia los datos, realiza el depósito poniendo la referencia en el concepto, y sube el comprobante.</div>
 </div>
 <div class="vg-faq-item">
 <button class="vg-faq-q" onclick="vgToggleFaq(this)"><span>¿Cuánto tiempo tarda la entrega?</span><span class="vg-faq-icon">+</span></button>
@@ -14092,16 +14092,10 @@ window.vgBingSize = function(){
 <button class="vg-pay-copy-all" onclick="copyPayData('Spin by OXXO\nTarjeta: 4217470022316489')">Copiar datos OXXO</button>
 </div>
 <div class="vg-pay-method">
-<div class="vg-pay-method-icon">💙</div>
-<h4>PayPal</h4>
-<div class="vg-pay-method-row"><span>Correo</span><code>Solicitar por WA</code></div>
-<button class="vg-pay-copy-all" onclick="openWhatsAppGeneral&amp;&amp;openWhatsAppGeneral()">Pedir por WhatsApp</button>
-</div>
-<div class="vg-pay-method">
 <div class="vg-pay-method-icon">🟡</div>
 <h4>Binance USDT</h4>
-<div class="vg-pay-method-row"><span>Pay ID</span><code>000000000</code></div>
-<button class="vg-pay-copy-all" onclick="copyPayData('Binance Pay ID: 000000000')">Copiar ID Binance</button>
+<div class="vg-pay-method-row"><span>Pay ID</span><code>787332768</code></div>
+<button class="vg-pay-copy-all" onclick="copyPayData('Binance Pay ID: 787332768')">Copiar ID Binance</button>
 </div>
 </div>
 <!-- Coupon -->
@@ -14306,7 +14300,6 @@ window.vgBingSize = function(){
 <div class="vg-footer-payment-badges">
 <span class="vg-pay-badge">BBVA</span>
 <span class="vg-pay-badge">Spin by OXXO</span>
-<span class="vg-pay-badge">PayPal</span>
 <span class="vg-pay-badge">Binance Pay</span>
 </div>
 </div>
@@ -32251,7 +32244,7 @@ html body .service-carousel-card .tag{
         '<div class="vgpq-item"><span class="ico">🛠</span><b>Reportas y damos seguimiento</b>'+
           '<span>Si algo falla, tiene número de reporte y respuesta.</span></div>'+
         '<div class="vgpq-item"><span class="ico">💳</span><b>Paga como te acomode</b>'+
-          '<span>BBVA, Spin by OXXO, PayPal o Binance Pay.</span></div>'+
+          '<span>BBVA, Spin by OXXO o Binance Pay.</span></div>'+
       '</div>'+
 
       '<div class="vgpq-tokens">'+
@@ -36647,6 +36640,263 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
     refrescar: async function(){ await traerTienda(true); pintar(); return tienda; },
     datos: function(){ return tienda; }
   };
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 64 · Referencia de pago y aviso de entrega
+
+     Lo que hacía falta no era otro método de pago: era que la pantalla
+     de pago se viera como la de una tienda seria.
+
+     Dos cosas:
+
+       1. Una REFERENCIA por pedido. El cliente la pone en el concepto
+          de la transferencia y tú la ves en tu estado de cuenta. Se
+          acabó cotejar capturas a ojo.
+
+       2. CUÁNDO lo recibe, según el horario que ya está en la base.
+          Se descartó la cuenta regresiva que se había propuesto: nada
+          aparta el producto ni congela el precio, así que un reloj de
+          "te quedan 2 horas" habría sido presión inventada. Esto es
+          verdad y además es lo que el cliente quiere saber al pagar.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-pago-referencia-v64">
+.vgref{
+  display:grid;gap:10px;margin:0 0 16px;padding:15px 16px;
+  border:1px solid rgba(34,245,211,.26);border-radius:14px;
+  background:linear-gradient(135deg,rgba(34,245,211,.08),rgba(255,255,255,.02));
+}
+.vgref-fila{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vgref-fila > div{min-width:0}
+.vgref-fila small{
+  display:block;font-size:.6rem;font-weight:900;letter-spacing:.14em;
+  text-transform:uppercase;color:#8593b5;margin-bottom:3px;
+}
+.vgref-fila b{
+  display:block;font-family:ui-monospace,Consolas,monospace;
+  font-size:1.5rem;font-weight:900;color:#fff;line-height:1.05;
+  letter-spacing:.02em;word-break:break-all;
+}
+.vgref-fila b.dinero{color:#22f5d3}
+.vgref-copia{
+  flex:none;border:1px solid rgba(34,245,211,.34);background:rgba(34,245,211,.10);
+  color:#8ff5e3;border-radius:9px;padding:9px 13px;cursor:pointer;
+  font-family:inherit;font-size:.76rem;font-weight:850;white-space:nowrap;transition:.14s;
+}
+.vgref-copia:hover{background:#22f5d3;color:#04231d;border-color:transparent}
+.vgref-copia.ok{background:#7fb88a;color:#052e16;border-color:transparent}
+
+.vgref-nota{
+  padding-top:11px;border-top:1px solid rgba(255,255,255,.09);
+  font-size:.8rem;color:#9aa7c2;line-height:1.55;
+}
+.vgref-nota b{color:#fff;font-weight:800}
+
+.vgref-hora{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 13px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+}
+.vgref-punto{
+  width:9px;height:9px;flex:none;border-radius:50%;margin-top:5px;
+  background:#7fb88a;box-shadow:0 0 0 4px rgba(127,184,138,.18);
+}
+.vgref-hora.cerrado .vgref-punto{background:#e5904d;box-shadow:0 0 0 4px rgba(229,144,77,.18)}
+.vgref-hora p{margin:0;font-size:.81rem;color:#9aa7c2;line-height:1.5}
+.vgref-hora p b{display:block;color:#fff;font-size:.86rem;font-weight:850;margin-bottom:2px}
+</style>
+
+<script id="vg-pago-referencia-js-v64">
+(function(){
+  'use strict';
+  if(window.__VG64__) return; window.__VG64__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ── La referencia ───────────────────────────────────────────
+     Cuatro caracteres bastan: no es una contraseña, es para que la
+     distingas entre los depósitos del día.
+
+     Se quitan los que se confunden al leerlos a mano de una pantalla
+     de banco: la O y el cero, la I y el uno, la S y el cinco. Un
+     cliente que teclea mal la referencia es un depósito que tienes
+     que cazar igual que antes. */
+  var LETRAS = 'ABCDEFGHJKLMNPQRTUVWXY2346789';
+
+  function nuevaReferencia(){
+    var r = '';
+    var az = new Uint32Array(4);
+    if(window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(az);
+    else for(var k=0;k<4;k++) az[k] = Math.floor(Math.random()*1e9);
+    for(var i=0;i<4;i++) r += LETRAS.charAt(az[i] % LETRAS.length);
+    return 'VG-' + r;
+  }
+
+  var refActual = null;
+
+  /* ── Horario ─────────────────────────────────────────────────
+     Se lee de la misma tabla que usa la respuesta automática del chat,
+     así no hay dos horarios que se contradigan. */
+  var horario = null;
+
+  async function traerHorario(){
+    if(horario !== null) return horario;
+    var c = cli();
+    if(!c){ horario = false; return horario; }
+    try{
+      var r = await c.from('vg_horario').select('abre,cierra,zona,activo').eq('id',1).limit(1);
+      horario = (!r.error && r.data && r.data[0]) ? r.data[0] : false;
+    }catch(e){ horario = false; }
+    return horario;
+  }
+
+  function abiertoAhora(h){
+    if(!h || !h.activo) return null;          /* sin horario puesto: no se opina */
+    var ahora;
+    try{
+      ahora = Number(new Intl.DateTimeFormat('es-MX',
+        {hour:'numeric', hour12:false, timeZone:h.zona || 'America/Tijuana'}).format(new Date()));
+    }catch(e){ ahora = new Date().getHours(); }
+    if(h.abre < h.cierra) return ahora >= h.abre && ahora < h.cierra;
+    /* horario que cruza la medianoche, por ejemplo de 20 a 4 */
+    return ahora >= h.abre || ahora < h.cierra;
+  }
+
+  function bloqueHorario(h){
+    var ab = abiertoAhora(h);
+    if(ab === null) return '';
+    if(ab){
+      return '<div class="vgref-hora"><span class="vgref-punto"></span>'+
+        '<p><b>Estamos atendiendo</b>En cuanto validemos tu comprobante te lo '+
+        'entregamos por el chat de tu pedido. Normalmente entre 20 minutos y 2 horas.</p></div>';
+    }
+    return '<div class="vgref-hora cerrado"><span class="vgref-punto"></span>'+
+      '<p><b>Fuera de horario</b>Tu pedido queda registrado y lo atendemos a partir '+
+      'de las '+h.abre+':00. Puedes pagar ahora sin problema: no pierdes el lugar.</p></div>';
+  }
+
+  /* ── El panel ────────────────────────────────────────────────── */
+  function montar(){
+    var modal = document.getElementById('paymentModal');
+    if(!modal) return;
+    var caja = modal.querySelector('.vg-pay-modal-new');
+    var metodos = modal.querySelector('.vg-pay-methods');
+    if(!caja || !metodos) return;
+
+    var viejo = modal.querySelector('.vgref');
+    if(viejo) viejo.remove();
+
+    refActual = nuevaReferencia();
+    var total = (document.getElementById('payModalTotal') || {}).textContent || '';
+    var monto = total.replace(/[^\d.]/g, '');
+
+    var d = document.createElement('div');
+    d.className = 'vgref';
+    d.innerHTML =
+      '<div class="vgref-fila">'+
+        '<div><small>Monto exacto</small><b class="dinero">'+esc(total)+'</b></div>'+
+        '<button type="button" class="vgref-copia" data-copiar="'+esc(monto)+'">Copiar</button>'+
+      '</div>'+
+      '<div class="vgref-fila">'+
+        '<div><small>Tu referencia</small><b>'+esc(refActual)+'</b></div>'+
+        '<button type="button" class="vgref-copia" data-copiar="'+esc(refActual)+'">Copiar</button>'+
+      '</div>'+
+      '<p class="vgref-nota">Escribe <b>'+esc(refActual)+'</b> en el concepto de tu '+
+        'transferencia. Con eso identificamos tu pago sin tener que preguntarte nada.</p>'+
+      '<div class="vgref-hueco"></div>';
+
+    /* Antes de los métodos: primero se sabe cuánto y con qué referencia,
+       después a dónde. Al revés obliga a subir y bajar. */
+    metodos.parentNode.insertBefore(d, metodos);
+
+    d.querySelectorAll('[data-copiar]').forEach(function(b){
+      b.onclick = function(){
+        var txt = b.getAttribute('data-copiar');
+        var listo = function(){
+          b.classList.add('ok'); var t = b.textContent; b.textContent = '✓ Copiado';
+          setTimeout(function(){ b.classList.remove('ok'); b.textContent = t; }, 1500);
+        };
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(txt).then(listo, function(){ viejoCopiar(txt, listo); });
+        }else viejoCopiar(txt, listo);
+      };
+    });
+
+    traerHorario().then(function(h){
+      var hueco = d.querySelector('.vgref-hueco');
+      if(hueco) hueco.outerHTML = bloqueHorario(h);
+    });
+  }
+
+  /* Respaldo para navegadores donde el portapapeles moderno no va sin
+     https, que en un teléfono viejo pasa. */
+  function viejoCopiar(txt, listo){
+    try{
+      var a = document.createElement('textarea');
+      a.value = txt; a.style.cssText = 'position:fixed;left:-9999px';
+      document.body.appendChild(a); a.select();
+      document.execCommand('copy'); a.remove(); listo();
+    }catch(e){ alert('Copia este dato: ' + txt); }
+  }
+
+  /* ── Que la referencia llegue al pedido ──────────────────────
+     El pedido se guarda DESPUÉS de pagar, así que la referencia no
+     puede ser su número. Se genera aquí y se le pega al pedido en
+     cuanto existe, en el campo de notas, que es lo que se ve en el
+     panel junto al comprobante. */
+  function engancharPedido(){
+    if(typeof window.vgCreateSupabaseOrder !== 'function') return false;
+    if(window.vgCreateSupabaseOrder.__vg64) return true;
+    var orig = window.vgCreateSupabaseOrder;
+    var envuelta = async function(){
+      var pedido = await orig.apply(this, arguments);
+      try{
+        if(pedido && pedido.id && refActual){
+          var c = cli();
+          if(c) await c.from('orders')
+            .update({ notes: 'Referencia de pago: ' + refActual })
+            .eq('id', pedido.id);
+          pedido.notes = 'Referencia de pago: ' + refActual;
+        }
+      }catch(e){ /* el pedido ya está guardado; la referencia es un extra */ }
+      return pedido;
+    };
+    envuelta.__vg64 = true;
+    window.vgCreateSupabaseOrder = envuelta;
+    return true;
+  }
+
+  /* ── Arranque ────────────────────────────────────────────────── */
+  var intentos = 0;
+  function arrancar(){
+    var modal = document.getElementById('paymentModal');
+    if(!modal){
+      if(++intentos < 60) setTimeout(arrancar, 500);
+      return;
+    }
+    engancharPedido();
+
+    /* Se vigila cuándo se abre la ventana para generar una referencia
+       nueva en cada pedido. Dos pedidos con la misma referencia serían
+       peores que ninguna. */
+    var abierto = modal.classList.contains('active');
+    new MutationObserver(function(){
+      var ahora = modal.classList.contains('active');
+      if(ahora && !abierto){ try{ montar(); }catch(e){} }
+      abierto = ahora;
+    }).observe(modal, {attributes:true, attributeFilter:['class']});
+
+    if(abierto) montar();
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+
+  window.vgReferencia = function(){ return refActual; };
 })();
 </script>
 </body>
