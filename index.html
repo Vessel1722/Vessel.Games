@@ -111,7 +111,8 @@ window.WHATSAPP_NUMBER = "526611078412";
   </script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Montserrat:wght@700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Montserrat:wght@700;900&amp;family=Barlow+Condensed:wght@600;700;800;900&amp;display=swap" rel="preload" as="style" onload="this.rel='stylesheet'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Montserrat:wght@700;900&amp;family=Barlow+Condensed:wght@600;700;800;900&amp;display=swap" rel="stylesheet"/></noscript>
 <style>
 
     :root {
@@ -11165,8 +11166,14 @@ body{margin:0;background:#070912;color:#fff;font-family:system-ui,-apple-system,
    Barlow Condensed display / Inter body, teal+gold palette
    ============================================================ */
 
-/* ─── 0. GOOGLE FONT (display) ───────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+/* ─── 0. GOOGLE FONT (display) ─────────────────────────────
+   El @import que había aquí se movió a la cabecera.
+
+   Un @import a media página es lo peor para el tiempo de dibujo: el
+   navegador tiene que leer once mil líneas, descubrir aquí que
+   necesita otra hoja de estilo, pedirla y esperarla, todo en serie y
+   sin pintar nada mientras tanto. En la cabecera se pide desde el
+   primer momento y en paralelo con lo demás. */
 
 /* ─── 1. DESIGN TOKENS ───────────────────────────────────── */
 :root {
@@ -15710,8 +15717,6 @@ window.vgBingSize = function(){
 <div class="vg-admin-tabs">
 <button class="vg-admin-tab" data-tab="usuarios">👥 Usuarios</button>
 <button class="vg-admin-tab" data-tab="dashboard">📊 Dashboard</button>
-<button class="vg-admin-tab active" data-tab="orders">Compras</button>
-<button class="vg-admin-tab" data-tab="products">Artículos</button>
 <button class="vg-admin-tab" data-tab="setup">Supabase</button>
 <button class="vg-admin-tab" data-tab="export">Exportar</button><button class="vg-admin-tab" data-tab="debug">Diagnóstico</button><button class="vg-admin-tab" data-tab="settings">Ajustes rápidos</button>
 </div>
@@ -15754,21 +15759,6 @@ window.vgBingSize = function(){
 </div>
 </div>
 </section>
-<section class="vg-admin-section active" id="vgAdminOrders">
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center">
-<span style="font-size:.74rem;font-weight:800;text-transform:uppercase;letter-spacing:.10em;color:#8b93b0;flex:1">Gestión de compras</span>
-<button class="vg-notif-btn" onclick="vgRequestNotifications()">🔔 Activar alertas</button>
-<button class="vg-csv-btn" onclick="vgExportCSV()">⬇️ Exportar CSV</button>
-</div>
-<div class="vg-admin-note vg-admin-ok"><b>Funcional con Supabase:</b> cuando el cliente abre WhatsApp con comprobante cargado, se crea pedido y se sube el archivo al bucket.</div>
-<div class="vg-admin-stats" id="vgAdminStats"></div>
-<div class="vg-admin-tools"><input class="vg-admin-input" id="vgOrderSearch" oninput="vgAdminRenderOrders()" placeholder="Buscar pedido..."/><select class="vg-admin-select" id="vgOrderFilter" onchange="vgAdminRenderOrders()"><option value="all">Todos</option><option value="pendiente">Pendiente</option><option value="validado">Validado</option><option value="entregado">Entregado</option><option value="cancelado">Cancelado</option></select><button class="vg-admin-btn" onclick="vgAdminLoadOrders()">Actualizar</button><button class="vg-admin-btn primary" onclick="vgAdminCreateTestOrder()">Crear pedido prueba</button></div>
-<div class="vg-order-layout"><div id="vgAdminOrdersList"></div><aside class="vg-order-preview" id="vgOrderPreview"><h3>Vista de comprobante</h3><p>Selecciona un pedido con comprobante para ver la imagen aquí y darle seguimiento a la transferencia.</p></aside></div>
-</section>
-<section class="vg-admin-section" id="vgAdminProducts">
-<div class="vg-admin-tools"><input class="vg-admin-input" id="vgProductSearch" oninput="vgAdminRenderProducts()" placeholder="Buscar artículo..."/><button class="vg-admin-btn primary" onclick="vgAdminSyncProducts()">Subir catálogo a Supabase</button><button class="vg-admin-btn" onclick="vgAdminLoadProducts()">Cargar cambios</button></div>
-<div id="vgAdminProductsList"></div>
-</section>
 <section class="vg-admin-section" id="vgAdminSetup">
 <div class="vg-admin-note"><b>Configura Supabase aquí.</b> Pega tu Project URL y tu anon public key. No pegues la service_role key en una página pública.</div>
 <div class="vg-admin-card">
@@ -15802,6 +15792,66 @@ window.vgBingSize = function(){
 </div>
 </div>
 <script id="vg-supabase-admin-v34" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script id="vg-un-solo-cliente-v68">
+/* ═══════════════════════════════════════════════════════════════════
+   VG FASE 68 · Un solo cliente de Supabase
+
+   La consola avisaba de cinco clientes de Supabase compartiendo el
+   mismo almacén de sesión. No es un aviso menor: fue exactamente la
+   causa de la caída en la que la página no cargaba. Varios clientes
+   sobre la misma sesión se disparan avisos entre ellos y se enredan.
+
+   En el archivo hay dieciocho sitios que crean clientes, y cuatro de
+   ellos crean uno NUEVO en cada llamada. Reescribir dieciocho sitios
+   es mucho que romper, así que se arregla en un solo punto: se envuelve
+   la fábrica de clientes para que devuelva siempre el mismo cuando le
+   piden lo mismo.
+
+   Cada quien sigue llamando a createClient como siempre y recibe un
+   cliente que funciona. Solo que ahora es el mismo.
+
+   Se reparten por url + clave + almacén de sesión. Ese último importa:
+   hay un cliente que usa 'vg_sb_auth' a propósito y tiene su propia
+   sesión, así que ese se queda aparte. Juntarlo con los demás sí
+   habría cambiado el comportamiento.
+
+   Va justo después de cargar la librería para llegar antes que
+   cualquiera que quiera crear uno.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+  if(!window.supabase || typeof window.supabase.createClient !== 'function') return;
+  if(window.supabase.createClient.__vg68) return;
+
+  var original = window.supabase.createClient;
+  var guardados = {};
+
+  function envuelta(url, clave, opciones){
+    /* Si falta algo, se deja pasar tal cual: no es tarea de esto
+       decidir si una configuración es válida. */
+    if(!url || !clave) return original.apply(this, arguments);
+
+    var almacen = (opciones && opciones.auth && opciones.auth.storageKey) || '(por defecto)';
+    var k = url + '|' + String(clave).slice(0, 24) + '|' + almacen;
+
+    if(!guardados[k]){
+      guardados[k] = original.apply(this, arguments);
+      guardados[k].__vgAlmacen = almacen;
+    }
+    return guardados[k];
+  }
+
+  envuelta.__vg68 = true;
+  window.supabase.createClient = envuelta;
+
+  /* Para poder comprobar cuántos hay de verdad desde la consola */
+  window.vgClientes = function(){
+    return Object.keys(guardados).map(function(k){
+      return k.split('|')[2];
+    });
+  };
+})();
+</script>
 <script id="vg-supabase-admin-app-v34">
 (function(){
 'use strict';
@@ -33381,7 +33431,16 @@ html body .service-carousel-card .imgbox > img{
     if(guardado === '0'){ mostrar(false); return; }
 
     try{
-      var r = await c.rpc('is_admin');
+      /* Se pregunta por vg_puede_atender y no por is_admin: la primera
+        dice que sí a los administradores Y a los operadores, que es
+        justo quien debe poder abrir el panel. Lo que ve cada uno
+        dentro ya lo decide el bloque de permisos.
+
+        Si esa función todavía no existe -falta correr la fase 71- se
+        vuelve a is_admin, para no dejar al dueño fuera de su panel por
+        un SQL sin correr. */
+     var r = await c.rpc('vg_puede_atender');
+     if(r && r.error) r = await c.rpc('is_admin');
       var ok = !r.error && r.data === true;
       try{ sessionStorage.setItem(LLAVE, ok ? '1' : '0'); }catch(e){}
       mostrar(ok);
@@ -36545,7 +36604,10 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
        encaraman al texto, y esconderlas con una media query dependía
        de ganar una pelea de especificidad contra decenas de capas de
        estilos que ya trae la página. Contando aquí no hay pelea. */
-    var cuantas = window.innerWidth < 900 ? 2 : 5;
+    /* Cinco eran demasiadas: a 113px cada una no caben en la franja y
+       desbordaban por la izquierda hasta encimarse al título. Con tres
+       cada foto se ve, que es de lo que se trata. */
+    var cuantas = window.innerWidth < 900 ? 2 : (cat === 'fortnite' ? 4 : 3);
     var urls = [], modo = '';
 
     if(cat === 'fortnite'){
@@ -36899,5 +36961,2027 @@ html body.vgfn-activo #marketView .layout > aside.sidebar{ display:none !importa
   window.vgReferencia = function(){ return refActual; };
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 65 · El descuento del cupón llega al pedido
+
+     El cupón cambiaba el precio EN PANTALLA pero no en el pedido. Con
+     VESSEL20 el cliente veía $196, pagaba $196, y a ti te llegaba el
+     pedido marcado en $245: parecía que te habían pagado de menos y tus
+     ventas del día salían infladas.
+
+     Aquí se sincroniza lo uno con lo otro. La pantalla manda: lo que ve
+     el cliente es lo que se cobra y lo que se guarda.
+     ═══════════════════════════════════════════════════════════════════ -->
+<script id="vg-cupon-total-js-v65">
+(function(){
+  'use strict';
+  if(window.__VG65__) return; window.__VG65__ = true;
+
+  function pesos(n){ return '$' + Number(n||0).toLocaleString('es-MX') + ' MXN'; }
+
+  /* Lee lo que de verdad se le está cobrando al cliente. Se toma de la
+     pantalla y no del cupón porque la pantalla es lo único que el
+     cliente ve; si algún día cambia cómo se calcula el descuento, esto
+     sigue estando bien. */
+  function totalEnPantalla(){
+    var el = document.getElementById('payModalTotal');
+    if(!el) return null;
+    var n = Number(String(el.textContent||'').replace(/[^0-9.]/g,''));
+    return isNaN(n) || n <= 0 ? null : n;
+  }
+
+  function sincronizar(){
+    var t = totalEnPantalla();
+    if(t === null) return;
+
+    /* 1. El pedido que se va a guardar */
+    var p = window.pendingPaymentOrder;
+    if(p && Number(p.total) !== t){
+      p.baseTotal = p.baseTotal || Number(p.total) || t;   /* se recuerda el de lista */
+      p.total = t;
+      if(window._activeCoupon && window._activeCoupon.code)
+        p.cupon = window._activeCoupon.code;
+      else delete p.cupon;
+    }
+
+    /* 2. El panel de referencia, que enseñaba el monto sin descuento */
+    var b = document.querySelector('#paymentModal .vgref-fila b.dinero');
+    if(b){
+      b.textContent = pesos(t);
+      var boton = b.parentElement && b.parentElement.parentElement
+        ? b.parentElement.parentElement.querySelector('[data-copiar]') : null;
+      if(boton) boton.setAttribute('data-copiar', String(t));
+    }
+  }
+
+  /* Se engancha después de aplicar el cupón, no en su lugar: el cálculo
+     del descuento sigue siendo el de la página. Aquí solo se copia el
+     resultado a donde hacía falta. */
+  function envolver(){
+    if(typeof window.vgApplyCoupon !== 'function') return false;
+    if(window.vgApplyCoupon.__vg65) return true;
+    var orig = window.vgApplyCoupon;
+    var nueva = function(){
+      var r = orig.apply(this, arguments);
+      setTimeout(sincronizar, 30);   /* la página reescribe el total en el mismo turno */
+      return r;
+    };
+    nueva.__vg65 = true;
+    window.vgApplyCoupon = nueva;
+    return true;
+  }
+
+  var intentos = 0;
+  function arrancar(){
+    if(!envolver()){
+      if(++intentos < 60) setTimeout(arrancar, 500);
+      return;
+    }
+    /* Red de seguridad: si el total cambia por cualquier otro camino
+       —quitar el cupón, cambiar el carrito— también se sincroniza. */
+    var el = document.getElementById('payModalTotal');
+    if(el) new MutationObserver(function(){ sincronizar(); })
+      .observe(el, {childList:true, characterData:true, subtree:true});
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 67 · Cuatro mejoras
+
+       · Aviso de pedido duplicado, antes de que pague dos veces.
+       · Los favoritos por fin sirven para algo.
+       · Tiempo de entrega real, sacado de tus pedidos.
+       · Respaldo de todo tu historial, en un archivo.
+
+     Ninguna necesita servidor: todas trabajan con lo que ya hay.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-mejoras-v67">
+/* ── Aviso de duplicado ── */
+#vgDupFondo{position:fixed;inset:0;z-index:2147483500;display:none;
+  align-items:center;justify-content:center;padding:18px;background:rgba(4,6,12,.86)}
+#vgDupFondo.ver{display:flex}
+#vgDupCaja{width:100%;max-width:400px;background:#0d1120;
+  border:1px solid rgba(229,144,77,.35);border-radius:16px;padding:24px 22px;
+  color:#eef0fa;font-family:Inter,system-ui,sans-serif}
+#vgDupCaja h4{margin:0 0 8px;font-size:1.08rem;font-weight:900;color:#e5904d}
+#vgDupCaja p{margin:0 0 8px;font-size:.87rem;color:#9aa7c2;line-height:1.55}
+#vgDupCaja p b{color:#fff}
+#vgDupCaja .ops{display:grid;gap:8px;margin-top:18px}
+#vgDupCaja button{padding:13px;border:0;border-radius:10px;cursor:pointer;
+  font-family:inherit;font-size:.88rem;font-weight:850}
+#vgDupCaja .ver-pedido{background:#22f5d3;color:#04231d}
+#vgDupCaja .igual{background:rgba(255,255,255,.08);color:#c3cde3}
+
+/* ── Avisos de favoritos ── */
+.vgfav-aviso{
+  display:flex;align-items:flex-start;gap:11px;
+  margin:0 0 16px;padding:13px 15px;border-radius:14px;
+  border:1px solid rgba(255,214,138,.28);
+  background:linear-gradient(135deg,rgba(255,214,138,.10),rgba(255,255,255,.02));
+}
+.vgfav-aviso .ico{font-size:1.2rem;line-height:1.2;flex:none}
+.vgfav-aviso div{min-width:0;flex:1}
+.vgfav-aviso b{display:block;color:#ffd68a;font-size:.85rem;font-weight:900;margin-bottom:2px}
+.vgfav-aviso p{margin:0;font-size:.8rem;color:#9aa7c2;line-height:1.5}
+.vgfav-aviso button{
+  flex:none;align-self:center;border:0;border-radius:9px;padding:9px 14px;cursor:pointer;
+  background:#ffd68a;color:#241a05;font-family:inherit;font-size:.79rem;font-weight:900;
+}
+.vgfav-x{background:none !important;color:#7f8ea6 !important;font-size:1.2rem !important;
+  padding:4px 8px !important;line-height:1}
+
+/* ── Tiempo de entrega ── */
+.vgtiempo{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 12px;border-radius:999px;
+  background:rgba(127,184,138,.12);border:1px solid rgba(127,184,138,.30);
+  font-size:.78rem;font-weight:800;color:#9bd1a6;
+}
+.vgtiempo i{width:7px;height:7px;border-radius:50%;background:#7fb88a;
+  box-shadow:0 0 0 3px rgba(127,184,138,.20);flex:none;font-style:normal}
+
+/* ── Respaldo ── */
+.vgresp{margin:0 0 14px;padding:14px 16px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035)}
+.vgresp b{display:block;color:#fff;font-size:.9rem;font-weight:900;margin-bottom:3px}
+.vgresp p{margin:0 0 11px;font-size:.79rem;color:#8593b5;line-height:1.5}
+.vgresp button{border:0;border-radius:10px;padding:11px 18px;cursor:pointer;
+  background:#22f5d3;color:#04231d;font-family:inherit;font-size:.83rem;font-weight:900}
+.vgresp button:disabled{opacity:.55;cursor:default}
+.vgresp .aviso{margin-top:9px;font-size:.78rem;color:#9bd1a6}
+</style>
+
+<script id="vg-mejoras-js-v67">
+(function(){
+  'use strict';
+  if(window.__VG67__) return; window.__VG67__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ═══════════════════════════════════════════════════════════
+     1 · AVISO DE PEDIDO DUPLICADO
+
+     Cuando alguien crea dos pedidos iguales en pocos minutos, casi
+     siempre es que creyó que el primero no pasó. Hoy nada lo detiene:
+     paga dos veces y a ti te toca devolver el dinero y dar la cara.
+
+     Se avisa, no se bloquea. A veces sí quiere dos.
+     ═══════════════════════════════════════════════════════════ */
+  var MINUTOS_DUP = 30;
+
+  async function buscarDuplicado(total, producto){
+    var c = cli(); if(!c) return null;
+    try{
+      var desde = new Date(Date.now() - MINUTOS_DUP*60000).toISOString();
+      var r = await c.from('orders')
+        .select('id,total,product_name,created_at,status')
+        .gte('created_at', desde)
+        .order('created_at', {ascending:false})
+        .limit(20);
+      if(r.error || !r.data) return null;
+      for(var i=0;i<r.data.length;i++){
+        var o = r.data[i];
+        if(String(o.source||'') === 'recommendation') continue;
+        if(Math.round(Number(o.total||0)) !== Math.round(Number(total||0))) continue;
+        if(producto && o.product_name &&
+           String(o.product_name).trim() !== String(producto).trim()) continue;
+        return o;
+      }
+    }catch(e){}
+    return null;
+  }
+
+  function preguntarDuplicado(previo){
+    return new Promise(function(resolver){
+      var f = document.getElementById('vgDupFondo');
+      if(!f){
+        f = document.createElement('div');
+        f.id = 'vgDupFondo';
+        f.innerHTML = '<div id="vgDupCaja"></div>';
+        document.body.appendChild(f);
+      }
+      var mins = Math.max(1, Math.round((Date.now() - Date.parse(previo.created_at))/60000));
+      f.querySelector('#vgDupCaja').innerHTML =
+        '<h4>Ya tienes un pedido igual</h4>'+
+        '<p>Hace <b>'+mins+' minuto'+(mins===1?'':'s')+'</b> se registró un pedido de '+
+        '<b>'+esc(previo.product_name||'este producto')+'</b> por el mismo monto.</p>'+
+        '<p>Si es el mismo y creíste que no pasó, <b>no vuelvas a pagar</b>: ya está '+
+        'registrado y lo estamos atendiendo.</p>'+
+        '<div class="ops">'+
+          '<button type="button" class="ver-pedido">Ver mi pedido anterior</button>'+
+          '<button type="button" class="igual">Es otro pedido, continuar</button>'+
+        '</div>';
+      f.classList.add('ver');
+      f.querySelector('.ver-pedido').onclick = function(){
+        f.classList.remove('ver');
+        if(typeof window.vgOpenClientPanel === 'function')
+          window.vgOpenClientPanel('purchases', previo.id);
+        resolver(false);
+      };
+      f.querySelector('.igual').onclick = function(){
+        f.classList.remove('ver');
+        resolver(true);
+      };
+    });
+  }
+
+  function engancharDuplicado(){
+    if(typeof window.sendPaymentWhatsApp !== 'function') return false;
+    if(window.sendPaymentWhatsApp.__vg67) return true;
+    var orig = window.sendPaymentWhatsApp;
+    var nueva = async function(){
+      try{
+        var p = window.pendingPaymentOrder || {};
+        var previo = await buscarDuplicado(p.total, p.product_name ||
+          (p.items && p.items[0] && p.items[0].title));
+        if(previo){
+          var seguir = await preguntarDuplicado(previo);
+          if(!seguir) return;
+        }
+      }catch(e){ /* si la comprobación falla, no se estorba la compra */ }
+      return orig.apply(this, arguments);
+    };
+    nueva.__vg67 = true;
+    window.sendPaymentWhatsApp = nueva;
+    return true;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     2 · LOS FAVORITOS SIRVEN PARA ALGO
+
+     La lista de deseos vive en el navegador del cliente, no en la base,
+     así que no se le puede mandar un aviso cuando algo cambie: desde el
+     servidor no hay forma de saber qué guardó cada quien.
+
+     Lo que sí se puede es avisarle en cuanto vuelve a entrar. Menos
+     potente que un mensaje al teléfono, pero es real y no promete algo
+     que no se puede cumplir.
+     ═══════════════════════════════════════════════════════════ */
+  function leerFavoritos(){
+    try{
+      var f = JSON.parse(localStorage.getItem('vg_fav_v1') || '[]');
+      return Array.isArray(f) ? f : [];
+    }catch(e){ return []; }
+  }
+
+  function avisoFavoritos(){
+    var favs = leerFavoritos();
+    if(!favs.length) return;
+    if(sessionStorage.getItem('vg_fav_avisado')) return;
+
+    var S = Array.isArray(window.SERVICES) ? window.SERVICES : [];
+    var guardados = S.filter(function(s){
+      return favs.indexOf(s.id) >= 0 || favs.indexOf(String(s.id)) >= 0;
+    });
+    if(!guardados.length) return;
+
+    /* De momento el aviso es de recordatorio. Cuando un guardado tenga
+       una fecha de salida —los de Fortnite la tienen— se puede afinar
+       para decir cuánto le queda. */
+    var destino = document.querySelector('#marketView .wrap') ||
+                  document.querySelector('#homeView .wrap');
+    if(!destino) return;
+
+    var d = document.createElement('div');
+    d.className = 'vgfav-aviso';
+    d.innerHTML =
+      '<span class="ico">♥</span>'+
+      '<div><b>Tienes '+guardados.length+' guardado'+(guardados.length===1?'':'s')+'</b>'+
+      '<p>'+esc(guardados.slice(0,2).map(function(s){ return s.title; }).join(', '))+
+      (guardados.length>2 ? ' y '+(guardados.length-2)+' más' : '')+'</p></div>'+
+      '<button type="button" class="ir">Ver mi lista</button>'+
+      '<button type="button" class="vgfav-x" aria-label="Cerrar">×</button>';
+
+    destino.insertBefore(d, destino.firstChild);
+
+    d.querySelector('.ir').onclick = function(){
+      if(typeof window.vgOpenWishlist === 'function') window.vgOpenWishlist();
+      else if(typeof window.openWishlist === 'function') window.openWishlist();
+      else{
+        var b = document.querySelector('[onclick*="ishlist"],[onclick*="avorito"]');
+        if(b) b.click();
+      }
+    };
+    d.querySelector('.vgfav-x').onclick = function(){
+      sessionStorage.setItem('vg_fav_avisado','1');
+      d.remove();
+    };
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     3 · TIEMPO DE ENTREGA REAL
+     ═══════════════════════════════════════════════════════════ */
+  async function tiempoEntrega(){
+    var c = cli(); if(!c) return null;
+    try{
+      var r = await c.rpc('vg_tiempo_entrega', {p_dias:7});
+      if(r.error || !r.data) return null;
+      var d = r.data;
+      /* Con menos de cinco entregas el número no dice nada: un par de
+         pedidos rápidos darían "8 minutos" y sería una promesa que no
+         se sostiene el día que entren veinte. */
+      if(!d.muestras || d.muestras < 5 || !d.mediana) return null;
+      return d;
+    }catch(e){ return null; }
+  }
+
+  function pintarTiempo(d){
+    if(!d) return;
+    var m = Number(d.mediana);
+    var txt = m < 60 ? (m + ' min')
+            : (Math.floor(m/60) + ' h ' + (m%60 ? (m%60)+' min' : ''));
+    var destino = document.querySelector('.hero-actions');
+    if(!destino || document.querySelector('.vgtiempo')) return;
+    var s = document.createElement('span');
+    s.className = 'vgtiempo';
+    s.title = 'Calculado con tus últimas ' + d.muestras + ' entregas';
+    s.innerHTML = '<i></i>Entrega promedio: '+esc(txt);
+    destino.appendChild(s);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     4 · RESPALDO DE TODO
+
+     Ventas, clientes, chats y canjes en un archivo. Si algo se borra
+     por accidente o Supabase falla, el historial no se pierde.
+
+     Se arma en el navegador con lo que el administrador ya puede leer:
+     no hace falta tocar la base.
+     ═══════════════════════════════════════════════════════════ */
+  var TABLAS = ['orders','vg_users','vg_live_chat_messages','vg_support_tickets',
+                'vg_token_tx','vg_token_wallet','vg_redemptions'];
+
+  async function armarRespaldo(estado){
+    var c = cli(); if(!c) throw new Error('Sin conexión con el servidor.');
+    var datos = { generado: new Date().toISOString(), tablas: {} };
+    for(var i=0;i<TABLAS.length;i++){
+      var t = TABLAS[i];
+      if(estado) estado('Copiando ' + t + '…');
+      try{
+        var r = await c.from(t).select('*').limit(5000);
+        datos.tablas[t] = r.error ? {error:r.error.message} : (r.data || []);
+      }catch(e){ datos.tablas[t] = {error:String(e)}; }
+    }
+    return datos;
+  }
+
+  function descargar(datos){
+    var nombre = 'vessel-respaldo-' + new Date().toISOString().slice(0,10) + '.json';
+    var blob = new Blob([JSON.stringify(datos, null, 1)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = nombre;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    return nombre;
+  }
+
+  function montarRespaldo(){
+    var cont = document.getElementById('vgAdminHoy');
+    if(!cont || cont.querySelector('.vgresp')) return;
+    var raiz = cont.querySelector('.vghoy');
+    if(!raiz) return;
+
+    var d = document.createElement('div');
+    d.className = 'vgresp';
+    d.innerHTML =
+      '<b>Respaldo de tu historial</b>'+
+      '<p>Ventas, clientes, chats, tickets y tokens en un archivo. '+
+      'Guárdalo donde quieras: si algo se borra, esto lo recupera.</p>'+
+      '<button type="button">Descargar respaldo</button>'+
+      '<div class="aviso" style="display:none"></div>';
+    raiz.insertBefore(d, raiz.firstChild);
+
+    var btn = d.querySelector('button'), av = d.querySelector('.aviso');
+    btn.onclick = async function(){
+      btn.disabled = true;
+      av.style.display = 'block';
+      try{
+        var datos = await armarRespaldo(function(t){ av.textContent = t; });
+        var nombre = descargar(datos);
+        var filas = Object.keys(datos.tablas).reduce(function(s,k){
+          return s + (Array.isArray(datos.tablas[k]) ? datos.tablas[k].length : 0); }, 0);
+        av.textContent = '✓ ' + nombre + ' · ' + filas + ' registros';
+      }catch(e){
+        av.textContent = 'No se pudo: ' + (e.message || e);
+      }finally{ btn.disabled = false; }
+    };
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     Arranque
+     ═══════════════════════════════════════════════════════════ */
+  var intentos = 0;
+  function arrancar(){
+    engancharDuplicado();
+    try{ avisoFavoritos(); }catch(e){}
+    tiempoEntrega().then(pintarTiempo);
+
+    var modal = document.getElementById('vgAdminModal');
+    if(modal && !modal.dataset.vg67){
+      modal.dataset.vg67 = '1';
+      var pend = false;
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){ pend = false; try{ montarRespaldo(); }catch(e){} });
+      }).observe(modal, {childList:true, subtree:true});
+    }
+
+    if(++intentos < 40) setTimeout(arrancar, 1200);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 70 · La cuenta recuerda los datos de juego
+
+     Cada pedido de Fortnite empezaba con el mismo ida y vuelta
+     preguntando el usuario de Epic. Guardándolo una vez, la segunda
+     compra ya no pregunta nada: el dato viaja con el pedido.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-datos-juego-v70">
+.vgdj{margin:0 0 14px;padding:15px 16px;border-radius:14px;
+  border:1px solid rgba(34,245,211,.22);
+  background:linear-gradient(135deg,rgba(34,245,211,.07),rgba(255,255,255,.02))}
+.vgdj > b{display:block;color:#fff;font-size:.92rem;font-weight:900;margin-bottom:3px}
+.vgdj > p{margin:0 0 13px;font-size:.79rem;color:#8593b5;line-height:1.5}
+.vgdj-campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.vgdj-campos label{display:block}
+.vgdj-campos span{display:block;font-size:.62rem;font-weight:900;letter-spacing:.11em;
+  text-transform:uppercase;color:#8593b5;margin-bottom:4px}
+.vgdj-campos input{width:100%;box-sizing:border-box;
+  border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);
+  color:#fff;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:.85rem}
+.vgdj-campos input:focus{outline:none;border-color:rgba(34,245,211,.45)}
+.vgdj-pie{display:flex;align-items:center;gap:12px;margin-top:13px;flex-wrap:wrap}
+.vgdj-pie button{border:0;border-radius:10px;padding:11px 20px;cursor:pointer;
+  background:#22f5d3;color:#04231d;font-family:inherit;font-size:.84rem;font-weight:900}
+.vgdj-pie button:disabled{opacity:.55;cursor:default}
+.vgdj-pie .msg{font-size:.79rem;color:#8ff5e3}
+.vgdj-pie .msg.mal{color:#ff9db0}
+</style>
+
+<script id="vg-datos-juego-js-v70">
+(function(){
+  'use strict';
+  if(window.__VG70__) return; window.__VG70__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* Qué se guarda. La clave es la que viaja a la base; se mantiene
+     corta y en minúsculas porque la función del servidor solo acepta
+     eso. Añadir un juego mañana es agregar una línea aquí. */
+  var CAMPOS = [
+    {k:'epic',      t:'Usuario de Epic',   ej:'para Fortnite'},
+    {k:'xbox',      t:'Gamertag de Xbox',  ej:'para juegos y Game Pass'},
+    {k:'free_fire', t:'ID de Free Fire',   ej:'solo números'},
+    {k:'psn',       t:'Usuario de PSN',    ej:'PlayStation'}
+  ];
+
+  var datos = null;     /* lo guardado, una vez leído */
+
+  async function traer(){
+    if(datos) return datos;
+    var c = cli(); if(!c) return {};
+    try{
+      var r = await c.rpc('vg_mis_datos_juego');
+      datos = (!r.error && r.data && typeof r.data === 'object') ? r.data : {};
+    }catch(e){ datos = {}; }
+    return datos;
+  }
+
+  async function guardar(nuevos, msg, btn){
+    var c = cli(); if(!c) return;
+    btn.disabled = true; msg.className = 'msg'; msg.textContent = 'Guardando…';
+    var r = await c.rpc('vg_guardar_datos_juego', {p_datos: nuevos});
+    btn.disabled = false;
+    if(r.error){
+      msg.className = 'msg mal';
+      msg.textContent = /does not exist|schema cache/i.test(r.error.message)
+        ? 'Falta correr supabase_fase69_DATOS_DE_JUEGO.sql en Supabase.'
+        : r.error.message;
+      return;
+    }
+    datos = (r.data && r.data.guardados) || nuevos;
+    msg.className = 'msg';
+    msg.textContent = '✓ Guardado. No volveremos a preguntártelo.';
+    setTimeout(function(){ msg.textContent = ''; }, 4000);
+  }
+
+  /* ── La tarjeta en el panel del cliente ─────────────────────── */
+  async function montar(){
+    var panel = document.getElementById('vg17Client');
+    if(!panel || !panel.classList.contains('active')) return;
+    var destino = document.querySelector('#vg17Client .vg17-body') ||
+                  document.querySelector('#vg17Client .vg17-panel-body') ||
+                  panel.querySelector('.vg17-tabs') && panel.querySelector('.vg17-tabs').parentElement;
+    if(!destino || destino.querySelector('.vgdj')) return;
+
+    var g = await traer();
+
+    var d = document.createElement('div');
+    d.className = 'vgdj';
+    d.innerHTML =
+      '<b>🎮 Tus datos de juego</b>'+
+      '<p>Guárdalos una vez y no te los volvemos a pedir en cada compra. '+
+      'Solo los usamos para entregarte lo que pediste.</p>'+
+      '<div class="vgdj-campos">'+
+        CAMPOS.map(function(c){
+          return '<label><span>'+esc(c.t)+'</span>'+
+            '<input data-k="'+c.k+'" maxlength="60" autocomplete="off" '+
+            'placeholder="'+esc(c.ej)+'" value="'+esc(g[c.k]||'')+'"></label>';
+        }).join('')+
+      '</div>'+
+      '<div class="vgdj-pie"><button type="button">Guardar</button>'+
+      '<span class="msg"></span></div>';
+
+    destino.insertBefore(d, destino.firstChild);
+
+    var btn = d.querySelector('button'), msg = d.querySelector('.msg');
+    btn.onclick = function(){
+      var nuevos = {};
+      d.querySelectorAll('[data-k]').forEach(function(i){
+        var v = (i.value||'').trim();
+        if(v) nuevos[i.getAttribute('data-k')] = v;
+      });
+      guardar(nuevos, msg, btn);
+    };
+  }
+
+  /* ── Que viajen con el pedido ────────────────────────────────
+     De poco sirve guardarlos si al entregar sigues teniendo que
+     preguntar. Se añaden al pedido en cuanto se crea, en el campo que
+     el panel enseña como "datos que dejó el cliente".
+
+     Solo el que hace falta: al que compra Fortnite no le sirve de nada
+     que le mandes su gamertag de Xbox. */
+  function cualToca(pedido){
+    var txt = JSON.stringify(pedido || {}).toLowerCase();
+    if(txt.indexOf('fortnite') >= 0) return 'epic';
+    if(txt.indexOf('free fire') >= 0 || txt.indexOf('diamantes') >= 0) return 'free_fire';
+    if(txt.indexOf('xbox') >= 0 || txt.indexOf('game pass') >= 0) return 'xbox';
+    if(txt.indexOf('psn') >= 0 || txt.indexOf('playstation') >= 0) return 'psn';
+    return null;
+  }
+
+  function engancharPedido(){
+    if(typeof window.vgCreateSupabaseOrder !== 'function') return false;
+    if(window.vgCreateSupabaseOrder.__vg70) return true;
+    var orig = window.vgCreateSupabaseOrder;
+    var envuelta = async function(){
+      var pedido = await orig.apply(this, arguments);
+      try{
+        var g = await traer();
+        var k = cualToca(window.pendingPaymentOrder);
+        if(pedido && pedido.id && k && g[k]){
+          var etiqueta = (CAMPOS.filter(function(c){ return c.k === k; })[0] || {}).t || k;
+          var c = cli();
+          if(c) await c.from('orders')
+            .update({ delivery_data: etiqueta + ': ' + g[k] })
+            .eq('id', pedido.id);
+        }
+      }catch(e){ /* el pedido ya está guardado; esto es un extra */ }
+      return pedido;
+    };
+    envuelta.__vg70 = true;
+    window.vgCreateSupabaseOrder = envuelta;
+    return true;
+  }
+
+  var intentos = 0;
+  function arrancar(){
+    engancharPedido();
+    var panel = document.getElementById('vg17Client');
+    if(panel && !panel.dataset.vg70){
+      panel.dataset.vg70 = '1';
+      var pend = false;
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){ pend = false; montar().catch(function(){}); });
+      }).observe(panel, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+    }
+    if(++intentos < 50) setTimeout(arrancar, 1200);
+  }
+
+  if(document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', arrancar, {once:true});
+  else arrancar();
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 72 · El panel sabe quién eres
+
+     Paso 2 de 5.
+
+       · Un operador ve solo lo suyo: pedidos, soporte, chat. No ve
+         usuarios, ni la conexión, ni los datos del negocio.
+       · Una pantalla de bitácora, solo para ti.
+
+     Se restringe SOLO a quien está marcado como 'operador'. Tú y
+     cualquiera que ya entraba siguen viendo todo, aunque su fila no
+     tenga rol. Un arreglo de permisos que te deja fuera de tu propio
+     panel no es un arreglo.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-roles-panel-v72">
+.vgbit{display:grid;gap:9px}
+.vgbit-cab{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.vgbit-cab h3{margin:0;font-size:1rem;font-weight:900;color:#fff}
+.vgbit-cab span{font-size:.76rem;color:#8593b5}
+.vgbit-fila{
+  display:grid;grid-template-columns:132px 1fr auto;gap:12px;align-items:baseline;
+  padding:10px 13px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+}
+@media(max-width:640px){ .vgbit-fila{grid-template-columns:1fr;gap:3px} }
+.vgbit-fila time{font-family:ui-monospace,Consolas,monospace;font-size:.74rem;color:#8593b5}
+.vgbit-fila b{font-size:.84rem;font-weight:800;color:#fff}
+.vgbit-fila b em{font-style:normal;color:#8ff5e3;font-weight:900}
+.vgbit-fila small{display:block;font-size:.74rem;color:#8593b5;margin-top:2px}
+.vgbit-quien{
+  font-size:.72rem;font-weight:900;color:#ffd68a;white-space:nowrap;
+  background:rgba(255,214,138,.12);padding:3px 10px;border-radius:999px;
+}
+.vgbit-nada{padding:34px 14px;text-align:center;color:#8593b5;font-size:.84rem}
+
+.vgrol-aviso{
+  margin:0 0 14px;padding:12px 15px;border-radius:12px;
+  border:1px solid rgba(255,214,138,.28);background:rgba(255,214,138,.08);
+  font-size:.82rem;color:#9aa7c2;line-height:1.5;
+}
+.vgrol-aviso b{color:#ffd68a;font-weight:900}
+</style>
+
+<script id="vg-roles-panel-js-v72">
+(function(){
+  'use strict';
+  if(window.__VG72__) return; window.__VG72__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* Lo que un operador NO ve. Todo lo demás sí.
+     Se nombra por lo que hace cada pestaña, no por su id, porque los
+     ids de este panel han cambiado de nombre varias veces. */
+  var VETADAS = ['usuarios','supabase','exportar','diagnóstico','diagnostico',
+                 'ajustes rápidos','ajustes rapidos','dashboard','analítica','analitica',
+                 'bitácora','bitacora'];
+
+  var rol = undefined;   /* undefined = sin averiguar todavía */
+  var montando = false;  /* mira el comentario de montarBitacora */
+
+  async function averiguarRol(){
+    if(rol !== undefined) return rol;
+    var c = cli();
+    if(!c){ rol = null; return rol; }
+    try{
+      var s = await c.auth.getUser();
+      var uid = s && s.data && s.data.user && s.data.user.id;
+      if(!uid){ rol = null; return rol; }
+      var r = await c.from('vg_users').select('rol').eq('id', uid).limit(1);
+      rol = (!r.error && r.data && r.data[0]) ? (r.data[0].rol || null) : null;
+    }catch(e){ rol = null; }
+    return rol;
+  }
+
+  /* ── Esconder lo que no le toca ─────────────────────────────── */
+  async function aplicarPermisos(){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal || !modal.classList.contains('active')) return;
+
+    var r = await averiguarRol();
+    if(r !== 'operador') return;          /* solo se restringe al operador */
+
+    var tabs = modal.querySelectorAll('.vg-admin-tab');
+    Array.prototype.forEach.call(tabs, function(b){
+      var t = (b.textContent||'').toLowerCase();
+      var veta = VETADAS.some(function(v){ return t.indexOf(v) >= 0; });
+      if(veta){
+        b.style.display = 'none';
+        /* Si estaba abierta en esa pestaña, se le manda a Pedidos */
+        if(b.classList.contains('active')){
+          var pedidos = Array.prototype.filter.call(tabs, function(x){
+            return /pedidos|hoy/i.test(x.textContent||'') && x.style.display !== 'none';
+          })[0];
+          if(pedidos) pedidos.click();
+        }
+      }
+    });
+
+    if(!modal.querySelector('.vgrol-aviso')){
+      var cont = modal.querySelector('.vg-admin-content');
+      if(cont){
+        var d = document.createElement('div');
+        d.className = 'vgrol-aviso';
+        d.innerHTML = '<b>Cuenta de operador.</b> Puedes atender pedidos y '+
+          'contestar el chat. Los datos del negocio y la configuración solo '+
+          'los ve el administrador.';
+        cont.insertBefore(d, cont.firstChild);
+      }
+    }
+  }
+
+  /* ── La bitácora ────────────────────────────────────────────── */
+  function cuando(iso){
+    var d = new Date(iso);
+    if(isNaN(d)) return '';
+    var min = Math.round((Date.now() - d) / 60000);
+    if(min < 1) return 'ahora';
+    if(min < 60) return 'hace ' + min + ' min';
+    if(min < 1440) return 'hace ' + Math.floor(min/60) + ' h';
+    return d.toLocaleDateString('es-MX', {day:'2-digit', month:'short'}) + ' ' +
+           d.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+  }
+
+  async function montarBitacora(){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return;
+    var tabs = modal.querySelector('.vg-admin-tabs');
+    var cont = modal.querySelector('.vg-admin-content');
+    if(!tabs || !cont) return;
+
+    /* Si alguna vez se colaron varias pestañas, se queda la primera. */
+    var yaHay = tabs.querySelectorAll('.vg-admin-tab[data-tab="bitacora"]');
+    for(var i = 1; i < yaHay.length; i++) yaHay[i].remove();
+    if(yaHay.length || document.getElementById('vgAdminBitacora')) return;
+
+    /* Averiguar el rol tarda, y mientras tanto siguen llegando avisos
+       del observador. Sin esta bandera, la comprobación de arriba mira
+       una sección que todavía no existe y se montan tres. */
+    if(montando) return;
+    montando = true;
+
+    var r = await averiguarRol();
+    if(r === 'operador') return;          /* un operador no ve el registro */
+
+    var sec = document.createElement('section');
+    sec.className = 'vg-admin-section';
+    sec.id = 'vgAdminBitacora';
+    sec.innerHTML = '<div class="vgbit"><div class="vgbit-nada">Cargando…</div></div>';
+    cont.appendChild(sec);
+
+    var b = document.createElement('button');
+    b.className = 'vg-admin-tab';
+    b.setAttribute('data-tab', 'bitacora');
+    b.textContent = '📋 Bitácora';
+    tabs.appendChild(b);
+
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-tab'),
+        function(x){ x.classList.toggle('active', x === b); });
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-section'),
+        function(s){ s.classList.toggle('active', s === sec); });
+      cargarBitacora();
+    });
+  }
+
+  async function cargarBitacora(){
+    var raiz = document.querySelector('#vgAdminBitacora .vgbit');
+    if(!raiz) return;
+    var c = cli();
+    if(!c){ raiz.innerHTML = '<div class="vgbit-nada">Sin conexión.</div>'; return; }
+    raiz.innerHTML = '<div class="vgbit-nada">Cargando…</div>';
+
+    var r = await c.from('vg_bitacora')
+      .select('creado_at,quien_nom,accion,sobre,detalle')
+      .order('creado_at', {ascending:false}).limit(120);
+
+    if(r.error){
+      raiz.innerHTML = '<div class="vgbit-nada">'+
+        (/does not exist|schema cache/i.test(r.error.message)
+          ? 'Falta correr supabase_fase71_ROLES_Y_BITACORA.sql en Supabase.'
+          : esc(r.error.message))+'</div>';
+      return;
+    }
+    if(!r.data || !r.data.length){
+      raiz.innerHTML = '<div class="vgbit-nada">Todavía no hay nada apuntado.<br>'+
+        'En cuanto marques un pedido, aparecerá aquí.</div>';
+      return;
+    }
+
+    raiz.innerHTML =
+      '<div class="vgbit-cab"><h3>Quién hizo qué</h3>'+
+      '<span>últimas '+r.data.length+' acciones</span></div>'+
+      r.data.map(function(x){
+        return '<div class="vgbit-fila">'+
+          '<time>'+esc(cuando(x.creado_at))+'</time>'+
+          '<div><b><em>'+esc(x.accion)+'</em>'+(x.sobre?' · '+esc(x.sobre):'')+'</b>'+
+          (x.detalle ? '<small>'+esc(x.detalle)+'</small>' : '')+'</div>'+
+          '<span class="vgbit-quien">'+esc(x.quien_nom||'?')+'</span>'+
+        '</div>';
+      }).join('');
+  }
+
+  var intentos = 0;
+  function arrancar(){
+    var modal = document.getElementById('vgAdminModal');
+    if(modal && !modal.dataset.vg72){
+      modal.dataset.vg72 = '1';
+      var pend = false;
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){
+          pend = false;
+          montarBitacora().catch(function(){});
+          aplicarPermisos().catch(function(){});
+        });
+      }).observe(modal, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});
+      return;    /* ya está enganchado: no hace falta seguir mirando */
+    }
+    if(++intentos < 40) setTimeout(arrancar, 1500);
+  }
+
+  /* Esto es cosa del panel de administración: no tiene por qué correr
+     mientras la portada todavía se está cargando. */
+  function alRato(){
+    if(window.requestIdleCallback) requestIdleCallback(arrancar, {timeout:3000});
+    else setTimeout(arrancar, 1200);
+  }
+  if(document.readyState === 'complete') alRato();
+  else window.addEventListener('load', alRato, {once:true});
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 74 · Notas y etiquetas de cliente
+
+     Paso 3 de 5.
+
+     Lo que sabes de un cliente deja de vivir en tu cabeza. Las
+     etiquetas se ven en la tabla sin abrir nada; la nota se abre con
+     el botón de al lado.
+
+     No se toca renderUsersTable: este bloque mira la tabla y le añade
+     lo suyo cuando cambia. Así el filtro de búsqueda sigue funcionando
+     igual y no hay dos sitios que dibujen lo mismo.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-notas-cliente-v74">
+.vgnt-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.vgnt-chip{
+  font-size:.62rem;font-weight:900;letter-spacing:.02em;
+  padding:2px 7px;border-radius:999px;white-space:nowrap;line-height:1.5;
+}
+.vgnt-c-vip{background:rgba(255,214,138,.16);color:#ffd68a}
+.vgnt-c-frecuente{background:rgba(25,230,193,.14);color:#19e6c1}
+.vgnt-c-cuidado{background:rgba(255,160,80,.16);color:#ffa050}
+.vgnt-c-moroso{background:rgba(255,112,144,.16);color:#ff7090}
+.vgnt-c-revende{background:rgba(150,160,255,.16);color:#a0aaff}
+.vgnt-c-nuevo{background:rgba(255,255,255,.09);color:#9aa7c2}
+
+.vgnt-abrir{
+  border:0;cursor:pointer;background:transparent;padding:1px 4px;
+  font-size:.82rem;line-height:1;opacity:.42;transition:opacity .15s;
+  vertical-align:middle;margin-left:5px;
+}
+.vgnt-abrir:hover{opacity:1}
+.vgnt-abrir.tiene{opacity:1}
+
+.vgnt-fondo{
+  position:fixed;inset:0;z-index:2147483000;display:flex;
+  align-items:center;justify-content:center;padding:18px;
+  background:rgba(6,9,20,.74);backdrop-filter:blur(3px);
+}
+.vgnt-caja{
+  width:min(460px,100%);max-height:88vh;overflow:auto;
+  background:#111726;border:1px solid rgba(255,255,255,.1);
+  border-radius:17px;padding:19px 20px 17px;
+  box-shadow:0 26px 70px rgba(0,0,0,.6);
+}
+.vgnt-caja h3{margin:0 0 2px;font-size:1rem;font-weight:900;color:#fff}
+.vgnt-caja .vgnt-sub{margin:0 0 15px;font-size:.76rem;color:#8593b5}
+.vgnt-caja label{
+  display:block;font-size:.7rem;font-weight:900;letter-spacing:.06em;
+  text-transform:uppercase;color:#8593b5;margin:0 0 7px;
+}
+.vgnt-caja textarea{
+  width:100%;min-height:110px;resize:vertical;box-sizing:border-box;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:11px;padding:11px 13px;color:#fff;
+  font-family:inherit;font-size:.85rem;line-height:1.55;
+}
+.vgnt-caja textarea:focus{outline:0;border-color:rgba(25,230,193,.5)}
+.vgnt-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.vgnt-tag{
+  cursor:pointer;border:1px solid rgba(255,255,255,.12);background:transparent;
+  color:#8593b5;font-size:.73rem;font-weight:800;font-family:inherit;
+  padding:5px 11px;border-radius:999px;transition:all .14s;
+}
+.vgnt-tag:hover{border-color:rgba(255,255,255,.28);color:#c8d0e4}
+.vgnt-tag.on{border-color:transparent;color:#0a0e18;background:#19e6c1}
+.vgnt-pie{display:flex;gap:9px;margin-top:16px}
+.vgnt-pie button{
+  flex:1;border:0;cursor:pointer;font-family:inherit;font-weight:900;
+  font-size:.84rem;padding:11px;border-radius:11px;transition:filter .14s;
+}
+.vgnt-pie button:hover{filter:brightness(1.1)}
+.vgnt-ok{background:#19e6c1;color:#07121a}
+.vgnt-no{background:rgba(255,255,255,.07);color:#c8d0e4}
+.vgnt-pie button[disabled]{opacity:.5;cursor:default}
+.vgnt-err{margin:11px 0 0;font-size:.77rem;color:#ff7090;line-height:1.5}
+</style>
+
+<script id="vg-notas-cliente-js-v74">
+(function(){
+  'use strict';
+  if(window.__VG74__) return; window.__VG74__ = true;
+
+  var TAGS = [
+    {k:'VIP',       c:'vip',       t:'⭐ VIP'},
+    {k:'Frecuente', c:'frecuente', t:'🔁 Frecuente'},
+    {k:'Cuidado',   c:'cuidado',   t:'⚠️ Cuidado'},
+    {k:'Moroso',    c:'moroso',    t:'💸 Moroso'},
+    {k:'Revende',   c:'revende',   t:'🏷️ Revende'},
+    {k:'Nuevo',     c:'nuevo',     t:'🆕 Nuevo'}
+  ];
+  function clase(k){
+    for(var i=0;i<TAGS.length;i++) if(TAGS[i].k===k) return TAGS[i].c;
+    return 'nuevo';
+  }
+
+  var FICHAS = {};      /* uid -> {notas, etiquetas} */
+  var PEDIDOS = {};     /* uid -> true, ya se preguntó (aunque no tenga nada) */
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ── Leer una fila de la tabla ───────────────────────────────
+     Hay dos dibujados distintos de esta tabla en la página. El viejo
+     pone el nombre en la segunda columna y el id en un input; el que
+     se usa hoy pone el nombre en la primera y el id en el botón de
+     borrar. Y las filas de administrador no llevan id en ninguna
+     parte, así que ésas se resuelven por correo al abrirlas. */
+  /* Solo el texto propio de la celda: nada de lo que este bloque le
+     haya metido dentro (el botón, las pastillas). */
+  function nombreDe(cel){
+    var t = '';
+    Array.prototype.forEach.call(cel.childNodes, function(n){
+      if(n.nodeType === 3) t += n.nodeValue;
+    });
+    if(!t.trim()){
+      var b = cel.querySelector('b');
+      if(b) t = b.textContent || '';
+    }
+    return t.replace(/\s+/g,' ').trim() || 'Cliente';
+  }
+
+  function leerFila(tr){
+    var inp  = tr.querySelector('input[data-uid]');
+    var bor  = tr.querySelector('[data-borrar]');
+    var i    = inp ? 1 : 0;                      /* columna del nombre */
+    var cel  = tr.cells && tr.cells[i];
+    if(!cel) return null;
+    return {
+      celda:  cel,
+      uid:    inp ? inp.getAttribute('data-uid')
+                  : (bor ? bor.getAttribute('data-borrar') : null),
+      nombre: nombreDe(cel),
+      mail:   inp ? null : ((tr.cells[1] && tr.cells[1].textContent||'').trim())
+    };
+  }
+
+  /* ── Pintar una fila ─────────────────────────────────────────── */
+  function pintar(tr, d){
+    var celda = d.celda, uid = d.uid;
+    if(!celda) return;
+    var f = (uid && FICHAS[uid]) || {};
+    var tags = f.etiquetas || [];
+
+    var viejo = celda.querySelector('.vgnt-chips');
+    if(viejo) viejo.remove();
+
+    var btn = celda.querySelector('.vgnt-abrir');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.className = 'vgnt-abrir';
+      btn.type = 'button';
+      btn.title = 'Nota de este cliente';
+      btn.textContent = '📝';
+      btn.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        abrir(tr, leerFila(tr) || d).catch(function(){});
+      });
+      var b = celda.querySelector('b');
+      (b ? b.parentNode : celda).appendChild(btn);
+    }
+    btn.classList.toggle('tiene', !!(f.notas || tags.length));
+
+    if(tags.length){
+      var d = document.createElement('div');
+      d.className = 'vgnt-chips';
+      d.innerHTML = tags.map(function(k){
+        return '<span class="vgnt-chip vgnt-c-'+clase(k)+'">'+esc(k)+'</span>';
+      }).join('');
+      celda.appendChild(d);
+    }
+  }
+
+  /* ── Recorrer la tabla ───────────────────────────────────────── */
+  var trabajando = false;
+  async function adornar(){
+    var wrap = document.getElementById('vgUsersTableWrap');
+    if(!wrap || trabajando) return;
+    var filas = wrap.querySelectorAll('tbody tr');
+    if(!filas.length) return;
+
+    var mapa = [], faltan = [];
+    Array.prototype.forEach.call(filas, function(tr){
+      var d = leerFila(tr);
+      if(!d) return;
+      mapa.push([tr, d]);
+      if(d.uid && !PEDIDOS[d.uid]) faltan.push(d.uid);
+    });
+    if(!mapa.length) return;
+
+    if(faltan.length){
+      trabajando = true;
+      try{
+        var c = cli();
+        if(c){
+          var r = await c.rpc('vg_notas_de', {p_ids: faltan});
+          if(!r.error && r.data)
+            r.data.forEach(function(x){
+              FICHAS[x.id] = {notas:x.notas, etiquetas:x.etiquetas || []};
+            });
+          /* Se marcan como preguntados aunque la consulta falle: si falta
+             el SQL, no tiene sentido volver a preguntar en cada pintado. */
+          faltan.forEach(function(u){ PEDIDOS[u] = true; });
+        }
+      }catch(e){}
+      trabajando = false;
+    }
+
+    mapa.forEach(function(p){ pintar(p[0], p[1]); });
+  }
+
+  /* ── La ventanita ────────────────────────────────────────────── */
+  async function abrir(tr, d){
+    var uid = d.uid, nombre = d.nombre;
+
+    /* Fila sin id a la vista (las de administrador): se busca por
+       correo, y solo cuando de verdad hace falta. */
+    if(!uid && d.mail && d.mail.indexOf('@') > 0){
+      var c0 = cli();
+      if(c0){
+        var q = await c0.from('vg_users').select('id').eq('email', d.mail).limit(1);
+        if(!q.error && q.data && q.data[0]) uid = String(q.data[0].id);
+      }
+    }
+    if(!uid){ alert('No pude identificar a este cliente.'); return; }
+
+    if(!PEDIDOS[uid]){
+      var c1 = cli();
+      if(c1){
+        var q2 = await c1.rpc('vg_notas_de', {p_ids:[uid]});
+        if(!q2.error && q2.data && q2.data[0])
+          FICHAS[uid] = {notas:q2.data[0].notas, etiquetas:q2.data[0].etiquetas || []};
+        PEDIDOS[uid] = true;
+      }
+    }
+
+    var f = FICHAS[uid] || {};
+    var sel = (f.etiquetas || []).slice();
+
+    var fondo = document.createElement('div');
+    fondo.className = 'vgnt-fondo';
+    fondo.innerHTML =
+      '<div class="vgnt-caja">'+
+        '<h3>'+esc(nombre)+'</h3>'+
+        '<p class="vgnt-sub">Solo tú ves esto. El cliente no.</p>'+
+        '<label>Etiquetas</label>'+
+        '<div class="vgnt-tags">'+
+          TAGS.map(function(t){
+            return '<button type="button" class="vgnt-tag'+
+              (sel.indexOf(t.k)>=0?' on':'')+'" data-k="'+t.k+'">'+t.t+'</button>';
+          }).join('')+
+        '</div>'+
+        '<label>Nota</label>'+
+        '<textarea placeholder="Paga rápido. Pide siempre por WhatsApp, no por el chat…">'+
+          esc(f.notas||'')+'</textarea>'+
+        '<div class="vgnt-pie">'+
+          '<button type="button" class="vgnt-no">Cancelar</button>'+
+          '<button type="button" class="vgnt-ok">Guardar</button>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(fondo);
+
+    var caja = fondo.querySelector('.vgnt-caja');
+    var area = fondo.querySelector('textarea');
+    var ok   = fondo.querySelector('.vgnt-ok');
+    setTimeout(function(){ area.focus(); }, 40);
+
+    function cerrar(){
+      document.removeEventListener('keydown', tecla);
+      fondo.remove();
+    }
+    function tecla(e){ if(e.key === 'Escape') cerrar(); }
+    document.addEventListener('keydown', tecla);
+    fondo.addEventListener('click', function(e){ if(e.target === fondo) cerrar(); });
+    fondo.querySelector('.vgnt-no').addEventListener('click', cerrar);
+
+    caja.addEventListener('click', function(e){
+      var b = e.target.closest && e.target.closest('.vgnt-tag');
+      if(!b) return;
+      var k = b.getAttribute('data-k');
+      var i = sel.indexOf(k);
+      if(i >= 0) sel.splice(i,1); else sel.push(k);
+      b.classList.toggle('on', i < 0);
+    });
+
+    ok.addEventListener('click', async function(){
+      var c = cli();
+      if(!c) return;
+      ok.disabled = true; ok.textContent = 'Guardando…';
+      var vieja = fondo.querySelector('.vgnt-err');
+      if(vieja) vieja.remove();
+
+      var r = await c.rpc('vg_guardar_nota',
+        {p_id: String(uid), p_notas: area.value, p_etiquetas: sel});
+
+      if(r.error){
+        ok.disabled = false; ok.textContent = 'Guardar';
+        var p = document.createElement('p');
+        p.className = 'vgnt-err';
+        p.textContent = /does not exist|schema cache/i.test(r.error.message)
+          ? 'Falta correr la fase 74 en Supabase.'
+          : r.error.message;
+        caja.appendChild(p);
+        return;
+      }
+
+      FICHAS[uid] = {notas: area.value.trim() || null, etiquetas: sel};
+      PEDIDOS[uid] = true;
+      cerrar();
+      if(tr && tr.isConnected){
+        var d2 = leerFila(tr);
+        if(d2){ d2.uid = uid; pintar(tr, d2); }
+      }
+    });
+  }
+
+  /* ── Estar pendiente de la tabla ─────────────────────────────── */
+  var intentos = 0, pend = false;
+  function arrancar(){
+    var wrap = document.getElementById('vgUsersTableWrap');
+    if(wrap && !wrap.dataset.vg74){
+      wrap.dataset.vg74 = '1';
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){
+          pend = false;
+          adornar().catch(function(){});
+        });
+      }).observe(wrap, {childList:true, subtree:true});
+      adornar().catch(function(){});
+      return;    /* la tabla es fija: enganchada una vez, ya está */
+    }
+    if(++intentos < 40) setTimeout(arrancar, 1500);
+  }
+
+  /* Solo sirve dentro del panel: que espere a que cargue la portada. */
+  function alRato(){
+    if(window.requestIdleCallback) requestIdleCallback(arrancar, {timeout:3000});
+    else setTimeout(arrancar, 1200);
+  }
+  if(document.readyState === 'complete') alRato();
+  else window.addEventListener('load', alRato, {once:true});
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 75 · Qué te piden que no vendes
+
+     Paso 4 de 5.
+
+     El buscador ya escribe "Sin coincidencias para X" cuando falla.
+     Este bloque se cuelga de ahí y lo apunta, en vez de meter mano
+     dentro del buscador. Si mañana cambias el buscador, esto no lo
+     rompe: como mucho deja de apuntar.
+
+     Se espera 1,4 segundos desde la última tecla. Quien escribe
+     "fortnite" pasa por "f", "fo", "for"… y ninguna de esas es una
+     búsqueda de verdad.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-busquedas-v75">
+.vgbq{display:grid;gap:8px}
+.vgbq-cab{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap;margin-bottom:4px}
+.vgbq-cab h3{margin:0;font-size:1rem;font-weight:900;color:#fff}
+.vgbq-cab span{font-size:.76rem;color:#8593b5}
+.vgbq-int{
+  margin:0 0 13px;padding:12px 15px;border-radius:12px;
+  border:1px solid rgba(25,230,193,.24);background:rgba(25,230,193,.07);
+  font-size:.82rem;color:#9aa7c2;line-height:1.55;
+}
+.vgbq-int b{color:#8ff5e3;font-weight:900}
+.vgbq-fila{
+  display:grid;grid-template-columns:58px 1fr auto auto;gap:12px;align-items:center;
+  padding:10px 13px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+}
+.vgbq-fila.ok{opacity:.45}
+@media(max-width:640px){
+  .vgbq-fila{grid-template-columns:52px 1fr auto;gap:8px}
+  .vgbq-fila time{display:none}
+}
+.vgbq-veces{
+  text-align:center;font-size:.95rem;font-weight:900;color:#0a0e18;
+  background:#19e6c1;border-radius:9px;padding:4px 0;line-height:1.25;
+}
+.vgbq-veces small{display:block;font-size:.55rem;font-weight:800;opacity:.72}
+.vgbq-fila.baja .vgbq-veces{background:rgba(255,255,255,.1);color:#c8d0e4}
+.vgbq-fila b{font-size:.9rem;font-weight:800;color:#fff;word-break:break-word}
+.vgbq-fila time{font-size:.72rem;color:#8593b5;white-space:nowrap}
+.vgbq-fila button{
+  border:1px solid rgba(255,255,255,.14);background:transparent;color:#8593b5;
+  font-family:inherit;font-size:.72rem;font-weight:800;cursor:pointer;
+  padding:6px 11px;border-radius:9px;white-space:nowrap;transition:all .14s;
+}
+.vgbq-fila button:hover{border-color:rgba(25,230,193,.5);color:#19e6c1}
+.vgbq-nada{padding:34px 14px;text-align:center;color:#8593b5;font-size:.84rem;line-height:1.6}
+</style>
+
+<script id="vg-busquedas-js-v75">
+(function(){
+  'use strict';
+  if(window.__VG75__) return; window.__VG75__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ══ 1. Apuntar lo que no se encuentra ═════════════════════════ */
+
+  var yaMandadas = {};   /* en esta visita, una vez por texto */
+  var reloj = null;
+
+  function apuntar(txt){
+    txt = String(txt||'').trim();
+    if(txt.length < 3 || txt.length > 60) return;
+    var k = txt.toLowerCase();
+    if(yaMandadas[k]) return;
+    yaMandadas[k] = true;
+    var c = cli();
+    if(!c) return;
+    /* El .then() no es adorno: en Supabase la consulta no sale del
+       navegador hasta que alguien consume la promesa. Llamarla suelta
+       no manda nada. No se espera el resultado -es un apunte, no una
+       venta- pero sí hay que arrancarla. */
+    try{
+      c.rpc('vg_apuntar_busqueda', {p_texto: txt}).then(
+        function(r){ if(r && r.error) yaMandadas[k] = false; },
+        function(){ yaMandadas[k] = false; }
+      );
+    }catch(e){ yaMandadas[k] = false; }
+  }
+
+  function mirarPanel(){
+    var p = document.getElementById('searchResultsPanel');
+    if(!p || !p.classList.contains('active')) return;
+    /* Si hay lista de resultados, encontró algo. */
+    if(p.querySelector('.search-result-list')) return;
+    var m = (p.textContent||'').match(/Sin coincidencias para\s*"([^"]+)"/i);
+    if(m && m[1]) apuntar(m[1]);
+  }
+
+  function vigilarPanel(){
+    var p = document.getElementById('searchResultsPanel');
+    if(!p || p.dataset.vg75) return !!p;
+    p.dataset.vg75 = '1';
+    new MutationObserver(function(){
+      clearTimeout(reloj);
+      reloj = setTimeout(mirarPanel, 1400);
+    }).observe(p, {childList:true, subtree:true, attributes:true,
+                   attributeFilter:['class']});
+    return true;
+  }
+
+  /* ══ 2. La pantalla del panel ══════════════════════════════════ */
+
+  var montando = false;
+
+  function cuando(iso){
+    var d = new Date(iso);
+    if(isNaN(d)) return '';
+    var dias = Math.floor((Date.now() - d) / 86400000);
+    if(dias < 1) return 'hoy';
+    if(dias === 1) return 'ayer';
+    if(dias < 30) return 'hace ' + dias + ' días';
+    return d.toLocaleDateString('es-MX', {day:'2-digit', month:'short'});
+  }
+
+  async function esOperador(){
+    var c = cli();
+    if(!c) return false;
+    try{
+      var s = await c.auth.getUser();
+      var uid = s && s.data && s.data.user && s.data.user.id;
+      if(!uid) return false;
+      var r = await c.from('vg_users').select('rol').eq('id', uid).limit(1);
+      return !r.error && r.data && r.data[0] && r.data[0].rol === 'operador';
+    }catch(e){ return false; }
+  }
+
+  async function montar(){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return;
+    var tabs = modal.querySelector('.vg-admin-tabs');
+    var cont = modal.querySelector('.vg-admin-content');
+    if(!tabs || !cont) return;
+
+    var yaHay = tabs.querySelectorAll('.vg-admin-tab[data-tab="buscado"]');
+    for(var i = 1; i < yaHay.length; i++) yaHay[i].remove();
+    if(yaHay.length || document.getElementById('vgAdminBuscado')) return;
+
+    if(montando) return;      /* la comprobación de rol tarda */
+    montando = true;
+    if(await esOperador()) return;
+
+    var sec = document.createElement('section');
+    sec.className = 'vg-admin-section';
+    sec.id = 'vgAdminBuscado';
+    sec.innerHTML = '<div class="vgbq"><div class="vgbq-nada">Cargando…</div></div>';
+    cont.appendChild(sec);
+
+    var b = document.createElement('button');
+    b.className = 'vg-admin-tab';
+    b.setAttribute('data-tab', 'buscado');
+    b.textContent = '🔎 Lo que buscan';
+    tabs.appendChild(b);
+
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-tab'),
+        function(x){ x.classList.toggle('active', x === b); });
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-section'),
+        function(s){ s.classList.toggle('active', s === sec); });
+      cargar();
+    });
+  }
+
+  async function cargar(){
+    var raiz = document.querySelector('#vgAdminBuscado .vgbq');
+    if(!raiz) return;
+    var c = cli();
+    if(!c){ raiz.innerHTML = '<div class="vgbq-nada">Sin conexión.</div>'; return; }
+    raiz.innerHTML = '<div class="vgbq-nada">Cargando…</div>';
+
+    var r = await c.rpc('vg_busquedas_top', {p_dias: 90});
+
+    if(r.error){
+      raiz.innerHTML = '<div class="vgbq-nada">'+
+        (/does not exist|schema cache/i.test(r.error.message)
+          ? 'Falta correr la fase 75 en Supabase.'
+          : esc(r.error.message))+'</div>';
+      return;
+    }
+    if(!r.data || !r.data.length){
+      raiz.innerHTML = '<div class="vgbq-nada">Nadie ha buscado algo que no tengas.<br>'+
+        'O eso, o todavía no le ha dado tiempo: esto se llena solo.</div>';
+      return;
+    }
+
+    raiz.innerHTML =
+      '<div class="vgbq-int"><b>Esto te lo pidieron y no lo tenías.</b> '+
+      'Cada línea es alguien que vino con intención de comprar y se fue con '+
+      'las manos vacías. Lo de arriba es lo que más se repite.</div>'+
+      '<div class="vgbq-cab"><h3>Búsquedas sin resultado</h3>'+
+      '<span>últimos 90 días</span></div>'+
+      r.data.map(function(x){
+        return '<div class="vgbq-fila'+(x.atendida?' ok':'')+
+                 (x.veces < 3 ? ' baja' : '')+'" data-k="'+esc(x.clave)+'">'+
+          '<div class="vgbq-veces">'+x.veces+'<small>VECES</small></div>'+
+          '<b>'+esc(x.texto)+'</b>'+
+          '<time>'+esc(cuando(x.ultima))+'</time>'+
+          '<button type="button">'+(x.atendida?'Reabrir':'Ya lo tengo')+'</button>'+
+        '</div>';
+      }).join('');
+
+    /* Se engancha una sola vez: cargar() vuelve a escribir el interior
+       de raiz, pero raiz sigue siendo el mismo nodo. */
+    if(raiz.dataset.vg75click) return;
+    raiz.dataset.vg75click = '1';
+    raiz.addEventListener('click', async function(ev){
+      var btn = ev.target.closest && ev.target.closest('.vgbq-fila button');
+      if(!btn) return;
+      var fila = btn.closest('.vgbq-fila');
+      var ok   = !fila.classList.contains('ok');
+      btn.disabled = true;
+      var rr = await c.rpc('vg_busqueda_atendida',
+        {p_clave: fila.getAttribute('data-k'), p_val: ok});
+      btn.disabled = false;
+      if(rr.error) return;
+      fila.classList.toggle('ok', ok);
+      btn.textContent = ok ? 'Reabrir' : 'Ya lo tengo';
+    });
+  }
+
+  /* ══ 3. Arranque ═══════════════════════════════════════════════ */
+  var intentos = 0, pend = false;
+  function arrancar(){
+    var listo = vigilarPanel();
+
+    var modal = document.getElementById('vgAdminModal');
+    if(modal && modal.dataset.vg75 && listo) return;
+    if(modal && !modal.dataset.vg75){
+      modal.dataset.vg75 = '1';
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){
+          pend = false;
+          montar().catch(function(){});
+        });
+      }).observe(modal, {childList:true, subtree:true, attributes:true,
+                         attributeFilter:['class']});
+    }
+    if(++intentos < 40) setTimeout(arrancar, 1500);
+  }
+
+  /* El panel del buscador no existe hasta que alguien busca por
+     primera vez. Antes lo miraba en bucle para siempre; ahora se
+     engancha en cuanto se escribe en cualquier campo, que es cuando
+     de verdad puede aparecer. */
+  document.addEventListener('input', function(){ vigilarPanel(); }, true);
+
+  /* Nada de esto hace falta mientras la portada carga. */
+  function alRato(){
+    if(window.requestIdleCallback) requestIdleCallback(arrancar, {timeout:3000});
+    else setTimeout(arrancar, 1200);
+  }
+  if(document.readyState === 'complete') alRato();
+  else window.addEventListener('load', alRato, {once:true});
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 76 · Enlaces e imágenes rotas
+
+     Paso 5 de 5. Sin SQL: esto se comprueba entero en el navegador.
+
+     Una foto que no carga es una venta que no se hace, y no te enteras
+     nunca porque el cliente no te escribe para decírtelo: se va. Con
+     68 imágenes en imgur y enlaces que caducan, esto conviene pasarlo
+     antes de cada inauguración.
+
+     Se prueban las imágenes de verdad, cargándolas. No hay forma
+     honesta de comprobar un enlace a otra web desde el navegador -el
+     navegador no deja-, así que esos no se inventan: se listan aparte
+     para que los mires tú.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-enlaces-v76">
+.vgel{display:grid;gap:9px}
+.vgel-int{
+  margin:0 0 4px;padding:12px 15px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);
+  font-size:.82rem;color:#9aa7c2;line-height:1.55;
+}
+.vgel-int b{color:#fff;font-weight:900}
+.vgel-btn{
+  border:0;cursor:pointer;font-family:inherit;font-weight:900;font-size:.85rem;
+  padding:11px 20px;border-radius:11px;background:#19e6c1;color:#07121a;
+  transition:filter .14s;
+}
+.vgel-btn:hover{filter:brightness(1.1)}
+.vgel-btn[disabled]{opacity:.5;cursor:default}
+.vgel-btn.gris{background:rgba(255,255,255,.07);color:#c8d0e4}
+.vgel-acc{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+.vgel-barra{
+  height:6px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;
+}
+.vgel-barra i{display:block;height:100%;background:#19e6c1;width:0;transition:width .2s}
+.vgel-res{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:#8593b5;margin:2px 0 6px}
+.vgel-res b{color:#fff;font-weight:900;font-size:.95rem}
+.vgel-res .mal b{color:#ff7090}
+.vgel-fila{
+  display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;
+  padding:10px 13px;border-radius:11px;
+  border:1px solid rgba(255,112,144,.26);background:rgba(255,112,144,.06);
+}
+@media(max-width:640px){ .vgel-fila{grid-template-columns:44px 1fr;gap:9px}
+                         .vgel-fila button{grid-column:1/-1} }
+.vgel-fila .vgel-x{
+  width:54px;height:54px;border-radius:9px;display:grid;place-items:center;
+  background:rgba(255,112,144,.14);color:#ff7090;font-size:1.3rem;
+}
+.vgel-fila b{display:block;font-size:.87rem;font-weight:800;color:#fff;word-break:break-word}
+.vgel-fila small{
+  display:block;font-size:.71rem;color:#8593b5;margin-top:3px;word-break:break-all;
+  font-family:ui-monospace,Consolas,monospace;
+}
+.vgel-fila button{
+  border:1px solid rgba(255,255,255,.14);background:transparent;color:#8593b5;
+  font-family:inherit;font-size:.72rem;font-weight:800;cursor:pointer;
+  padding:6px 11px;border-radius:9px;white-space:nowrap;
+}
+.vgel-fila button:hover{border-color:rgba(25,230,193,.5);color:#19e6c1}
+.vgel-nada{
+  padding:30px 14px;text-align:center;font-size:.86rem;line-height:1.6;
+  color:#8ff5e3;border:1px solid rgba(25,230,193,.24);
+  background:rgba(25,230,193,.07);border-radius:12px;
+}
+.vgel-lista{
+  margin-top:6px;padding:12px 15px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);
+  font-size:.75rem;color:#8593b5;line-height:1.7;
+  max-height:220px;overflow:auto;font-family:ui-monospace,Consolas,monospace;
+}
+.vgel-lista a{color:#9aa7c2;text-decoration:none}
+.vgel-lista a:hover{color:#19e6c1}
+</style>
+
+<script id="vg-enlaces-js-v76">
+(function(){
+  'use strict';
+  if(window.__VG76__) return; window.__VG76__ = true;
+
+  function cli(){ return (typeof window.vgGetSB==='function') ? window.vgGetSB() : null; }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ── Qué comprobar ───────────────────────────────────────────── */
+  function recoger(){
+    var vistos = {}, lista = [];
+    function meter(url, donde){
+      if(!url) return;
+      url = String(url).trim();
+      if(!url || url.indexOf('data:') === 0 || url.indexOf('blob:') === 0) return;
+      if(/^portada\.png$/i.test(url)) return;          /* el respaldo local */
+      if(vistos[url]) return;
+      vistos[url] = 1;
+      lista.push({url:url, donde:donde || 'la página'});
+    }
+
+    /* 1. El catálogo, esté dibujado o no */
+    var S = Array.isArray(window.SERVICES) ? window.SERVICES : [];
+    S.forEach(function(p){
+      meter(p.image, p.title || ('producto ' + p.id));
+      if(Array.isArray(p.gallery)) p.gallery.forEach(function(g){
+        meter(typeof g === 'string' ? g : (g && g.url), p.title || 'galería');
+      });
+    });
+
+    /* 2. Lo que hay puesto en pantalla ahora mismo */
+    Array.prototype.forEach.call(document.images, function(img){
+      var src = img.getAttribute('src');
+      if(!src) return;
+      var alt = (img.getAttribute('alt')||'').trim();
+      meter(src, alt || 'imagen de la página');
+    });
+
+    return lista;
+  }
+
+  /* Enlaces a otras webs. No se pueden probar desde aquí -el navegador
+     no deja leer respuestas de otros dominios- así que no se finge que
+     sí: se listan para revisarlos a mano. */
+  function enlacesFuera(){
+    var vistos = {}, out = [];
+    Array.prototype.forEach.call(document.querySelectorAll('a[href^="http"]'), function(a){
+      var h = a.getAttribute('href');
+      if(!h || h.indexOf(location.origin) === 0) return;
+      if(vistos[h]) return;
+      vistos[h] = 1;
+      out.push({url:h, texto:(a.textContent||'').trim().slice(0,50) || h});
+    });
+    return out;
+  }
+
+  /* ── Probar una imagen ───────────────────────────────────────── */
+  function probar(url){
+    return new Promise(function(ok){
+      var img = new Image();
+      var listo = false;
+      var t = setTimeout(function(){
+        if(listo) return; listo = true; img.src = ''; ok(false);
+      }, 9000);
+      img.referrerPolicy = 'no-referrer';   /* como las carga la página */
+      img.onload  = function(){ if(listo) return; listo = true; clearTimeout(t);
+                                ok(img.naturalWidth > 1); };
+      img.onerror = function(){ if(listo) return; listo = true; clearTimeout(t); ok(false); };
+      img.src = url;
+    });
+  }
+
+  /* De seis en seis: todas a la vez satura la red y da falsos rotos. */
+  async function revisar(lista, avance){
+    var malas = [], i = 0, hechas = 0;
+    async function obrero(){
+      while(i < lista.length){
+        var it = lista[i++];
+        var bien = await probar(it.url);
+        if(!bien) malas.push(it);
+        avance(++hechas, lista.length);
+      }
+    }
+    var hilos = [];
+    for(var h = 0; h < 6; h++) hilos.push(obrero());
+    await Promise.all(hilos);
+    return malas;
+  }
+
+  /* ── La pantalla ─────────────────────────────────────────────── */
+  var montando = false;
+
+  async function esOperador(){
+    var c = cli();
+    if(!c) return false;
+    try{
+      var s = await c.auth.getUser();
+      var uid = s && s.data && s.data.user && s.data.user.id;
+      if(!uid) return false;
+      var r = await c.from('vg_users').select('rol').eq('id', uid).limit(1);
+      return !r.error && r.data && r.data[0] && r.data[0].rol === 'operador';
+    }catch(e){ return false; }
+  }
+
+  function inicio(){
+    var fuera = enlacesFuera();
+    return '<div class="vgel-int"><b>Revisa las fotos antes de cada inauguración.</b> '+
+      'Una imagen que no carga es una venta que no se hace, y no te enteras nunca: '+
+      'el cliente no te escribe, se va.</div>'+
+      '<div class="vgel-acc"><button class="vgel-btn" id="vgelIr">Revisar ahora</button>'+
+      '<span style="font-size:.78rem;color:#8593b5">Tarda un minuto. No cierres esta pestaña.</span></div>'+
+      (fuera.length
+        ? '<div class="vgel-int" style="margin-top:8px">Además hay <b>'+fuera.length+
+          ' enlaces a otras webs</b>. El navegador no me deja comprobarlos desde aquí, '+
+          'así que no te voy a decir que están bien sin haberlo mirado. Ábrelos tú de vez en cuando:'+
+          '<div class="vgel-lista">'+ fuera.map(function(x){
+            return '<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.url)+'</a>';
+          }).join('<br>')+'</div></div>'
+        : '');
+  }
+
+  async function lanzar(raiz){
+    var lista = recoger();
+    if(!lista.length){
+      raiz.innerHTML = '<div class="vgel-nada">No encontré imágenes que comprobar.</div>';
+      return;
+    }
+    raiz.innerHTML =
+      '<div class="vgel-int" id="vgelEstado">Comprobando <b>'+lista.length+'</b> imágenes…</div>'+
+      '<div class="vgel-barra"><i id="vgelBarra"></i></div>';
+
+    var barra = raiz.querySelector('#vgelBarra');
+    var est   = raiz.querySelector('#vgelEstado');
+
+    var malas = await revisar(lista, function(hechas, total){
+      barra.style.width = Math.round(hechas * 100 / total) + '%';
+      est.innerHTML = 'Comprobando… <b>'+hechas+'</b> de '+total;
+    });
+
+    var bien = lista.length - malas.length;
+    var cab =
+      '<div class="vgel-res"><span>Comprobadas <b>'+lista.length+'</b></span>'+
+      '<span>Bien <b>'+bien+'</b></span>'+
+      '<span class="mal">Rotas <b>'+malas.length+'</b></span></div>'+
+      '<div class="vgel-acc"><button class="vgel-btn" id="vgelIr">Volver a revisar</button>'+
+      (malas.length ? '<button class="vgel-btn gris" id="vgelCopiar">Copiar la lista</button>' : '')+
+      '</div>';
+
+    if(!malas.length){
+      raiz.innerHTML = cab + '<div class="vgel-nada">Todas las imágenes cargan bien.<br>'+
+        'Nada que arreglar.</div>';
+      return;
+    }
+
+    raiz.innerHTML = cab + malas.map(function(x){
+      return '<div class="vgel-fila">'+
+        '<div class="vgel-x">✕</div>'+
+        '<div><b>'+esc(x.donde)+'</b><small>'+esc(x.url)+'</small></div>'+
+        '<button type="button" data-ver="'+esc(x.url)+'">Abrirla</button>'+
+      '</div>';
+    }).join('');
+
+    var cp = raiz.querySelector('#vgelCopiar');
+    if(cp) cp.addEventListener('click', function(){
+      var txt = malas.map(function(x){ return x.donde + '  ->  ' + x.url; }).join('\n');
+      try{ navigator.clipboard.writeText(txt); cp.textContent = 'Copiada'; }
+      catch(e){ cp.textContent = 'No pude copiar'; }
+    });
+  }
+
+  function engancharRaiz(raiz){
+    if(raiz.dataset.vg76) return;
+    raiz.dataset.vg76 = '1';
+    raiz.addEventListener('click', function(ev){
+      var t = ev.target;
+      if(t && t.id === 'vgelIr'){ t.disabled = true; lanzar(raiz).catch(function(){}); return; }
+      var ver = t && t.getAttribute && t.getAttribute('data-ver');
+      if(ver) window.open(ver, '_blank', 'noopener');
+    });
+  }
+
+  async function montar(){
+    var modal = document.getElementById('vgAdminModal');
+    if(!modal) return;
+    var tabs = modal.querySelector('.vg-admin-tabs');
+    var cont = modal.querySelector('.vg-admin-content');
+    if(!tabs || !cont) return;
+
+    var yaHay = tabs.querySelectorAll('.vg-admin-tab[data-tab="enlaces"]');
+    for(var i = 1; i < yaHay.length; i++) yaHay[i].remove();
+    if(yaHay.length || document.getElementById('vgAdminEnlaces')) return;
+
+    if(montando) return;
+    montando = true;
+    if(await esOperador()) return;
+
+    var sec = document.createElement('section');
+    sec.className = 'vg-admin-section';
+    sec.id = 'vgAdminEnlaces';
+    sec.innerHTML = '<div class="vgel"></div>';
+    cont.appendChild(sec);
+
+    var b = document.createElement('button');
+    b.className = 'vg-admin-tab';
+    b.setAttribute('data-tab', 'enlaces');
+    b.textContent = '🔗 Fotos rotas';
+    tabs.appendChild(b);
+
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-tab'),
+        function(x){ x.classList.toggle('active', x === b); });
+      Array.prototype.forEach.call(modal.querySelectorAll('.vg-admin-section'),
+        function(s){ s.classList.toggle('active', s === sec); });
+      var raiz = sec.querySelector('.vgel');
+      engancharRaiz(raiz);
+      /* No se revisa solo: son cientos de peticiones y quien abre la
+         pestaña puede venir solo de paso. */
+      if(!raiz.innerHTML.trim()) raiz.innerHTML = inicio();
+    });
+  }
+
+  /* ── Arranque ────────────────────────────────────────────────── */
+  var intentos = 0, pend = false;
+  function arrancar(){
+    var modal = document.getElementById('vgAdminModal');
+    if(modal && !modal.dataset.vg76){
+      modal.dataset.vg76 = '1';
+      new MutationObserver(function(){
+        if(pend) return; pend = true;
+        requestAnimationFrame(function(){
+          pend = false;
+          montar().catch(function(){});
+        });
+      }).observe(modal, {childList:true, subtree:true, attributes:true,
+                         attributeFilter:['class']});
+      return;
+    }
+    if(++intentos < 40) setTimeout(arrancar, 1500);
+  }
+
+  function alRato(){
+    if(window.requestIdleCallback) requestIdleCallback(arrancar, {timeout:3000});
+    else setTimeout(arrancar, 1200);
+  }
+  if(document.readyState === 'complete') alRato();
+  else window.addEventListener('load', alRato, {once:true});
+})();
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 77 · Las portadas de sección, alineadas
+
+     Las coloqué con desplazamientos en porcentaje: right = 2% + i·6,5%.
+     Eso no es maquetar, es aritmética que cuadra en el ancho en que lo
+     probé y se desbarata en cualquier otro. De ahí que fueran
+     desalineadas y se metieran debajo del título.
+
+     Ahora son una fila de verdad, con la misma proporción para todas y
+     encerrada en la mitad derecha, donde no hay texto. El navegador
+     reparte; yo no cuento porcentajes.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-portadas-v77">
+
+/* La franja de imágenes vive en la derecha y no puede salir de ahí.
+   Antes ocupaba toda la portada y por eso se encimaba al texto. */
+.vgfn-portada{
+  left:auto; right:0; top:0; bottom:0;
+  width:min(52%, 560px);
+  display:flex; align-items:center; justify-content:flex-end;
+  gap:14px; padding:20px 22px;
+}
+
+/* Degradado que funde el borde izquierdo de la franja con el fondo,
+   para que no se vea un corte recto donde empiezan las fotos. */
+.vgfn-portada:after{
+  background:linear-gradient(90deg,
+    #070910 0%, rgba(7,9,16,.72) 26%, rgba(7,9,16,.18) 58%, transparent 80%);
+}
+
+/* Fuera el posicionamiento por cuentas. Ahora son piezas de una fila. */
+.vgfn-portada img{
+  position:static; flex:0 0 auto;
+  right:auto; bottom:auto; left:auto; top:auto;
+}
+
+/* Fotos con fondo: todas con la MISMA proporción y recortadas al
+   centro. Que cada una traiga su forma es lo que las hacía parecer
+   pegadas de cualquier manera. */
+.vgfn-portada.cartas img{
+  height:clamp(104px, 62%, 200px);
+  width:auto; max-width:none;
+  aspect-ratio:3 / 4;
+  object-fit:cover; object-position:center;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 14px 34px rgba(0,0,0,.55);
+  /* Sin el giro en abanico. Tenía sentido cuando iban superpuestas;
+     en una fila ordenada lo único que hace es que parezcan torcidas.
+     Se cambia la animación entera porque una animación gana a una
+     regla normal, y pelearla con !important sería peor. */
+  animation-name:vgfnEntra;
+}
+
+/* Fortnite: PNG sin fondo. Van de pie y enteros, sin recortar ni
+   enmarcar; una figura recortada a la que le falten los pies parece
+   un error, no un diseño. */
+.vgfn-portada.recortes img{
+  height:clamp(120px, 86%, 260px);
+  width:auto; max-width:none;
+  aspect-ratio:auto;
+  object-fit:contain;
+  border:0; border-radius:0; box-shadow:none;
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.55));
+}
+
+/* El texto se queda en su mitad y no pasa por debajo de las fotos. */
+#marketView .section-hero-content{ max-width:min(700px, 54%); }
+
+
+/* ── Teléfono ────────────────────────────────────────────────────
+   Aquí no hay dos mitades que repartir: el título necesita el ancho
+   entero. Así que las fotos pasan a ser fondo de verdad -atenuadas y
+   bajo un velo- en vez de pelearse con el texto por el mismo sitio. */
+@media(max-width:900px){
+  .vgfn-portada{
+    width:100%; left:0; padding:16px;
+    justify-content:flex-end; gap:10px; opacity:.42;
+  }
+  .vgfn-portada:after{
+    background:linear-gradient(90deg,
+      #070910 0%, rgba(7,9,16,.86) 46%, rgba(7,9,16,.55) 100%);
+  }
+  .vgfn-portada.cartas img{ height:clamp(88px, 46%, 150px); }
+  .vgfn-portada.recortes img{ height:clamp(96px, 62%, 170px) }
+  #marketView .section-hero-content{ max-width:100%; }
+}
+
+/* Muy estrecho: dos fotos ya no caben sin apelotonarse. Queda una. */
+@media(max-width:430px){
+  .vgfn-portada img:nth-of-type(n+2){ display:none }
+  .vgfn-portada{ opacity:.34 }
+}
+</style>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 78 · La proporción correcta
+
+     Medido en la página, no supuesto:
+
+       · Las fotos del catálogo son 1200x750, o sea APAISADAS. Yo las
+         metí en un marco 3/4 vertical, y "cover" se comió tres cuartas
+         partes del ancho: de un banner ancho quedaba una tira estrecha
+         del centro. Eso era lo de "mal recortadas", y lo causé yo
+         eligiendo una proporción que no es la de sus imágenes.
+
+       · Cinco fotos de 113px no caben en los 516px de la franja, así
+         que desbordaban hacia la izquierda hasta la x=587, y el título
+         llega hasta la x=630. Se pisaban 43px.
+
+     La segunda parte no se arregla con más cuentas, sino quitándole la
+     posibilidad de desbordar: las fotos se reparten el ancho que hay.
+     Sean tres o sean seis, caben siempre.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-portadas-v78">
+
+/* Proporción de verdad: 16/10, la de las fotos. Así "cover" recorta un
+   pelo en vez de rebanar la imagen. */
+.vgfn-portada.cartas img{
+  aspect-ratio:16 / 10;
+  flex:1 1 0;          /* se reparten el hueco; no pueden desbordar */
+  min-width:0;         /* sin esto, flex se niega a encoger */
+  width:auto;
+  height:auto;
+  max-height:none;
+}
+
+/* En el teléfono la franja es ancha y baja: si se reparten el ancho,
+   salen altísimas y se salen por arriba. Ahí se manda la altura. */
+@media(max-width:900px){
+  .vgfn-portada{ padding:14px; gap:10px }
+  .vgfn-portada.cartas img{
+    flex:0 0 auto;
+    height:64%;
+    width:auto;
+  }
+}
+@media(max-width:430px){
+  .vgfn-portada.cartas img{ height:58% }
+}
+
+/* Fortnite son PNG recortados, cada uno con su forma. Esos van por
+   altura y enteros: repartirles el ancho los dejaría de tamaños
+   distintos según lo ancha que sea cada figura. */
+.vgfn-portada.recortes img{
+  flex:0 0 auto;
+  width:auto;
+  aspect-ratio:auto;
+  max-width:26%;
+}
+@media(max-width:900px){
+  .vgfn-portada.recortes img{ max-width:44% }
+}
+</style>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VG FASE 79 · Que se vean las fotos, y sin costura
+
+     Tres fallos míos, encadenados:
+
+       · Al pasar las fotos a una fila les quité el position, y con él
+         perdieron su altura de capa. El degradado -que debe oscurecer
+         el FONDO- pasó a pintarse encima de ellas. De ahí lo lavado.
+
+       · El degradado empezaba en negro sólido en el borde izquierdo de
+         la franja, sobre el morado del fondo: una línea recta a media
+         portada. Ahora la capa ocupa el ancho entero y el degradado
+         cruza toda la portada, así que no hay borde donde cortar.
+
+       · Cuatro recortes al 26% no caben en la franja y lo que sobraba
+         lo recortaba el marco. Ahora también se reparten el hueco.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="vg-portadas-v79">
+
+/* La capa vuelve a ocupar la portada entera; lo que mantiene las fotos
+   a la derecha es el hueco de la izquierda, no el ancho de la caja.
+   Así el degradado cruza de lado a lado y no deja costura. */
+.vgfn-portada{
+  left:0; right:0; width:auto;
+  padding:20px 22px 20px 46%;
+}
+
+.vgfn-portada:after{
+  background:linear-gradient(90deg,
+    #070910 0%, rgba(7,9,16,.94) 30%, rgba(7,9,16,.62) 50%,
+    rgba(7,9,16,.22) 70%, rgba(7,9,16,0) 88%);
+}
+
+/* Lo que faltaba: las fotos por encima del velo. Con position:relative
+   recuperan altura de capa. Siguen por debajo del texto porque toda
+   esta capa va en z-index 0 y eso encierra lo de dentro. */
+.vgfn-portada img{
+  position:relative;
+  z-index:1;
+}
+
+/* Los recortes de Fortnite también se reparten el hueco. Con "contain"
+   ninguno se recorta: la figura se ajusta entera dentro de lo suyo. */
+.vgfn-portada.recortes img{
+  flex:1 1 0;
+  min-width:0;
+  width:auto;
+  max-width:none;
+  height:88%;
+  object-fit:contain;
+  object-position:bottom center;
+}
+
+/* ── Teléfono ───────────────────────────────────────────────────
+   Estaban al 42% y al 34%: casi un fantasma. Se suben, y la
+   legibilidad del texto la pone el degradado, que ahora está donde
+   tiene que estar: debajo. */
+@media(max-width:900px){
+  .vgfn-portada{ padding:14px 14px 14px 34%; opacity:.82 }
+  .vgfn-portada:after{
+    background:linear-gradient(90deg,
+      #070910 0%, rgba(7,9,16,.95) 34%, rgba(7,9,16,.66) 56%,
+      rgba(7,9,16,.34) 78%, rgba(7,9,16,.18) 100%);
+  }
+  .vgfn-portada.recortes img{ height:82% }
+}
+@media(max-width:430px){
+  .vgfn-portada{ opacity:.7; padding-left:30% }
+}
+</style>
+
 </body>
 </html>
